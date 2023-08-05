@@ -119,7 +119,7 @@ def get_grps;game;end
 def get_option
   opt = OptionParser.new
 
-  opt.on('-q') {|v| $quiet = v } 
+  # opt.on('-q') {|v| $quiet = v } 
   opt.on('-S') {|v| $stat = v } 
   opt.on('-s') {|v| $strct= v } 
   opt.on('-v') {|v| $verb= v } 
@@ -138,10 +138,9 @@ def get_option
 
   opt.parse!(ARGV)
 
-  p ["$quiet,$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level",
-     $quiet,$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level
-    ] if $dbg
-
+  p ["$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level",
+     $stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level
+    ] if $dbg # of get_option
 end # of get_option
 
 def get_paramater(infile)
