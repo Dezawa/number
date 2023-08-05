@@ -111,9 +111,6 @@ def main(infile)
   return  game.fill?
 end
 
-def get_grps;game;end
-#
-
 
 ####################################################
 def get_option

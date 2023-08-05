@@ -96,38 +96,6 @@ def main(infile)
   return  $game.fill?
 end
 
-def get_grps;$game;end
-#
-
-
-####################################################
-def get_option
-  opt = OptionParser.new
-
-  opt.on('-q') {|v| $quiet = v } 
-  opt.on('-S') {|v| $stat = v } 
-  opt.on('-s') {|v| $strct= v } 
-  opt.on('-v') {|v| $verb= v } 
-  opt.on('-V') {|v| $Verb= v } 
-  opt.on('-T') {|v| $table= v } 
-  opt.on('-t') {|v| $test= v } 
-  opt.on('-c') {|v| $cout= v } 
-  opt.on('-g') {|v| $gout= v }
-  opt.on('-d') {|v| $dbg= v }
-  opt.on('-m') {|v| $mail=v }
-  #opt.on('- ""') {|v| $= v }
-  #opt.on('- ""') {|v| $= v }
-  $level=0
-  opt.on('-1') {|v| $level= 1 } 
-  opt.on('-h') {|v| puts $help;exit(0)}
-
-  opt.parse!(ARGV)
-
-  p ["$quiet,$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level",
-     $quiet,$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level
-    ] if $dbg
-
-end # of get_option
 
 def get_paramater(infile)
   ## get paramater file
@@ -232,27 +200,3 @@ def try_error
     }
   end
 end
-################################################3
-# DO Main
-################################################
-
-if /numple.rb$/ =~ $PROGRAM_NAME
-  $of = $stdout
-  get_option
-  ret=0
-  $stat = true
-puts $PROGRAM_NAME
-  if ARGV.size >0 
-puts ARGV[0]
-    ARGV.each{|argv| puts argv; main(open(argv,"r") ) || ret = 1
-      $FileDir = File.dirname(argv)
-      $stat && $count.each{|l,v| printf " Stat: %-10s %3d\n",l,v} 
-    }
-  else
-    main($stdin) || ret = 1
-    $stat && $count.each{|l,v| printf " Stat: %-10s %3d\n",l,v} 
-  end
-  #pp $count
-  exit(ret)
-end
-
