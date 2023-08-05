@@ -68,11 +68,10 @@ require 'net/smtp'
 $LOAD_PATH.unshift(File.join(File.dirname(File.expand_path(__FILE__)),"number"))
 $LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)))
 require 'num_ClassDefine'
-require 'num_groups'
 require 'num_resolver'
 require 'num_make_waku_pform'
 require 'group_ability'
-
+Iromono = %r[ARROW|SUM|KIKA|XROSS|COLOR|HUTOU|DIFF|NEIGH|ODD|CUP]
 
 require 'pp'
 
@@ -94,7 +93,7 @@ def main(infile)
   # get game option 
   form,sep = get_paramater(infile)
 
-  $game = Groupssub.new() rescue Game.new()
+  game = Game.new()
   # make Ban, cell, group
   $game.get_structure(infile,form,sep)
 
@@ -154,17 +153,10 @@ def get_paramater(infile)
   ##  STD | 9, 12, 25, 9-3-2-3 ,,,
   ##
   infile.gets
-  puts "$_= #{$_}" unless $quiet
-  require 'num_arrow'  if $_ =~ /ARROW/
-  require 'num_sum'    if $_ =~ /SUM/ 
-  require 'num_kika'   if $_ =~ /KIKA/  
-  require 'num_xross'  if $_ =~ /XROSS/
-  require 'num_collor' if $_ =~ /COLOR/
-  require 'num_hutougou' if $_ =~ /HUTOU/ 
-  require 'num_diff'     if $_ =~ /DIFF/  
-  require 'num_neighber' if $_ =~ /NEIGH/ 
-  require 'num_odd'      if $_ =~ /ODD/   
-  require 'num_cupcell'  if $_ =~ /CUP/   
+
+  require 'num_game'
+  require "num_#{$_.downcase}" if Iromono =~ $_
+
   sep = $_ =~ /NSP/ ? ""   : /\s+/
   
   while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end
