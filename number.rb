@@ -88,7 +88,7 @@ $BAN=[]
 #
 ###################################
 def main(infile)
-  # get game option 
+  # pp "get game option "
   form,sep = get_paramater(infile)
 
   game = Game.new()
@@ -150,15 +150,16 @@ def get_paramater(infile)
   ##  # [NSP] [ARROW,,,,]
   ##  STD | 9, 12, 25, 9-3-2-3 ,,,
   ##
+
   infile.gets
 
   require 'num_game'
   require "num_#{$_.downcase}" if Iromono =~ $_
 
   sep = $_ =~ /NSP/ ? ""   : /\s+/
-  
+
   while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end
-  puts "Structure #{$_}" unless $quiet
+  # puts "Structure #{$_}" unless $quiet
   relayList = $_.split
   form=relayList.shift
   form="9"  if form == "STD"
@@ -207,7 +208,7 @@ def try(grps)
         #i += 1
         puts "=======================#{i}===#{$gsw}=#{$optsw}======"
       }
-      #        $gout && $game.gout
+      #        $gout && game.gout
       #$game.cout
     end
   }
@@ -226,11 +227,11 @@ def try_error
       t_vlist = t_cell.vlist
       t_c = t_cell.c
 
-      puts "Try & error cell #{t_c}:vlist #{t_cell.vlist.join(' ')}" unless $quiet
+      # puts "Try & error cell #{t_c}:vlist #{t_cell.vlist.join(' ')}" unless $quiet
       $count["Try & error"] += 1
 
       t_vlist.each{|v|
-        puts "Cell #{t_cell} value=#{v}" unless $quiet
+        # puts "Cell #{t_cell} value=#{v}" unless $quiet
         # 現環境の保存と複製
         $BAN << $game
         grps  = $game.copy
@@ -250,7 +251,7 @@ if /number.rb$/ =~ $PROGRAM_NAME
   get_option
   ret=0
   $stat = true
-puts $PROGRAM_NAME
+  puts $PROGRAM_NAME
   if $mail
     # メールから問題を読み、答えをメールで返す
     # Subjectにoption, body に問題
@@ -286,8 +287,8 @@ puts $PROGRAM_NAME
     }
 
   elsif ARGV.size >0 
-puts ARGV[0]
-    ARGV.each{|argv| puts argv; main(open(argv,"r") ) || ret = 1
+    ARGV.each{|argv|
+      main(open(argv,"r") ) || ret = 1
       $FileDir = File.dirname(argv)
       $stat && $count.each{|l,v| printf " Stat: %-10s %3d\n",l,v} 
     }

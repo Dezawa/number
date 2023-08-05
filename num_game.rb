@@ -92,16 +92,16 @@ class Game
   #    dataファイルにある、arrow情報も読む
   def get_initialdata(infile,sep)
     c=0
-    print "last $_='",$_,"', @gsize=#{@gsize} @size=#{@size}\n" unless $quiet
-    
+    # print "last $_='",$_,"', @gsize=#{@gsize} @size=#{@size}\n" unless $quiet
+
     #所定の cell数だけ、初期データを読む
     while infile.gets && c < @size
       # print $_
       $_ =~ /^\s*#/ && while infile.gets =~ /^\s*#/;end
       #STDERR.
-      print $_ unless $quiet
+      # print $_ unless $quiet
       $_.chop.split(sep).each{|v|
-        #print "#{c}='#{v}' "
+        # print "#{c}='#{v}' "
         next if v =~ /\s/
         if v=="e"
           @cells[c].set_even

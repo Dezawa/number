@@ -101,7 +101,7 @@ class Cell
     end
     v_remove = vv & @ability
     if v_remove.size > 0
-      print " ";print "rmAbility cell #{@c} v=[#{v_remove.join(',')}]. by #{msg}\n" if $Verb
+      print " rmAbility cell #{@c} v=[#{v_remove.join(',')}]. by #{msg}\n" if $Verb
       ret = $gsw = true
       @ability -= v_remove
       rmCellAbilityFromGroupsOfGroupList(v_remove)
