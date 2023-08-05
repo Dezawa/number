@@ -120,8 +120,7 @@ class Game
         end
         c += 1
       }
-    end 
-    
+  end
     # dataファイルの後半にある arrow情報を得る
     # 標準では何もしないmethod
     optional_struct(sep,@n,infile)

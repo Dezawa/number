@@ -166,11 +166,6 @@ def get_paramater(infile)
 end # of get_paramater
 
 ###########################
-def dddresolve
-  return true if try($game) 
-  $level>0 && try_error 
-end
-
 def try(grps)
   [0,1,2,3].each{|i| 
     $gsw=true
