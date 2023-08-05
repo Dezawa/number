@@ -93,26 +93,25 @@ def main(infile)
 
   game = Game.new()
   # make Ban, cell, group
-  $game.get_structure(infile,form,sep)
+  game.get_structure(infile,form,sep)
 
   # set initial data
-  $game.get_initialdata(infile,sep)
+  game.get_initialdata(infile,sep)
 
   # Print initial
-  $game.form.out($game.cells) unless $quiet
+  # game.form.out(game.cells) unless $quiet
 
   #実行開始
-
-  $game.resolve
-  $game.form.out($game.cells) unless $quiet
-  $game.cout if $cout
-  #pp $game.fill?
+  game.resolve
+  # game.form.out(game.cells) unless $quiet
+  game.cout if $cout
+  #pp game.fill?
   #pp $count
-  $game.form.out($game.cells)
-  return  $game.fill?
+  game.form.out(game.cells)
+  return  game.fill?
 end
 
-def get_grps;$game;end
+def get_grps;game;end
 #
 
 
