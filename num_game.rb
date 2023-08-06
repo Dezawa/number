@@ -27,9 +27,7 @@ class Game
       sw |= self.reserv(2)
       sw |= self.prison(2)
       print "\n prison(2) #{sw}" if $verb
-      sw |= self.prison5
 
-      print " prison5 #{sw}" if $verb
       next if self.optional_test
       print "optional  #{sw}" if $verb
 

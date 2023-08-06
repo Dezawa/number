@@ -112,39 +112,6 @@ class Game #< Array
           vc
         }
   end
-  ###########################################################
-  
-  # cell 1,2,3 のいずれかに数字 4 がはいる、と決まったら
-  # 同じ行の 4、5、6、7、8、9 には 4の入る可能性は無くなる
-  #
-  # 1.各グループを調べ、のこり可能性が 2、3 となった値があるか調べる。
-  # 2.その値をもつ cell のリストを得、
-  # それ等を全て含むグループがあるか探す。
-  # もしあれば、そのグループの他のcellから 可能性をなくす。
-  def prison5
-    #return # prison(2,3)と等価?
-    ret = false
-    @groups.each{|grp|
-      (1..@n).each{|v| cnt=grp.ability[v].rest
-        if cnt>1 && cnt < 4 ## -> 1.
-          # 値vの可能性をもつcellを得る
-          w = grp.ability[v].cellList
-          s=w.size # 2 or 3
-          # これと同じcellを全て含むグループを探す
-          cogroup(w).each{|g| grp0=@groups[g]
-            # group g0 の w 以外のcellから 値Vの可能性をなくす
-            if grp0.rmAbility(v,w,"## prison5:group #{grp.g} V=#{v} cells=#{w.join(",")}")
-              $count[:prison_5] += 1
-              return true #ret = true
-            end
-            
-          }
-        end
-      }
-    }
-    ret
-  end # prison5 
-  
 
   def not_fill
     ret=nil

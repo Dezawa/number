@@ -190,8 +190,6 @@ def try(grps)
             grps.prison(vnum)  && $gsw=true  && sw = true && grps.rest_one
             return true if grps.fill?
 
-
-            grps.prison5       && $gsw=true  && sw = true &&   grps.rest_one
             if $gout ; puts "prison #{vnum} end" ; grps.gout ;end
           }
           $gout && grps.gout
