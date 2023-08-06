@@ -68,7 +68,8 @@ class Cell
     return nil unless valurest == 1 && !v
     set(ability[0])
   end
-  def set(v,msg="rest one")  
+  def set(v,msg="rest_one")
+    $count["Cell_ability is rest one"] += 1
     set_cell(v,msg)
   end
 
@@ -157,7 +158,7 @@ class Group
     sw = nil
     ability.fixed_by_rest_one.each{|cellData|
       if @cells[cellData.cellList.first].set(cellData.v,"grp(#{g}).ability #{cellData.cellList}")
-        $count[:group] += 1
+        $count[:Group_ability_is_rest_one] += 1
         sw = true
       end
     }

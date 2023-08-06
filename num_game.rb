@@ -25,22 +25,22 @@ class Game
       #@cells.each{|cell| sw |= cell.set_if_valurest_equal_1  }
       sw |= self.rest_one 
       sw |= self.reserv(2)
-      sw |= self.teiin(2)
-      print "\n teiin(2) #{sw}" if $verb
-      sw |= self.teiin5
+      sw |= self.prison(2)
+      print "\n prison(2) #{sw}" if $verb
+      sw |= self.prison5
 
-      print " teiin5 #{sw}" if $verb
+      print " prison5 #{sw}" if $verb
       next if self.optional_test
       print "optional  #{sw}" if $verb
 
       sw |= self.reserv(3)
       print " reserv(3) #{sw}" if $verb
-      sw |= self.teiin(3)
-      print " teiin(3) #{sw}" if $verb
+      sw |= self.prison(3)
+      print " prison(3) #{sw}" if $verb
       sw |= self.reserv(4)
       print " reserv(4) #{sw}" if $verb
-      sw |= self.teiin(4)
-      print " teiin(4) #{sw}" if $verb
+      sw |= self.prison(4)
+      print " prison(4) #{sw}" if $verb
       self.highClass.each{|method| sw |= method.call
         print " method #{sw}" if $verb
       }

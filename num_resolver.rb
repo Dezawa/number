@@ -48,31 +48,31 @@ class Game #< Array
   # これらのcellが属するgroupの他のcell には　v1,v2,,,は入らない
   ########
   ###########################################################
-  def teiin(v_num)
+  def prison(v_num)
     # 残り可能性の数　2,,v_num なcellを拾い上げる
     # 同じ「残り可能性」なcellの組み合わせを探し、v_numあればhit
     @groups.each{|grp| 
       cells=grp.cellList.select{|c| @cells[c].valurest >1 && @cells[c].valurest<=v_num}
       cells.combination(v_num){|cc| 
-        next if teiin_done[v_num].include? cc
+        next if prison_done[v_num].include? cc
         valus = cc.map{|c| @cells[c].ability}.inject([]){|val,abl| val |= abl}
         if valus.size == v_num #  このgrpでこれらのcellは vals が定員
-          $count["teiin#{v_num}"] += 1
+          $count["prison#{v_num}"] += 1
           # このcellを含むgrpの 他のcellにあるｖの可能性を消す
           cogroup(cc).each{|grp0| 
             @groups[grp0].rmAbility(valus,cc,
-                                    "teiin#{v_num} grp #{grp.g} val #{valus} cell #{cc}")
+                                    "prison#{v_num} grp #{grp.g} val #{valus} cell #{cc}")
           }
-          teiin_done[v_num] << cc
+          prison_done[v_num] << cc
           return true
         end
       } 
     } 
     return nil
-  end # def teiin
+  end # def prison
 
-  def teiin_done
-    @teiin_done ||= Hash.new{|h,k| h[k]=[]}
+  def prison_done
+    @prison_done ||= Hash.new{|h,k| h[k]=[]}
   end
   ###########################################################
   # 予約席
@@ -89,7 +89,7 @@ class Game #< Array
       group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num). # [[[2,[28,29],7], [2,[28,29],9]]]
       each{|abl_cmb|
         values,rm_cells = sum_of_cells_and_values(abl_cmb)
-        next if teiin_done[v_num].include? rm_cells #value_cell[1]
+        next if prison_done[v_num].include? rm_cells #value_cell[1]
         rm_value = @val - values
         if (rm_cells.map{|c| @cells[c].ability}.flatten - values).size > 0
           rm_cells.each{|c| 
@@ -97,7 +97,7 @@ class Game #< Array
                                 "reserve#{v_num} group #{group.g} cells#{rm_cells} v=#{values}")
           }
           $count["reserv#{v_num}"] += 1
-          teiin_done[v_num] << rm_cells
+          prison_done[v_num] << rm_cells
           return true
         end
       }
@@ -121,8 +121,8 @@ class Game #< Array
   # 2.その値をもつ cell のリストを得、
   # それ等を全て含むグループがあるか探す。
   # もしあれば、そのグループの他のcellから 可能性をなくす。
-  def teiin5
-    #return # teiin(2,3)と等価?
+  def prison5
+    #return # prison(2,3)と等価?
     ret = false
     @groups.each{|grp|
       (1..@n).each{|v| cnt=grp.ability[v].rest
@@ -133,8 +133,8 @@ class Game #< Array
           # これと同じcellを全て含むグループを探す
           cogroup(w).each{|g| grp0=@groups[g]
             # group g0 の w 以外のcellから 値Vの可能性をなくす
-            if grp0.rmAbility(v,w,"## teiin5:group #{grp.g} V=#{v} cells=#{w.join(",")}")
-              $count[:teiin_5] += 1
+            if grp0.rmAbility(v,w,"## prison5:group #{grp.g} V=#{v} cells=#{w.join(",")}")
+              $count[:prison_5] += 1
               return true #ret = true
             end
             
@@ -143,7 +143,7 @@ class Game #< Array
       }
     }
     ret
-  end # teiin5 
+  end # prison5 
   
 
   def not_fill
@@ -293,7 +293,7 @@ class Game #< Array
             end
           } # combination
         } # g_nums
-        $count["crossTeiin"] += 1 if vsw
+        $count["X wing"] += 1 if vsw
         #return true
       } # value
     } # h_v

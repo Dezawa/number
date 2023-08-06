@@ -187,12 +187,12 @@ def try(grps)
           (2..4).each{|vnum|
             grps.reserv(vnum) && $gsw=true  && sw = true &&   grps.rest_one
 
-            grps.teiin(vnum)  && $gsw=true  && sw = true && grps.rest_one
+            grps.prison(vnum)  && $gsw=true  && sw = true && grps.rest_one
             return true if grps.fill?
 
 
-            grps.teiin5       && $gsw=true  && sw = true &&   grps.rest_one
-            if $gout ; puts "teiin #{vnum} end" ; grps.gout ;end
+            grps.prison5       && $gsw=true  && sw = true &&   grps.rest_one
+            if $gout ; puts "prison #{vnum} end" ; grps.gout ;end
           }
           $gout && grps.gout
           ret = grps.optional_test  && gsw=true && sw = true
@@ -287,7 +287,7 @@ if /number.rb$/ =~ $PROGRAM_NAME
     }
   else
     main($stdin) || ret = 1
-    $stat && $count.each{|l,v| printf " Stat: %-10s %3d\n",l,v} 
+    game.output($stat, $count, $cout)
   end
   #pp $count
   exit(ret)
