@@ -1,5 +1,5 @@
 
-class Game 
+class Number::Game 
   attr_accessor :groups,:cells,:gsize,:size,:form,:arrow,:block,:n
   def optional_test;end
   
@@ -153,7 +153,7 @@ class Game
       xmax,ymax = make_waku_pform(infile,form,sep)  # 枠を算出
       ban_initialize(@w,@n,xmax,ymax)
       #印刷フォーム設定
-      @form=Form.new([@w,xmax,ymax],@n)
+      @form=Number::Form.new([@w,xmax,ymax],@n)
     else
       w_form = "#{$FileDir}/waku#{form}"
       p_form = "#{$FileDir}/pform#{form}"
@@ -161,7 +161,7 @@ class Game
       #印刷フォーム指定ファイルを読む
       ##### get PRINT FORM
       print "###\n" unless $quiet
-      @form=Form.new(p_form,@n)
+      @form=Number::Form.new(p_form,@n)
     end
     @block ||= @groups.select{|grp| grp.is_block? }
   end

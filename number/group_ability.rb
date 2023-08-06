@@ -1,4 +1,4 @@
-class GroupAbilities
+class Number::GroupAbilities
   attr_accessor :n, :ability
   def initialize(arg_n)
     @n = arg_n
@@ -6,7 +6,7 @@ class GroupAbilities
   end
 
   def setup_initial(cellList)
-    (1..@n).each{|v| @ability[v]= GroupAbility.new(@n,cellList.dup,v)}
+    (1..@n).each{|v| @ability[v]= Number::GroupAbility.new(@n,cellList.dup,v)}
     #@ability[0]= GroupAbility.new(0,cellList.dup,0)
   end
   def rmCellAbility(v0,cell_no,msg=nil)
@@ -34,7 +34,7 @@ class GroupAbilities
   end
 end
 
-class GroupAbility
+class Number::GroupAbility
   attr_accessor :rest,:cellList ,:v
   def initialize(arg_n,arg_cellList,arg_v)
     @cellList = arg_cellList

@@ -62,23 +62,25 @@ require 'optparse'
 require "stringio"
 require 'net/smtp'
 
+class Number
+end
+
 $LOAD_PATH.unshift(File.join(File.dirname(File.expand_path(__FILE__)),"number"))
 $LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)))
-require 'num_game'
-require 'num_ClassDefine'
-require 'num_resolver'
-require 'num_make_waku_pform'
+require 'game'
+require 'cell'
+require 'group'
+require 'form'
+
+require 'resolver'
+require 'make_waku_pform'
 require 'group_ability'
 Iromono = %r[ARROW|SUM|KIKA|XROSS|COLOR|HUTOU|DIFF|NEIGH|ODD|CUP]
-
-require 'pp'
 
 $count = Hash.new(0)
 $LibDir = File.dirname(__FILE__)
 $LOAD_PATH<< $LibDir +"/number"
 $BAN=[]
-
-###
 
 ###
 
@@ -108,7 +110,7 @@ def set_game_type(infile)
 end
 
 def game_setup(infile,form,sep)
-  game = Game.new()
+  game = Number::Game.new()
   # make Ban, cell, group
   game.get_structure(infile,form,sep)
 
@@ -155,7 +157,7 @@ def get_game_type(infile)
 
   infile.gets
 
-  required = Iromono =~ $_ ? "num_#{$_.downcase}" : nil
+  required = Iromono =~ $_ ? "number/#{$_.downcase}" : nil
 
   sep = $_ =~ /NSP/ ? ""   : /\s+/
 

@@ -41,7 +41,7 @@ EOMEMO
 ######################################
 require 'pp'
 #struct = ARGV.shift #"9" #9-3+4-3"
-class Game
+class Number::Game
   def make_waku_pform(infile,struct,sep)
     n,mult,sign,m_nr,dan = get_baseSize(struct)
     @n,bx,by = n
@@ -102,7 +102,7 @@ class Game
       j=ww[0]
       #pp [ww[0],ww[1]]
       #cell=@cells[ww[0]] = Cell.new(@groups,ww[0],@n,ww[1]) #(cell_nr,grp_list)
-      cell=@cells[ww[0]] = Cell.new(self,ww[0],ww[1]) #(cell_nr,grp_list)
+      cell=@cells[ww[0]] = Number::Cell.new(self,ww[0],ww[1]) #(cell_nr,grp_list)
       ww[1].each{|grp_no| @groups[grp_no].addcellList ww[0] }
     }
     # get neighber
@@ -158,7 +158,7 @@ class Game
           #next if w[xmax*y+x].nil?     #or w[xmax*y+x][1]
           unless  w[xmax*y+x].nil? 
             #@groups[gnr] =  Group.new(@cells,gnr,@n,:block)
-            @groups[gnr] =  Group.new(self,gnr,:block)
+            @groups[gnr] =  Number::Group.new(self,gnr,:block)
             (y .. y+by-1).each{|yy| 
               (x .. x+bx-1).each{|xx| w[xmax*yy+xx][1]<< gnr }
             }
@@ -174,7 +174,7 @@ class Game
     boxes.each{|box|
       (box.y .. box.y+@n-1).each{|y|
         #@groups[gnr] =  Group.new(@cells,gnr,@n,:holizontal)
-        @groups[gnr] =  Group.new(self,gnr,:holizontal)
+        @groups[gnr] =  Number::Group.new(self,gnr,:holizontal)
         (box.x .. box.x + @n-1).each{|x|  
           w[xmax*y+x][1]<<gnr 
         }
@@ -182,7 +182,7 @@ class Game
       }
       (box.x .. box.x+@n-1).each{|x|
         #@groups[gnr] =  Group.new(@cells,gnr,@n,:vertical)
-        @groups[gnr] =  Group.new(self,gnr,:vertical)
+        @groups[gnr] =  Number::Group.new(self,gnr,:vertical)
         (box.y .. box.y + @n-1).each{|y| w[xmax*y+x][1]<<gnr }
         gnr += 1 
       }

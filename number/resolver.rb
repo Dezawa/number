@@ -1,5 +1,5 @@
 # coding: UTF-8
-class Game #< Array
+class Number::Game #< Array
   def cogroup(cells)
     return [] if cells.size == 0
     cells[1..-1].inject(@cells[cells[0]].grpList) {|groups, c|   groups &= @cells[c].grpList}

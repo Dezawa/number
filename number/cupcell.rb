@@ -1,5 +1,5 @@
 ####
-class Cell
+class Number::Cell
   def even_only?
     @valu && @valu.even? || 
       !@valu &&  @ability.select{|a| a.odd? }.size==0
@@ -12,7 +12,7 @@ class Cell
   end
 
 end
-class Game #sub < Groups #Cupcell 
+class Number::Game #sub < Groups #Cupcell 
 # coding: euc-jp
 #module Optional
 def optional_struct(sep,n,infile)

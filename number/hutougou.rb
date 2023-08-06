@@ -1,4 +1,4 @@
-class Game 
+class Number::Game 
 #module Optional
 def optional_struct(sep,n,infile)
     while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end

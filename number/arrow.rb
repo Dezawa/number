@@ -1,5 +1,5 @@
 require 'pp'
-class Game 
+class Number::Game
 
 def optional_struct(sep,n,infile)
   get_arrow(infile)

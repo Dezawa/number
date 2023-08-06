@@ -2,7 +2,7 @@
 # 重要：このバージョンからKIKAのデータ順変更。初期値より先に構造を載せる。
 #
 #module KIKA
-class Game
+class Number::Game
   def set_block_group(gnr,boxes,bx,by,xmax,w,infile,sep)
 
       c = -1
@@ -17,7 +17,7 @@ class Game
           w[c][1] << d.to_i + gnr-1
         }
       end
-      (gnr .. gnr+@n-1).each{|g| @groups[g] = Group.new(self,g,:block)}
+      (gnr .. gnr+@n-1).each{|g| @groups[g] = Number::Group.new(self,g,:block)}
       gnr += @n
       gnr
   end

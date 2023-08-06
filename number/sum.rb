@@ -1,4 +1,4 @@
-class Game
+class Number::Game
 #module Optional
 ##############
 require 'pp'
