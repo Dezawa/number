@@ -92,7 +92,7 @@ def main(infile)
   $game.cout if $cout
   #pp $game.fill?
   #pp $count
-  $game.form.out($game.cells)
+ # $game.form.out($game.cells)
   return  $game.fill?
 end
 
@@ -126,11 +126,6 @@ def get_paramater(infile)
 end # of get_paramater
 
 ###########################
-def dddresolve
-  return true if try($game) 
-  $level>0 && try_error 
-end
-
 def try(grps)
   [0,1,2,3].each{|i| 
     $gsw=true
@@ -142,7 +137,7 @@ def try(grps)
         sw = true
         while sw
           sw = nil
-          grps.rest_one && $gsw=true && sw = true
+          grps.rest_one && $gsw=true && s１１w = true
           return true if grps.fill?
           if $gout; puts "rest one end"; grps.gout;end
 

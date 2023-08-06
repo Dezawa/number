@@ -168,6 +168,15 @@ class Game
     @block ||= @groups.select{|grp| grp.is_block? }
   end
 
+  def cell_out
+    @cells.each{|cell|
+      cell.v || puts("#{cell.c} : #{cell.ability}")
+    }
+  end
 
-
+  def output(statistics, count, cellout)
+    cellout && cell_out
+    statistics &&  $count.each{|l,v| printf " Stat: %-10s %3d\n",l,v}
+    form.out cells
+  end
 end # Groups

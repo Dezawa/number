@@ -59,12 +59,12 @@ $help ="
 ################
 #####
 require 'optparse'
-
 require "stringio"
 require 'net/smtp'
 
 $LOAD_PATH.unshift(File.join(File.dirname(File.expand_path(__FILE__)),"number"))
 $LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)))
+require 'num_game'
 require 'num_ClassDefine'
 require 'num_resolver'
 require 'num_make_waku_pform'
@@ -88,9 +88,26 @@ $BAN=[]
 #
 ###################################
 def main(infile)
-  # pp "get game option "
-  form,sep = get_paramater(infile)
+  form,sep = set_game_type(infile)
+  game = game_setup(infile,form,sep)
 
+  #実行開始
+  game.resolve
+  # game.form.out(game.cells) unless $quiet
+  game.cout if $cout
+  #pp game.fill?
+  #pp $count
+  #game.form.out(game.cells)
+  game
+end
+
+def set_game_type(infile)
+  form,sep,required = get_game_type(infile)
+  require required if required
+  [form,sep]
+end
+
+def game_setup(infile,form,sep)
   game = Game.new()
   # make Ban, cell, group
   game.get_structure(infile,form,sep)
@@ -100,18 +117,8 @@ def main(infile)
 
   # Print initial
   # game.form.out(game.cells) unless $quiet
-
-  #実行開始
-  game.resolve
-  # game.form.out(game.cells) unless $quiet
-  game.cout if $cout
-  #pp game.fill?
-  #pp $count
-  game.form.out(game.cells)
-  return  game.fill?
+  game
 end
-
-
 ####################################################
 def get_option
   opt = OptionParser.new
@@ -140,7 +147,7 @@ def get_option
     ] if $dbg # of get_option
 end # of get_option
 
-def get_paramater(infile)
+def get_game_type(infile)
   ## get paramater file
   ##  # [NSP] [ARROW,,,,]
   ##  STD | 9, 12, 25, 9-3-2-3 ,,,
@@ -148,8 +155,7 @@ def get_paramater(infile)
 
   infile.gets
 
-  require 'num_game'
-  require "num_#{$_.downcase}" if Iromono =~ $_
+  required = Iromono =~ $_ ? "num_#{$_.downcase}" : nil
 
   sep = $_ =~ /NSP/ ? ""   : /\s+/
 
@@ -159,8 +165,8 @@ def get_paramater(infile)
   form=relayList.shift
   form="9"  if form == "STD"
   
-  [form,sep]  # return
-end # of get_paramater
+  [form,sep,required]  # return
+end # of get_game_type
 
 ###########################
 def try(grps)
@@ -237,11 +243,9 @@ end
 ################################################
 
 if /number.rb$/ =~ $PROGRAM_NAME
-  $of = $stdout
   get_option
+  $of = $stdout
   ret=0
-  $stat = true
-  puts $PROGRAM_NAME
   if $mail
     # メールから問題を読み、答えをメールで返す
     # Subjectにoption, body に問題
@@ -278,9 +282,8 @@ if /number.rb$/ =~ $PROGRAM_NAME
 
   elsif ARGV.size >0 
     ARGV.each{|argv|
-      main(open(argv,"r") ) || ret = 1
-      $FileDir = File.dirname(argv)
-      $stat && $count.each{|l,v| printf " Stat: %-10s %3d\n",l,v} 
+      game = main(open(argv,"r") ) || ret = 1
+      game.output($stat, $count, $cout)
     }
   else
     main($stdin) || ret = 1
