@@ -41,7 +41,8 @@ EOMEMO
 ######################################
 require 'pp'
 #struct = ARGV.shift #"9" #9-3+4-3"
-class Number::Game
+module Number
+  module GamePform
   def make_waku_pform(infile,struct,sep)
     n,mult,sign,m_nr,dan = get_baseSize(struct)
     @n,bx,by = n
@@ -92,9 +93,6 @@ class Number::Game
     #pp $grps
     [xmax,ymax]
   end
-
-  
-
 
   def ban_initialize(w,n,xmax,ymax)
     w.each{|ww|
@@ -175,15 +173,15 @@ class Number::Game
       (box.y .. box.y+@n-1).each{|y|
         #@groups[gnr] =  Group.new(@cells,gnr,@n,:holizontal)
         @groups[gnr] =  Number::Group.new(self,gnr,:holizontal)
-        (box.x .. box.x + @n-1).each{|x|  
-          w[xmax*y+x][1]<<gnr 
+        (box.x .. box.x + @n-1).each{|x|
+          w[xmax*y+x][1] << gnr 
         }
         gnr += 1
       }
       (box.x .. box.x+@n-1).each{|x|
         #@groups[gnr] =  Group.new(@cells,gnr,@n,:vertical)
         @groups[gnr] =  Number::Group.new(self,gnr,:vertical)
-        (box.y .. box.y + @n-1).each{|y| w[xmax*y+x][1]<<gnr }
+        (box.y .. box.y + @n-1).each{|y| w[xmax*y+x][1] << gnr }
         gnr += 1 
       }
     }
@@ -193,8 +191,8 @@ class Number::Game
     offset = {'-' => 6, '+' => -6 }
     boxes =   Array.new(mnr)
 
-    box = Box.new(@n,-6,-6)
-    wbox=Box.new(@n)
+    box = Number::Box.new(@n,-6,-6)
+    wbox=Number::Box.new(@n)
     bnr = -1
     xmin = 0
     xmax = 0
@@ -205,7 +203,7 @@ class Number::Game
       xmin = wbox.x if ( xmin > wbox.x )
       (0..mult[dan]-1).each{|b|
         bnr += 1
-        boxes[bnr] = Box.new(@n,wbox.p)
+        boxes[bnr] = Number::Box.new(@n,wbox.p)
         xmax = wbox.x+@n if  xmax < wbox.x+@n
         wbox.p = wbox+ [12,0]
       }
@@ -242,44 +240,12 @@ class Number::Game
     # pp ["struct,n,mult,sign",struct,n,mult,sign]
     # pp ["Mnr,Dan",mnr,dan]
     [[n,bx,by],mult,sign,mnr,dan ]
+  end
+end
 end
 
-end
-
-class Box 
-  def initialize(n,x=nil,y=nil)
-    @n = n
-    @position=[]
-    @position = x if x.class==Array
-    @position = [x,y] unless y.nil?
-  end
-
-  def p(x=nil,y=nil)
-    @position = x if x.class==Array
-    @position = [x,y] unless y.nil?
-    @position 
-  end
-
-  def p=(x=nil,y=nil)
-    @position =  x if x.class==Array
-    @position = [x,y] unless y.nil?
-    @position
-  end
-
-  def +(x=nil,y=nil)
-    @position = [@position[0]+x[0],@position[1]+x[1]] if x.class==Array
-    @position = [@position[0]+x,@position[1]+y]       unless y.nil?
-    @position
-  end
-
-  def x=(i) ;    @position[0] = i ;  end
-  def x ;    @position[0] ;  end
-  def y ;    @position[1] ;  end
-end
 
 #main(struct)
-
-
 
 __END__
 箱の重なり横数  Retsu 5  アルゴリズム考えよう

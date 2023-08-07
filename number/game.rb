@@ -1,3 +1,4 @@
+require_relative './make_waku_pform'
 
 class Number::Game 
   attr_accessor :groups,:cells,:gsize,:size,:form,:arrow,:block,:n
