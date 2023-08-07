@@ -1,12 +1,19 @@
 require_relative './make_waku_pform'
 
-class Number::Game 
+module Number
+  class Game
+    include Number::GamePform
   attr_accessor :groups,:cells,:gsize,:size,:form,:arrow,:block,:n
+  attr_reader :infile, :form, :sep
   def optional_test;end
   
-  def initialize(args={})#n,gsize,cells)
+  def initialize(infile,form,sep)#n,gsize,cells)
+    @infile,@form,@sep = infile,form,sep
     @groups = Array.new
     @cells = []
+    
+    get_structure
+    get_initialdata
   end
 
   def block
@@ -89,7 +96,7 @@ class Number::Game
   
   # data file の残りを読んで、初期値を得る 
   #    dataファイルにある、arrow情報も読む
-  def get_initialdata(infile,sep)
+  def get_initialdata
     c=0
     # print "last $_='",$_,"', @gsize=#{@gsize} @size=#{@size}\n" unless $quiet
 
@@ -119,7 +126,7 @@ class Number::Game
         end
         c += 1
       }
-  end
+    end
     # dataファイルの後半にある arrow情報を得る
     # 標準では何もしないmethod
     optional_struct(sep,@n,infile)
@@ -149,22 +156,23 @@ class Number::Game
     @arrow = @arrow.compact if @arrow
     @arrow=@arrow.sort{|a,b| b.size<=>a.size  }
   end
-  def get_structure(infile,form,sep)
+  ### def structure(data,form,sep)
+  ###   if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form # 3x3-4+5
+  ###     xmax,ymax = make_waku_pform_new(data,form,sep)  # 枠を算出
+  ###     ban_initialize(@w,@n,xmax,ymax)
+  ###     #印刷フォーム設定
+  ###     @form=Number::Form.new([@w,xmax,ymax],@n)
+  ###   end
+  ###   #@block ||= @groups.select{|grp| grp.is_block? }
+  ### end
+  def get_structure
     if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form # 3x3-4+5
       xmax,ymax = make_waku_pform(infile,form,sep)  # 枠を算出
       ban_initialize(@w,@n,xmax,ymax)
       #印刷フォーム設定
       @form=Number::Form.new([@w,xmax,ymax],@n)
-    else
-      w_form = "#{$FileDir}/waku#{form}"
-      p_form = "#{$FileDir}/pform#{form}"
-      get_structure_file(w_form,sep)
-      #印刷フォーム指定ファイルを読む
-      ##### get PRINT FORM
-      print "###\n" unless $quiet
-      @form=Number::Form.new(p_form,@n)
     end
-    @block ||= @groups.select{|grp| grp.is_block? }
+    #@block ||= @groups.select{|grp| grp.is_block? }
   end
 
   def cell_out
@@ -179,3 +187,4 @@ class Number::Game
     form.out cells
   end
 end # Groups
+end

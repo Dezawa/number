@@ -103,24 +103,24 @@ def main(infile)
   game
 end
 
-def set_game_type(infile)
-  form,sep,required = get_game_type(infile)
-  require required if required
-  [form,sep]
-end
+# def set_game_type(infile)
+#   form,sep,required = get_game_type(infile)
+#   require required if required
+#   [form,sep]
+# end
 
-def game_setup(infile,form,sep)
-  game = Number::Game.new()
-  # make Ban, cell, group
-  game.get_structure(infile,form,sep)
+# def game_setup(infile,form,sep)
+#   game = Number::Game.new()
+#   # make Ban, cell, group
+#   game.get_structure(infile,form,sep)
 
-  # set initial data
-  game.get_initialdata(infile,sep)
+#   # set initial data
+#   game.get_initialdata(infile,sep)
 
-  # Print initial
-  # game.form.out(game.cells) unless $quiet
-  game
-end
+#   # Print initial
+#   # game.form.out(game.cells) unless $quiet
+#   game
+# end
 ####################################################
 def get_option
   opt = OptionParser.new
@@ -149,26 +149,26 @@ def get_option
     ] if $dbg # of get_option
 end # of get_option
 
-def get_game_type(infile)
-  ## get paramater file
-  ##  # [NSP] [ARROW,,,,]
-  ##  STD | 9, 12, 25, 9-3-2-3 ,,,
-  ##
+# def get_game_type(infile)
+#   ## get paramater file
+#   ##  # [NSP] [ARROW,,,,]
+#   ##  STD | 9, 12, 25, 9-3-2-3 ,,,
+#   ##
 
-  infile.gets
+#   infile.gets
 
-  required = Iromono =~ $_ ? "number/#{$_.downcase}" : nil
+#   required = Iromono =~ $_ ? "number/#{$_.downcase}" : nil
 
-  sep = $_ =~ /NSP/ ? ""   : /\s+/
+#   sep = $_ =~ /NSP/ ? ""   : /\s+/
 
-  while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end
-  # puts "Structure #{$_}" unless $quiet
-  relayList = $_.split
-  form=relayList.shift
-  form="9"  if form == "STD"
+#   while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end
+#   # puts "Structure #{$_}" unless $quiet
+#   relayList = $_.split
+#   form=relayList.shift
+#   form="9"  if form == "STD"
   
-  [form,sep,required]  # return
-end # of get_game_type
+#   [form,sep,required]  # return
+# end # of get_game_type
 
 ###########################
 def try(grps)
@@ -237,6 +237,7 @@ def try_error
       }
     }
   end
+end
 end
 ################################################3
 # DO Main
