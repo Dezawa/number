@@ -3,6 +3,7 @@ require_relative './make_waku_pform'
 module Number
   class Game
     Iromono = %w[ARROW SUM KIKA XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL]
+    IromonoReg = %r[#{Iromono.join("|")}]
     include Number::GamePform
   attr_accessor :groups,:cells,:gsize,:size,:form,:arrow,:block,:n
   attr_reader :infile, :form, :sep, :game_type
@@ -24,8 +25,9 @@ module Number
   end
 
   def set_game_type
-    required = Iromono.include?(game_type) ? "./game_types/#{game_type.downcase}" : nil
+    required = IromonoReg =~ game_type ? "./game_types/#{$&.downcase}" : nil
     return unless required
+
     require_relative required
     extend Number::GameTypes::GameType
   end

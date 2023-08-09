@@ -43,7 +43,7 @@ RSpec.describe Number::Game, type: :model do
   describe '色物拡張' do
     Number::Game::Iromono.each do | game_type |
       it "#{game_type}がextendされる" do
-        game = Number::Game.new(infile, "9", "", game_type: game_type)
+        game = Number::Game.new(infile, "9", "", game_type: "# NSP #{game_type}")
         game.set_game_type
         expect(game.game_type).to eq game_type
       end
