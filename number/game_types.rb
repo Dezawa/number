@@ -1,0 +1,2 @@
+module Number::GameTypes
+end
