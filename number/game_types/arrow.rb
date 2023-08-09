@@ -1,4 +1,6 @@
 require 'pp'
+# 構造、初期データのあと、Arrow定義の行をつける
+# ○のcell番号 arrowのcell番号達
 module Number::GameTypes::GameType
   def game_type
     'ARROW'

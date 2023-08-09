@@ -2,7 +2,12 @@ module Number::GameTypes::GameType
   def game_type
     'SUM'
   end
-#module Optional
+
+  # #NSP SUM
+  # 9
+  # ここに9x9データ
+  # このあと sum cell0 cell..... を並べる
+  
 ##############
 require 'pp'
 def optional_struct(sep,n,infile)
