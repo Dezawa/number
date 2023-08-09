@@ -62,237 +62,265 @@ require 'optparse'
 require "stringio"
 require 'net/smtp'
 
-class Number
-end
+
 
 #$LOAD_PATH.unshift(File.join(File.dirname(File.expand_path(__FILE__)),"number"))
 #$LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)))
 require_relative 'number/game'
-relative 'number/cell'
-relative 'number/group'
-relative 'number/form'
+require_relative 'number/cell'
+require_relative 'number/group'
+require_relative 'number/form'
 
-relative 'number/resolver'
-relative 'number/make_waku_pform'
-relative 'number/group_ability'
-Iromono = %r[ARROW|SUM|KIKA|XROSS|COLOR|HUTOU|DIFF|NEIGH|ODD|CUP]
+require_relative 'number/resolver'
+require_relative 'number/make_waku_pform'
+require_relative 'number/group_ability'
 
-$count = Hash.new(0)
-$LibDir = File.dirname(__FILE__)
-$LOAD_PATH<< $LibDir +"/number"
-$BAN=[]
+class Numple
+  attr_reader :infile, :game
+  def initialize(infile)
+    @infile = infile
+  end
 
-###
+  def resolve
+    game = create_game
+    game.resolve
+  end
 
-###################################
-#
-# MAIN
-#
-###################################
-def main(infile)
-  form,sep = set_game_type(infile)
-  game = game_setup(infile,form,sep)
+  def create_game
+    form,sep, game_type = analyze_data
+    @game = Number::Game.create(infile, form, sep, game_type: game_type)
+  end
 
-  #実行開始
-  game.resolve
-  # game.form.out(game.cells) unless $quiet
-  game.cout if $cout
-  #pp game.fill?
-  #pp $count
-  #game.form.out(game.cells)
-  game
+  def analyze_data
+    infile.gets
+    game_type = (match = $_.match(Number::Game::IromonoReg)) ? match[0] : nil
+    sep = $_ =~ /NSP/ ? ""   : /\s+/
+    while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end
+    relay_list = $_.split
+    form=relay_list.shift
+    form="9"  if form == "STD"
+    [form,sep,game_type]
+  end
+
+  
 end
+__END__
+# $count = Hash.new(0)
+# $LibDir = File.dirname(__FILE__)
+# $LOAD_PATH<< $LibDir +"/number"
+# $BAN=[]
 
-# def set_game_type(infile)
-#   form,sep,required = get_game_type(infile)
-#   require required if required
-#   [form,sep]
-# end
+# ###
 
-# def game_setup(infile,form,sep)
-#   game = Number::Game.new()
-#   # make Ban, cell, group
-#   game.get_structure(infile,form,sep)
+# ###################################
+# #
+# # MAIN
+# #
+# ###################################
+# def main(infile)
+#   form,sep = set_game_type(infile)
+#   game = game_setup(infile,form,sep)
 
-#   # set initial data
-#   game.get_initialdata(infile,sep)
-
-#   # Print initial
+#   #実行開始
+#   game.resolve
 #   # game.form.out(game.cells) unless $quiet
+#   game.cout if $cout
+#   #pp game.fill?
+#   #pp $count
+#   #game.form.out(game.cells)
 #   game
 # end
-####################################################
-def get_option
-  opt = OptionParser.new
 
-  # opt.on('-q') {|v| $quiet = v } 
-  opt.on('-S') {|v| $stat = v } 
-  opt.on('-s') {|v| $strct= v } 
-  opt.on('-v') {|v| $verb= v } 
-  opt.on('-V') {|v| $Verb= v } 
-  opt.on('-T') {|v| $table= v } 
-  opt.on('-t') {|v| $test= v } 
-  opt.on('-c') {|v| $cout= v } 
-  opt.on('-g') {|v| $gout= v }
-  opt.on('-d') {|v| $dbg= v }
-  opt.on('-m') {|v| $mail=v }
-  #opt.on('- ""') {|v| $= v }
-  #opt.on('- ""') {|v| $= v }
-  $level=0
-  opt.on('-1') {|v| $level= 1 } 
-  opt.on('-h') {|v| puts $help;exit(0)}
+# # def set_game_type(infile)
+# #   form,sep,required = get_game_type(infile)
+# #   require required if required
+# #   [form,sep]
+# # end
 
-  opt.parse!(ARGV)
+# # def game_setup(infile,form,sep)
+# #   game = Number::Game.new()
+# #   # make Ban, cell, group
+# #   game.get_structure(infile,form,sep)
 
-  p ["$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level",
-     $stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level
-    ] if $dbg # of get_option
-end # of get_option
+# #   # set initial data
+# #   game.get_initialdata(infile,sep)
 
-# def get_game_type(infile)
-#   ## get paramater file
-#   ##  # [NSP] [ARROW,,,,]
-#   ##  STD | 9, 12, 25, 9-3-2-3 ,,,
-#   ##
+# #   # Print initial
+# #   # game.form.out(game.cells) unless $quiet
+# #   game
+# # end
+# ####################################################
+# def get_option
+#   opt = OptionParser.new
 
-#   infile.gets
+#   # opt.on('-q') {|v| $quiet = v } 
+#   opt.on('-S') {|v| $stat = v } 
+#   opt.on('-s') {|v| $strct= v } 
+#   opt.on('-v') {|v| $verb= v } 
+#   opt.on('-V') {|v| $Verb= v } 
+#   opt.on('-T') {|v| $table= v } 
+#   opt.on('-t') {|v| $test= v } 
+#   opt.on('-c') {|v| $cout= v } 
+#   opt.on('-g') {|v| $gout= v }
+#   opt.on('-d') {|v| $dbg= v }
+#   opt.on('-m') {|v| $mail=v }
+#   #opt.on('- ""') {|v| $= v }
+#   #opt.on('- ""') {|v| $= v }
+#   $level=0
+#   opt.on('-1') {|v| $level= 1 } 
+#   opt.on('-h') {|v| puts $help;exit(0)}
 
-#   required = Iromono =~ $_ ? "number/#{$_.downcase}" : nil
+#   opt.parse!(ARGV)
 
-#   sep = $_ =~ /NSP/ ? ""   : /\s+/
+#   p ["$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level",
+#      $stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level
+#     ] if $dbg # of get_option
+# end # of get_option
 
-#   while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end
-#   # puts "Structure #{$_}" unless $quiet
-#   relayList = $_.split
-#   form=relayList.shift
-#   form="9"  if form == "STD"
+# # def get_game_type(infile)
+# #   ## get paramater file
+# #   ##  # [NSP] [ARROW,,,,]
+# #   ##  STD | 9, 12, 25, 9-3-2-3 ,,,
+# #   ##
+
+# #   infile.gets
+
+# #   required = Iromono =~ $_ ? "number/#{$_.downcase}" : nil
+
+# #   sep = $_ =~ /NSP/ ? ""   : /\s+/
+
+# #   while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end
+# #   # puts "Structure #{$_}" unless $quiet
+# #   relayList = $_.split
+# #   form=relayList.shift
+# #   form="9"  if form == "STD"
   
-#   [form,sep,required]  # return
-# end # of get_game_type
+# #   [form,sep,required]  # return
+# # end # of get_game_type
 
-###########################
-def try(grps)
-  [0,1,2,3].each{|i| 
-    $gsw=true
-    while $gsw
-      if $gout; puts "while loop top"; grps.gout;end
-      $gsw=nil
-      grps.highClass.each{|method|
-#puts method.inspect
-        sw = true
-        while sw
-          sw = nil
-          grps.rest_one && $gsw=true && sw = true
-          return true if grps.fill?
-          if $gout; puts "rest one end"; grps.gout;end
+# ###########################
+# def try(grps)
+#   [0,1,2,3].each{|i| 
+#     $gsw=true
+#     while $gsw
+#       if $gout; puts "while loop top"; grps.gout;end
+#       $gsw=nil
+#       grps.highClass.each{|method|
+# #puts method.inspect
+#         sw = true
+#         while sw
+#           sw = nil
+#           grps.rest_one && $gsw=true && sw = true
+#           return true if grps.fill?
+#           if $gout; puts "rest one end"; grps.gout;end
 
-          (2..4).each{|vnum|
-            grps.reserv(vnum) && $gsw=true  && sw = true &&   grps.rest_one
+#           (2..4).each{|vnum|
+#             grps.reserv(vnum) && $gsw=true  && sw = true &&   grps.rest_one
 
-            grps.prison(vnum)  && $gsw=true  && sw = true && grps.rest_one
-            return true if grps.fill?
+#             grps.prison(vnum)  && $gsw=true  && sw = true && grps.rest_one
+#             return true if grps.fill?
 
-            if $gout ; puts "prison #{vnum} end" ; grps.gout ;end
-          }
-          $gout && grps.gout
-          ret = grps.optional_test  && gsw=true && sw = true
-          ret && grps.rest_one
-          return true if grps.fill?
-          method.call && $gsw=true
-        end
-        $gout && grps.gout
-        #i += 1
-        puts "=======================#{i}===#{$gsw}=#{$optsw}======"
-      }
-      #        $gout && game.gout
-      #$game.cout
-    end
-  }
-  grps.fill?
-end # of resolv
+#             if $gout ; puts "prison #{vnum} end" ; grps.gout ;end
+#           }
+#           $gout && grps.gout
+#           ret = grps.optional_test  && gsw=true && sw = true
+#           ret && grps.rest_one
+#           return true if grps.fill?
+#           method.call && $gsw=true
+#         end
+#         $gout && grps.gout
+#         #i += 1
+#         puts "=======================#{i}===#{$gsw}=#{$optsw}======"
+#       }
+#       #        $gout && game.gout
+#       #$game.cout
+#     end
+#   }
+#   grps.fill?
+# end # of resolv
 
-def try_error
-  if true
-    (1..1).each{|i| # とりあえず、深さ1まで
-      $try = nil
+# def try_error
+#   if true
+#     (1..1).each{|i| # とりあえず、深さ1まで
+#       $try = nil
 
-      # 未定cellのうち、可能性数がもっとも少ない cellについて、トライ＆エラー
-      ## target t_
-      t_cell= $game.cells.map{|cell| cell if cell.valurest>0 }.
-      compact.sort{|a,b| a.valurest <=> b.valurest}[0]
-      t_vlist = t_cell.vlist
-      t_c = t_cell.c
+#       # 未定cellのうち、可能性数がもっとも少ない cellについて、トライ＆エラー
+#       ## target t_
+#       t_cell= $game.cells.map{|cell| cell if cell.valurest>0 }.
+#       compact.sort{|a,b| a.valurest <=> b.valurest}[0]
+#       t_vlist = t_cell.vlist
+#       t_c = t_cell.c
 
-      # puts "Try & error cell #{t_c}:vlist #{t_cell.vlist.join(' ')}" unless $quiet
-      $count["Try & error"] += 1
+#       # puts "Try & error cell #{t_c}:vlist #{t_cell.vlist.join(' ')}" unless $quiet
+#       $count["Try & error"] += 1
 
-      t_vlist.each{|v|
-        # puts "Cell #{t_cell} value=#{v}" unless $quiet
-        # 現環境の保存と複製
-        $BAN << $game
-        grps  = $game.copy
-        grps.cells[t_c].set(v,"Try & error")
-        return  true if try(grps) 
-        $game = $BAN.pop
-      }
-    }
-  end
-end
-end
-################################################3
-# DO Main
-################################################
+#       t_vlist.each{|v|
+#         # puts "Cell #{t_cell} value=#{v}" unless $quiet
+#         # 現環境の保存と複製
+#         $BAN << $game
+#         grps  = $game.copy
+#         grps.cells[t_c].set(v,"Try & error")
+#         return  true if try(grps) 
+#         $game = $BAN.pop
+#       }
+#     }
+#   end
+# end
+# end
+# ################################################3
+# # DO Main
+# ################################################
 
-if /number.rb$/ =~ $PROGRAM_NAME
-  get_option
-  $of = $stdout
-  ret=0
-  if $mail
-    # メールから問題を読み、答えをメールで返す
-    # Subjectにoption, body に問題
+# if /number.rb$/ =~ $PROGRAM_NAME
+#   get_option
+#   $of = $stdout
+#   ret=0
+#   if $mail
+#     # メールから問題を読み、答えをメールで返す
+#     # Subjectにoption, body に問題
     
-    ## メールを一つ読み、解析する
-    $/ = ""
-    h = {}
-    header = gets.split(/[\n\r]+/)
-    while head = header.shift
-      if /^(\w+):\s*(.*)$/ =~ head
-        tag = $1 ;h[$1] = $2
-      elsif tag and /^\s/ =~ head
-        h[tag] += head
-      end
-    end
-    # Make response header
-    res = "Subject: Re: #{h['Subject']}\n"+
-      "In-Reply-To: #{h['Message-Id']}\n"+
-      "From: Number Place <number@aliadne.net>\n" +
-      "To: #{h['From']}"+
-      "Date: "+Time.now.strftime('%a,%d %b %Y %T')+"\n\n"
-    $/ = "\n"
-    $of = StringIO.new("", 'r+')
-    main($stdin) 
-    $of.printf "\n"
-    $count.each{|l,v| $of.printf "Stat: %-10s %3d\n",l,v} 
-    $of.rewind
-    $/ = nil
-    #puts $of.gets
+#     ## メールを一つ読み、解析する
+#     $/ = ""
+#     h = {}
+#     header = gets.split(/[\n\r]+/)
+#     while head = header.shift
+#       if /^(\w+):\s*(.*)$/ =~ head
+#         tag = $1 ;h[$1] = $2
+#       elsif tag and /^\s/ =~ head
+#         h[tag] += head
+#       end
+#     end
+#     # Make response header
+#     res = "Subject: Re: #{h['Subject']}\n"+
+#       "In-Reply-To: #{h['Message-Id']}\n"+
+#       "From: Number Place <number@aliadne.net>\n" +
+#       "To: #{h['From']}"+
+#       "Date: "+Time.now.strftime('%a,%d %b %Y %T')+"\n\n"
+#     $/ = "\n"
+#     $of = StringIO.new("", 'r+')
+#     main($stdin) 
+#     $of.printf "\n"
+#     $count.each{|l,v| $of.printf "Stat: %-10s %3d\n",l,v} 
+#     $of.rewind
+#     $/ = nil
+#     #puts $of.gets
     
-    Net::SMTP.start('ww3.aliadne.net', 25,"ww3.aliadne.net") {|smtp|
-      smtp.send_message(res+$of.gets, 'number@aliadne.net',h['From'])
-    }
+#     Net::SMTP.start('ww3.aliadne.net', 25,"ww3.aliadne.net") {|smtp|
+#       smtp.send_message(res+$of.gets, 'number@aliadne.net',h['From'])
+#     }
 
-  elsif ARGV.size >0 
-    ARGV.each{|argv|
-      game = main(open(argv,"r") ) || ret = 1
-      game.output($stat, $count, $cout)
-    }
-  else
-    main($stdin) || ret = 1
-    game.output($stat, $count, $cout)
-  end
-  #pp $count
-  exit(ret)
-end
+#   elsif ARGV.size >0 
+#     ARGV.each{|argv|
+#       game = main(open(argv,"r") ) || ret = 1
+#       game.output($stat, $count, $cout)
+#     }
+#   else
+#     main($stdin) || ret = 1
+#     game.output($stat, $count, $cout)
+#   end
+#   #pp $count
+#   exit(ret)
+# end
 
 
 #$Log: number.rb,v $

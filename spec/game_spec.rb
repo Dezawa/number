@@ -49,4 +49,17 @@ RSpec.describe Number::Game, type: :model do
       end
     end
   end
+
+  describe '解' do
+    let(:game) { Number::Game.create(infile, "9", "") }
+    let(:infile) { open('./sample/np101001') }
+    before do
+      infile.gets
+      infile.gets
+    end
+
+    it '' do
+      game.resolve
+    end
+  end
 end
