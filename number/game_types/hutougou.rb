@@ -1,4 +1,7 @@
-class Number::Game 
+module Number::GameTypes::GameType
+  def game_type
+    'HUTOUGOU'
+  end
 #module Optional
 def optional_struct(sep,n,infile)
     while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end

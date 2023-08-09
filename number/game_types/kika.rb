@@ -2,7 +2,10 @@
 # 重要：このバージョンからKIKAのデータ順変更。初期値より先に構造を載せる。
 #
 #module KIKA
-class Number::Game
+module Number::GameTypes::GameType
+  def game_type
+    'KIKA'
+  end
   def set_block_group(gnr,boxes,bx,by,xmax,w,infile,sep)
 
       c = -1

@@ -1,5 +1,8 @@
 #module Optional
-class Number::Game
+module Number::GameTypes::GameType
+  def game_type
+    'XROSS'
+  end
   def set_optional_group(gnr,boxes,bx,by,xmax,w,infile,sep)
   #def add_xross_group(boxes,xmax,n,w,gsize) 
     return 0 if boxes.size != 1

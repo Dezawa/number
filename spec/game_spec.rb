@@ -4,11 +4,13 @@ require_relative '../number/cell'
 require_relative '../number/form'
 require_relative '../number/group'
 require_relative '../number/group_ability'
+require_relative '../number/game_types'
+
 RSpec.describe Number::Game, type: :model do
   let(:data) { "123......\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n" }
   let(:infile) {  StringIO.new(data, 'r+') }
   context :new do
-    let(:game) { Number::Game.new(infile, "9", "") }
+    let(:game) { Number::Game.create(infile, "9", "") }
       
     it "groupは27" do
       expect(game.groups.size).to eq 3*9
@@ -34,6 +36,16 @@ RSpec.describe Number::Game, type: :model do
       end
       it "abirityは123以外" do
         expect(game.cells[3].ability).to eq [4, 5, 6, 7, 8, 9]
+      end
+    end
+  end
+
+  describe '色物拡張' do
+    Number::Game::Iromono.each do | game_type |
+      it "#{game_type}がextendされる" do
+        game = Number::Game.new(infile, "9", "", game_type: game_type)
+        game.set_game_type
+        expect(game.game_type).to eq game_type
       end
     end
   end

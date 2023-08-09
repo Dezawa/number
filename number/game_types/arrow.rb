@@ -1,6 +1,8 @@
 require 'pp'
-class Number::Game
-
+module Number::GameTypes::GameType
+  def game_type
+    'ARROW'
+  end
 def optional_struct(sep,n,infile)
   get_arrow(infile)
   @arrow.sort!{|a,b| a.size<=>b.size}

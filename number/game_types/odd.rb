@@ -1,4 +1,7 @@
-class Number::Game 
+module Number::GameTypes::GameType
+  def game_type
+    'ODD'
+  end
   #module Optional
   def optional_struct(sep,n,infile)
     get_arrow(infile)

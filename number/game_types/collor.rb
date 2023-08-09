@@ -1,5 +1,8 @@
 #module Optional
-class Number::Game
+module Number::GameTypes::GameType
+  def game_type
+    'COLLOR'
+  end
   def set_optional_group(gnr,boxes,bx,by,xmax,w,infile,sep)
       #    puts gnr
       while  infile.gets !~ /^([\d\s]+$)/;end

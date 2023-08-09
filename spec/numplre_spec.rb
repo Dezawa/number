@@ -1,9 +1,9 @@
-require_relative '../number'
+require_relative '../numpre'
 RSpec.describe Number, type: :model do
   let(:data) { "123......\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n" }
 
   context :new do
-    let(:number) { Number.new("9", "",nil,data) }
+    let(:number) { Numpre.new("9", "",nil,data) }
       
     it "groupは27" do
       expect(number.game.groups.size).to eq 3*9

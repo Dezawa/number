@@ -2,20 +2,34 @@ require_relative './make_waku_pform'
 
 module Number
   class Game
+    Iromono = %w[ARROW SUM KIKA XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL]
     include Number::GamePform
   attr_accessor :groups,:cells,:gsize,:size,:form,:arrow,:block,:n
-  attr_reader :infile, :form, :sep
+  attr_reader :infile, :form, :sep, :game_type
+
+  def self.create(infile,form,sep, game_type: nil)
+    instance = new(infile,form,sep, game_type: nil)
+    instance.set_game_type
+    instance.get_structure
+    instance.get_initialdata
+    instance
+  end
+  
   def optional_test;end
   
-  def initialize(infile,form,sep)#n,gsize,cells)
-    @infile,@form,@sep = infile,form,sep
+  def initialize(infile,form,sep, game_type: nil)
+    @infile,@form,@sep,@game_type = infile,form,sep,game_type
     @groups = Array.new
     @cells = []
-    
-    get_structure
-    get_initialdata
   end
 
+  def set_game_type
+    required = Iromono.include?(game_type) ? "./game_types/#{game_type.downcase}" : nil
+    return unless required
+    require_relative required
+    extend Number::GameTypes::GameType
+  end
+  
   def block
     @block ||= @groups.select{|grp| grp.is_block? }
   end
@@ -142,12 +156,14 @@ module Number
     @arrow=[]
     a=[]
     puts $_   if $verb
+    raise 'ENOUGH ARROW DATA' unless $_
     $_.split.each{|c| a << c.to_i - 1 }
     @arrow << a.dup
     
     puts "arrow #{$_}"  if $verb
     while infile.gets =~ /\d/ ; 
       puts "arrow #{$_}"    if $verb
+      raise 'ENOUGH ARROW DATA' unless $_
       
       a=[]
       $_.split.each{|c| a << c.to_i - 1 }

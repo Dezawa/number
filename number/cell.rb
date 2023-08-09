@@ -1,4 +1,5 @@
-class Number::Cell
+module Number
+  class Cell
   attr_accessor  :game,:groups,:valu,:c,:ability,:grpList
   def initialize(arg_game,cell_no,arg_grpList)
     @game = arg_game
@@ -102,3 +103,4 @@ class Number::Cell
       }
   end
 end  # class Cell
+end

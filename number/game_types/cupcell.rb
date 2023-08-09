@@ -12,7 +12,10 @@ class Number::Cell
   end
 
 end
-class Number::Game #sub < Groups #Cupcell 
+module Number::GameTypes::GameType
+  def game_type
+    'CUPCELL'
+  end
 # coding: euc-jp
 #module Optional
 def optional_struct(sep,n,infile)

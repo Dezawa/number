@@ -1,5 +1,8 @@
 #module Optional
-class Number::Game# < Array
+module Number::GameTypes::GameType
+  def game_type
+    'NEIGHBER'
+  end
 def optional_struct(sep,n,infile)
   # @arrow は、隣同士で一つ違いのcellの組み合わせ
   # $neigh は、初期値は隣同士のcell、このmethodの結果、二つ以上違うcellの組み合わせとなる

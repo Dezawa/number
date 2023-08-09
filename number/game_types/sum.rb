@@ -1,4 +1,7 @@
-class Number::Game
+module Number::GameTypes::GameType
+  def game_type
+    'SUM'
+  end
 #module Optional
 ##############
 require 'pp'

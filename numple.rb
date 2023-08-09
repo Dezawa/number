@@ -65,16 +65,16 @@ require 'net/smtp'
 class Number
 end
 
-$LOAD_PATH.unshift(File.join(File.dirname(File.expand_path(__FILE__)),"number"))
-$LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)))
-require 'game'
-require 'cell'
-require 'group'
-require 'form'
+#$LOAD_PATH.unshift(File.join(File.dirname(File.expand_path(__FILE__)),"number"))
+#$LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)))
+require_relative 'number/game'
+relative 'number/cell'
+relative 'number/group'
+relative 'number/form'
 
-require 'resolver'
-require 'make_waku_pform'
-require 'group_ability'
+relative 'number/resolver'
+relative 'number/make_waku_pform'
+relative 'number/group_ability'
 Iromono = %r[ARROW|SUM|KIKA|XROSS|COLOR|HUTOU|DIFF|NEIGH|ODD|CUP]
 
 $count = Hash.new(0)
