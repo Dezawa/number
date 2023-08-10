@@ -9,7 +9,7 @@ module Number::GameTypes::GameType
       while $_ =~ /^([\d\s]+$)/
         if $1 && $_ =~ /\d/
           #        puts $_
-          @groups[gnr] = Number::Group.new(self,gnr,:option)
+          @groups[gnr] = Number::Group.new(self,gnr,:option, @count)
           $_.split.each{|cell|   # これらのcellがそのgrp
             ww = w.assoc(cell.to_i-1)
             ww[1] << gnr

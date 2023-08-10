@@ -1,6 +1,6 @@
 class Number::Group
-  attr_accessor  :game,:cells,:n,:g,:ability,:cellList,:atrivute
-  def initialize(arg_game,arg_g,atr=[])
+  attr_accessor  :game,:cells,:n,:g,:ability,:cellList,:atrivute, :count
+  def initialize(arg_game,arg_g,atr=[], count)
     @game = arg_game
     @n = @game.n
     @g = arg_g
@@ -8,6 +8,7 @@ class Number::Group
     @ability= Number::GroupAbilities.new(@n)
     @cellList=Array.new
     @atrivute = atr # :holizontal :vertical  :block
+    @count = count
   end
 
   def inspect

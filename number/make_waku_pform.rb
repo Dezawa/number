@@ -156,7 +156,7 @@ module Number
           #next if w[xmax*y+x].nil?     #or w[xmax*y+x][1]
           unless  w[xmax*y+x].nil? 
             #@groups[gnr] =  Group.new(@cells,gnr,@n,:block)
-            @groups[gnr] =  Number::Group.new(self,gnr,:block)
+            @groups[gnr] =  Number::Group.new(self,gnr,:block, @count)
             (y .. y+by-1).each{|yy| 
               (x .. x+bx-1).each{|xx| w[xmax*yy+xx][1]<< gnr }
             }
@@ -172,7 +172,7 @@ module Number
     boxes.each{|box|
       (box.y .. box.y+@n-1).each{|y|
         #@groups[gnr] =  Group.new(@cells,gnr,@n,:holizontal)
-        @groups[gnr] =  Number::Group.new(self,gnr,:holizontal)
+        @groups[gnr] =  Number::Group.new(self,gnr,:holizontal, @count)
         (box.x .. box.x + @n-1).each{|x|
           w[xmax*y+x][1] << gnr 
         }
@@ -180,7 +180,7 @@ module Number
       }
       (box.x .. box.x+@n-1).each{|x|
         #@groups[gnr] =  Group.new(@cells,gnr,@n,:vertical)
-        @groups[gnr] =  Number::Group.new(self,gnr,:vertical)
+        @groups[gnr] =  Number::Group.new(self,gnr,:vertical, count)
         (box.y .. box.y + @n-1).each{|y| w[xmax*y+x][1] << gnr }
         gnr += 1 
       }
