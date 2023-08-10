@@ -89,7 +89,7 @@ require_relative 'number/group_ability'
 class Numple
   attr_reader :infile, :game
   def initialize(infile)
-    @infile = infile
+    @infile = infile.is_a?(String) ? open(infile) : infile
   end
 
   def resolve
