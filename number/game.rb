@@ -40,10 +40,6 @@ module Number
   end
 
   def resolve
-    return true if try
-    $level>0 && try_error 
-  end
-  def try
     count = 4
     #self.rest_one 
     sw = true
@@ -73,44 +69,6 @@ module Number
       count -= 1
     end
     self.fill? 
-  end
-
-  def try_error
-    if true
-      (1..1).each{|i| # とりあえず、深さ1まで
-        $try = nil
-
-        # 未定cellのうち、可能性数がもっとも少ない cellについて、トライ＆エラー
-        ## target t_
-        t_cell= self.cells.map{|cell| cell if cell.valurest>0 }.
-        compact.sort{|a,b| a.valurest <=> b.valurest}[0]
-        t_vlist = t_cell.vlist
-        t_c = t_cell.c
-
-        puts "Try & error cell #{t_c}:vlist #{t_cell.vlist.join(' ')}" unless $quiet
-        @count["Try & error"] += 1
-
-        t_vlist.each{|v|
-          puts "Cell #{t_cell} value=#{v}" unless $quiet
-          # 現環境の保存と複製
-          $BAN << self
-          game  = self.copy
-          game.cells[t_c].set(v,"Try & error")
-          return  true if game.try#(self) 
-          #$self = $BAN.pop
-        }
-      }
-    end
-  end
-
-  def copy
-    gr = self.dup
-    gr.cells.each{|cell| 
-      cell.ability = cell.ability.dup
-      cell.groups  = gr.groups
-    }
-    gr.groups.each{|grp|  grp.ability = grp.ability.dup   }
-    gr
   end
   
   # data file の残りを読んで、初期値を得る 
