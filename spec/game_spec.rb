@@ -50,6 +50,15 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 
+  let(:sult) { "876159423 
+321487965 
+945326187 
+452978631 
+638241759 
+719635842 
+594762318 
+267813594 
+183594276".gsub(/\s/,'').split('').map(&:to_i) }
   describe '解' do
     let(:game) { Number::Game.create(infile, "9", "") }
     let(:infile) { open('./sample/np101001') }
@@ -58,8 +67,9 @@ RSpec.describe Number::Game, type: :model do
       infile.gets
     end
 
-    it '' do
+    it '解は' do
       game.resolve
+      expect(game.cells.map(&:v)).to eq sult
     end
   end
 end
