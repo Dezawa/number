@@ -43,7 +43,7 @@ require 'pp'
 #struct = ARGV.shift #"9" #9-3+4-3"
 module Number
   module GamePform
-  def make_waku_pform(infile,struct,sep)
+  def make_waku_pform(struct)
     n,mult,sign,m_nr,dan = get_baseSize(struct)
     @n,bx,by = n
     @val = (1..@n).to_a
@@ -87,7 +87,7 @@ module Number
     @cells  = Array.new
 
     # $grps を作る。 空サイズで作った後埋める
-    @gsize = set_grp(infile,boxes,bx,by,xmax,@w,sep)
+    @gsize = set_grp(boxes,bx,by,xmax,@w,sep)
     
     #pp $cells
     #pp $grps
@@ -137,19 +137,19 @@ module Number
   end
 
 
-  def set_grp(infile,boxes,bx,by,xmax,w,sep)
+  def set_grp(boxes,bx,by,xmax,w,sep)
     maxgnr = boxes.size*@n*2
     gnr = 0
     gnr = set_vertical_holizontal_group(gnr,boxes,xmax,w)
-    gnr = set_block_group(gnr,boxes,bx,by,xmax,w,infile,sep)
-    gnr = set_optional_group(gnr,boxes,bx,by,xmax,w,infile,sep)
+    gnr = set_block_group(gnr,boxes,bx,by,xmax,w)
+    gnr = set_optional_group(gnr,boxes,bx,by,xmax,w)
     gnr
   end
   
-  def set_optional_group(gnr,boxes,bx,by,xmax,w,infile,sep)
+  def set_optional_group(gnr,boxes,bx,by,xmax,w)
   end
 
-  def set_block_group(gnr,boxes,bx,by,xmax,w,infile,sep)
+  def set_block_group(gnr,boxes,bx,by,xmax,w)
     boxes.each{|box|  
       (box.y .. box.y+@n-1).step(by).each{|y| 
         (box.x .. box.x + @n-1).step(bx).each{|x|
