@@ -55,7 +55,20 @@ $help ="
    -d[1..9]       debagu用  
    -t             test用
    -1             ハイレベル解法    
+
 "
+
+# 使い方
+# numple = Numplre.new(infile)
+#  infile :: STDIN :: 起動後keyBoad もしくは pipe で dataを流し込む
+#         :: IO :: data file を open、もしくは data文字列を StringIOにしたもの
+#         :: String  data file名
+# numple.resolve
+# puts numple.output_form  解出力
+# puts numple.cell_out     Cellの残された可能性出力
+#      numple.cell_ability  Cellの残された可能性のデータ
+# puts numple.output_statistics  統計出力
+
 ################
 #####
 require 'optparse'
@@ -76,16 +89,6 @@ require_relative 'number/resolver'
 require_relative 'number/make_waku_pform'
 require_relative 'number/group_ability'
 
-# 使い方
-# numple = Numplre.new(infile)
-#  infile :: STDIN :: 起動後keyBoad もしくは pipe で dataを流し込む
-#         :: IO :: data file を open、もしくは data文字列を StringIOにしたもの
-#         :: String  data file名
-# numple.resolve
-# puts numple.output_form  解出力
-# puts numple.cell_out     Cellの残された可能性出力
-#      numple.cell_ability  Cellの残された可能性のデータ
-# puts numple.output_statistics  統計出力
 class Numple
   attr_reader :infile, :game
   def initialize(infile)
@@ -125,45 +128,8 @@ class Numple
     [form,sep,game_type]
   end
 end
+################# end of Numple ###
 
-# ###################################
-# #
-# # MAIN
-# #
-# ###################################
-# def main(infile)
-#   form,sep = set_game_type(infile)
-#   game = game_setup(infile,form,sep)
-
-#   #実行開始
-#   game.resolve
-#   # game.form.out(game.cells) unless $quiet
-#   game.cout if $cout
-#   #pp game.fill?
-#   #pp $count
-#   #game.form.out(game.cells)
-#   game
-# end
-
-# # def set_game_type(infile)
-# #   form,sep,required = get_game_type(infile)
-# #   require required if required
-# #   [form,sep]
-# # end
-
-# # def game_setup(infile,form,sep)
-# #   game = Number::Game.new()
-# #   # make Ban, cell, group
-# #   game.get_structure(infile,form,sep)
-
-# #   # set initial data
-# #   game.get_initialdata(infile,sep)
-
-# #   # Print initial
-# #   # game.form.out(game.cells) unless $quiet
-# #   game
-# # end
-# ####################################################
 def get_option
   opt = OptionParser.new
 
@@ -191,96 +157,6 @@ def get_option
     ] if $dbg # of get_option
 end # of get_option
 
-# # def get_game_type(infile)
-# #   ## get paramater file
-# #   ##  # [NSP] [ARROW,,,,]
-# #   ##  STD | 9, 12, 25, 9-3-2-3 ,,,
-# #   ##
-
-# #   infile.gets
-
-# #   required = Iromono =~ $_ ? "number/#{$_.downcase}" : nil
-
-# #   sep = $_ =~ /NSP/ ? ""   : /\s+/
-
-# #   while infile.gets && ( $_ =~ /^\s*#/ || $_ =~ /^\s*$/) ; end
-# #   # puts "Structure #{$_}" unless $quiet
-# #   relayList = $_.split
-# #   form=relayList.shift
-# #   form="9"  if form == "STD"
-  
-# #   [form,sep,required]  # return
-# # end # of get_game_type
-
-# ###########################
-# def try(grps)
-#   [0,1,2,3].each{|i| 
-#     $gsw=true
-#     while $gsw
-#       if $gout; puts "while loop top"; grps.gout;end
-#       $gsw=nil
-#       grps.highClass.each{|method|
-# #puts method.inspect
-#         sw = true
-#         while sw
-#           sw = nil
-#           grps.rest_one && $gsw=true && sw = true
-#           return true if grps.fill?
-#           if $gout; puts "rest one end"; grps.gout;end
-
-#           (2..4).each{|vnum|
-#             grps.reserv(vnum) && $gsw=true  && sw = true &&   grps.rest_one
-
-#             grps.prison(vnum)  && $gsw=true  && sw = true && grps.rest_one
-#             return true if grps.fill?
-
-#             if $gout ; puts "prison #{vnum} end" ; grps.gout ;end
-#           }
-#           $gout && grps.gout
-#           ret = grps.optional_test  && gsw=true && sw = true
-#           ret && grps.rest_one
-#           return true if grps.fill?
-#           method.call && $gsw=true
-#         end
-#         $gout && grps.gout
-#         #i += 1
-#         puts "=======================#{i}===#{$gsw}=#{$optsw}======"
-#       }
-#       #        $gout && game.gout
-#       #$game.cout
-#     end
-#   }
-#   grps.fill?
-# end # of resolv
-
-# def try_error
-#   if true
-#     (1..1).each{|i| # とりあえず、深さ1まで
-#       $try = nil
-
-#       # 未定cellのうち、可能性数がもっとも少ない cellについて、トライ＆エラー
-#       ## target t_
-#       t_cell= $game.cells.map{|cell| cell if cell.valurest>0 }.
-#       compact.sort{|a,b| a.valurest <=> b.valurest}[0]
-#       t_vlist = t_cell.vlist
-#       t_c = t_cell.c
-
-#       # puts "Try & error cell #{t_c}:vlist #{t_cell.vlist.join(' ')}" unless $quiet
-#       $count["Try & error"] += 1
-
-#       t_vlist.each{|v|
-#         # puts "Cell #{t_cell} value=#{v}" unless $quiet
-#         # 現環境の保存と複製
-#         $BAN << $game
-#         grps  = $game.copy
-#         grps.cells[t_c].set(v,"Try & error")
-#         return  true if try(grps) 
-#         $game = $BAN.pop
-#       }
-#     }
-#   end
-# end
-# end
 ################################################3
 # DO Main
 ################################################
@@ -288,12 +164,14 @@ end # of get_option
 get_option
 if ARGV.size >0 
   ARGV.each{|infile|
+    puts "############ #{infile} #######"
     numple = Numple.new(infile)
     numple.resolve
     puts numple.output_form # 解出力
     puts numple.cell_out if $cout    #Cellの残された可能性出力
     # numple.cell_ability  #Cellの残された可能性のデータ
-    puts numple.output_statistics if $stat # 統計出力    
+    puts numple.output_statistics if $stat # 統計出力
+    puts 
    }
  else
    main($stdin) || ret = 1
@@ -333,20 +211,6 @@ if ARGV.size >0
 #     Net::SMTP.start('ww3.aliadne.net', 25,"ww3.aliadne.net") {|smtp|
 #       smtp.send_message(res+$of.gets, 'number@aliadne.net',h['From'])
 #     }
-
-#   elsif ARGV.size >0 
-#     ARGV.each{|argv|
-#       game = main(open(argv,"r") ) || ret = 1
-#       game.output($stat, $count, $cout)
-#     }
-#   else
-#     main($stdin) || ret = 1
-#     game.output($stat, $count, $cout)
-#   end
-#   #pp $count
-#   exit(ret)
-# end
-
 
 #$Log: number.rb,v $
 #Revision 1.17  2012-09-07 00:54:56  dezawa
