@@ -124,16 +124,7 @@ class Numple
     form="9"  if form == "STD"
     [form,sep,game_type]
   end
-
-  
 end
-__END__
-# $count = Hash.new(0)
-# $LibDir = File.dirname(__FILE__)
-# $LOAD_PATH<< $LibDir +"/number"
-# $BAN=[]
-
-# ###
 
 # ###################################
 # #
@@ -173,32 +164,32 @@ __END__
 # #   game
 # # end
 # ####################################################
-# def get_option
-#   opt = OptionParser.new
+def get_option
+  opt = OptionParser.new
 
-#   # opt.on('-q') {|v| $quiet = v } 
-#   opt.on('-S') {|v| $stat = v } 
-#   opt.on('-s') {|v| $strct= v } 
-#   opt.on('-v') {|v| $verb= v } 
-#   opt.on('-V') {|v| $Verb= v } 
-#   opt.on('-T') {|v| $table= v } 
-#   opt.on('-t') {|v| $test= v } 
-#   opt.on('-c') {|v| $cout= v } 
-#   opt.on('-g') {|v| $gout= v }
-#   opt.on('-d') {|v| $dbg= v }
-#   opt.on('-m') {|v| $mail=v }
-#   #opt.on('- ""') {|v| $= v }
-#   #opt.on('- ""') {|v| $= v }
-#   $level=0
-#   opt.on('-1') {|v| $level= 1 } 
-#   opt.on('-h') {|v| puts $help;exit(0)}
+  # opt.on('-q') {|v| $quiet = v } 
+  opt.on('-S') {|v| $stat = v } 
+  opt.on('-s') {|v| $strct= v } 
+  opt.on('-v') {|v| $verb= v } 
+  opt.on('-V') {|v| $Verb= v } 
+  opt.on('-T') {|v| $table= v } 
+  opt.on('-t') {|v| $test= v } 
+  opt.on('-c') {|v| $cout= v } 
+  opt.on('-g') {|v| $gout= v }
+  opt.on('-d') {|v| $dbg= v }
+  opt.on('-m') {|v| $mail=v }
+  #opt.on('- ""') {|v| $= v }
+  #opt.on('- ""') {|v| $= v }
+  $level=0
+  opt.on('-1') {|v| $level= 1 } 
+  opt.on('-h') {|v| puts $help;exit(0)}
 
-#   opt.parse!(ARGV)
+  opt.parse!(ARGV)
 
-#   p ["$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level",
-#      $stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level
-#     ] if $dbg # of get_option
-# end # of get_option
+  p ["$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level",
+     $stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level
+    ] if $dbg # of get_option
+end # of get_option
 
 # # def get_game_type(infile)
 # #   ## get paramater file
@@ -290,14 +281,25 @@ __END__
 #   end
 # end
 # end
-# ################################################3
-# # DO Main
-# ################################################
+################################################3
+# DO Main
+################################################
 
-# if /number.rb$/ =~ $PROGRAM_NAME
-#   get_option
-#   $of = $stdout
-#   ret=0
+get_option
+if ARGV.size >0 
+  ARGV.each{|infile|
+    numple = Numple.new(infile)
+    numple.resolve
+    puts numple.output_form # 解出力
+    puts numple.cell_out if $cout    #Cellの残された可能性出力
+    # numple.cell_ability  #Cellの残された可能性のデータ
+    puts numple.output_statistics if $stat # 統計出力    
+   }
+ else
+   main($stdin) || ret = 1
+   game.output($stat, $count, $cout)
+   end
+  
 #   if $mail
 #     # メールから問題を読み、答えをメールで返す
 #     # Subjectにoption, body に問題
