@@ -1,4 +1,5 @@
 require_relative './make_waku_pform'
+require_relative './resolver'
 
 module Number
   class Game
