@@ -160,24 +160,24 @@ end # of get_option
 ################################################3
 # DO Main
 ################################################
-
-get_option
-if ARGV.size >0 
-  ARGV.each{|infile|
-    puts "############ #{infile} #######"
-    numple = Numple.new(infile)
-    numple.resolve
-    puts numple.output_form # 解出力
-    puts numple.cell_out if $cout    #Cellの残された可能性出力
-    # numple.cell_ability  #Cellの残された可能性のデータ
-    puts numple.output_statistics if $stat # 統計出力
-    puts 
-   }
- else
-   main($stdin) || ret = 1
-   game.output($stat, $count, $cout)
-   end
-  
+if /number.rb$/ =~ $PROGRAM_NAME
+  get_option
+  if ARGV.size >0 
+    ARGV.each{|infile|
+      puts "############ #{infile} #######"
+      numple = Numple.new(infile)
+      numple.resolve
+      puts numple.output_form # 解出力
+      puts numple.cell_out if $cout    #Cellの残された可能性出力
+      # numple.cell_ability  #Cellの残された可能性のデータ
+      puts numple.output_statistics if $stat # 統計出力
+      puts 
+    }
+  else
+    main($stdin) || ret = 1
+    game.output($stat, $count, $cout)
+  end
+end
 #   if $mail
 #     # メールから問題を読み、答えをメールで返す
 #     # Subjectにoption, body に問題
