@@ -1,7 +1,7 @@
 module Number
   class Cell
   attr_accessor  :game,:groups,:valu,:c,:ability,:grpList
-  def initialize(arg_game,cell_no,arg_grpList)
+  def initialize(arg_game,cell_no,arg_grpList, count)
     @game = arg_game
     @n = @game.n
     @c=cell_no
@@ -10,6 +10,7 @@ module Number
     @grpList=arg_grpList
     @groups = @game.groups
     @val = (1..@n).to_a
+    @count = count
   end
   def inspect
     super +
@@ -56,7 +57,7 @@ module Number
     set(ability[0])
   end
   def set(v,msg="rest_one")
-    $count["Cell_ability is rest one"] += 1
+    @count["Cell_ability is rest one"] += 1
     set_cell(v,msg)
   end
 

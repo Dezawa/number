@@ -37,7 +37,7 @@ class Number::Group
     sw = nil
     ability.fixed_by_rest_one.each{|cellData|
       if @cells[cellData.cellList.first].set(cellData.v,"grp(#{g}).ability #{cellData.cellList}")
-        $count[:Group_ability_is_rest_one] += 1
+        @count[:Group_ability_is_rest_one] += 1
         sw = true
       end
     }

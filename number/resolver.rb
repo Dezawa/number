@@ -57,7 +57,7 @@ class Number::Game #< Array
         next if prison_done[v_num].include? cc
         valus = cc.map{|c| @cells[c].ability}.inject([]){|val,abl| val |= abl}
         if valus.size == v_num #  このgrpでこれらのcellは vals が定員
-          $count["prison#{v_num}"] += 1
+          @count["prison#{v_num}"] += 1
           # このcellを含むgrpの 他のcellにあるｖの可能性を消す
           cogroup(cc).each{|grp0| 
             @groups[grp0].rmAbility(valus,cc,
@@ -96,7 +96,7 @@ class Number::Game #< Array
             @cells[c].rmAbility(rm_value,
                                 "reserve#{v_num} group #{group.g} cells#{rm_cells} v=#{values}")
           }
-          $count["reserv#{v_num}"] += 1
+          @count["reserv#{v_num}"] += 1
           prison_done[v_num] << rm_cells
           return true
         end
@@ -260,7 +260,7 @@ class Number::Game #< Array
             end
           } # combination
         } # g_nums
-        $count["X wing"] += 1 if vsw
+        @count["X wing"] += 1 if vsw
         #return true
       } # value
     } # h_v

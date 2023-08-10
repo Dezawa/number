@@ -5,8 +5,9 @@ module Number
     Iromono = %w[ARROW SUM KIKA XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL]
     IromonoReg = %r[#{Iromono.join("|")}]
     include Number::GamePform
-  attr_accessor :groups,:cells,:gsize,:size,:form,:arrow,:block,:n
-  attr_reader :infile, :form, :sep, :game_type
+    include Number::Resolver
+  attr_accessor :groups,:cells,:gsize,:size, :form_size,:form,:arrow,:block,:n
+  attr_reader :infile, :form, :sep, :game_type, :count
 
   def self.create(infile,form,sep, game_type: nil)
     instance = new(infile,form,sep, game_type: nil)
@@ -22,6 +23,7 @@ module Number
     @infile,@form,@sep,@game_type = infile,form,sep,game_type
     @groups = Array.new
     @cells = []
+    @count =  Hash.new(0)
   end
 
   def set_game_type
@@ -85,7 +87,7 @@ module Number
         t_c = t_cell.c
 
         puts "Try & error cell #{t_c}:vlist #{t_cell.vlist.join(' ')}" unless $quiet
-        $count["Try & error"] += 1
+        @count["Try & error"] += 1
 
         t_vlist.each{|v|
           puts "Cell #{t_cell} value=#{v}" unless $quiet
