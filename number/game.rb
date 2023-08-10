@@ -10,8 +10,8 @@ module Number
   attr_accessor :groups,:cells,:gsize,:size, :form_size,:form,:arrow,:block,:n
   attr_reader :infile, :form, :sep, :game_type, :count
 
-  def self.create(infile,form,sep, game_type: nil)
-    instance = new(infile,form,sep, game_type: nil)
+  def self.create(infile,form_size,sep, game_type: nil)
+    instance = new(infile,form_size,sep, game_type: nil)
     instance.set_game_type
     instance.get_structure
     instance.get_initialdata
@@ -20,8 +20,8 @@ module Number
   
   def optional_test;end
   
-  def initialize(infile,form,sep, game_type: nil)
-    @infile,@form,@sep,@game_type = infile,form,sep,game_type
+  def initialize(infile,form_size,sep, game_type: nil)
+    @infile,@form_size,@sep,@game_type = infile,form_size,sep,game_type
     @groups = Array.new
     @cells = []
     @count =  Hash.new(0)
@@ -187,10 +187,13 @@ module Number
   ###   #@block ||= @groups.select{|grp| grp.is_block? }
   ### end
   def get_structure
-    if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form # 3x3-4+5
-      xmax,ymax = make_waku_pform(infile,form,sep)  # 枠を算出
+    if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form_size # 3x3-4+5
+      xmax,ymax = make_waku_pform(form_size)  # 枠を算出
       ban_initialize(@w,@n,xmax,ymax)
       #印刷フォーム設定
+      @form=Number::Form.new([@w,xmax,ymax],@n)
+    else
+      xmax,ymax = make_waku_pform(form_size)  # 枠を算出
       @form=Number::Form.new([@w,xmax,ymax],@n)
     end
     #@block ||= @groups.select{|grp| grp.is_block? }
