@@ -17,9 +17,9 @@ RSpec.describe Numple, type: :model do
       numple = Numple.new(infile)
       numple.analyze_data
       expect(infile.read).to eq data
-    end 
+    end
   end
-  
+
   describe 'Game.createの実行' do
     it 'params' do
       infile = StringIO.new("#NSP \n9\n" + data, 'r+')
@@ -27,7 +27,7 @@ RSpec.describe Numple, type: :model do
         expect(infile).to eq(infile) and
           expect(form).to eq '9' and
           expect(sep).to eq '' and
-          expect(game_type).to eq ({game_type: nil})
+          expect(game_type).to eq({ game_type: nil })
       end
       numple = Numple.new(infile)
       game = numple.create_game
