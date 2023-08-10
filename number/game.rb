@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
+require 'English'
 require_relative './make_waku_pform'
 require_relative './resolver'
 
 module Number
   class Game
-    Iromono = %w[ARROW SUM KIKA XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL]
-    IromonoReg = /#{Iromono.join('|')}/
+    Iromono = %w[ARROW SUM KIKA XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL].freeze
+    IromonoReg = /#{Iromono.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
     attr_accessor :groups, :cells, :gsize, :size, :form_size, :form, :arrow, :block, :n
@@ -39,14 +42,14 @@ module Number
     end
 
     def block
-      @block ||= @groups.select { |grp| grp.is_block? }
+      @block ||= @groups.select(&:is_block?)
     end
 
     def resolve
       count = 4
       # self.rest_one
       sw = true
-      while !fill? && (sw || count > 0)
+      while !fill? && (sw || count.positive?)
         sw = nil
         # @cells.each{|cell| sw |= cell.set_if_valurest_equal_1  }
         sw |= rest_one
@@ -85,10 +88,10 @@ module Number
       # 所定の cell数だけ、初期データを読む
       while infile.gets && c < @size
         # print $_
-        $_ =~ /^\s*#/ && while infile.gets =~ /^\s*#/; end
+        $LAST_READ_LINE =~ /^\s*#/ && while infile.gets =~ /^\s*#/; end
         # STDERR.
         # print $_ unless $quiet
-        $_.chop.split(sep).each do |v|
+        $LAST_READ_LINE.chop.split(sep).each do |v|
           # print "#{c}='#{v}' "
           next if v =~ /\s/
 
@@ -96,14 +99,14 @@ module Number
             @cells[c].set_even
           elsif v == 'o'
             @cells[c].set_odd
-          elsif (vv = v.to_i) > 0
+          elsif (vv = v.to_i).positive?
             # STDERR.        print "#{vv} "
             vlst = v.split('|')
             if vlst.size == 1
               # print "[ C=#{c} vv=#{vv}] ";
               @cells[c].set_cell(vv, 'initialize')
             else
-              vv = @val - vlst.map! { |i| i.to_i }
+              vv = @val - vlst.map!(&:to_i)
               @cells[c].rmAbility(vv, 'initialize')
             end
           end
@@ -114,29 +117,29 @@ module Number
       # 標準では何もしないmethod
       optional_struct(sep, @n, infile)
       # @arrow = @arrow.compact if @arrow
-    end # of get_initialdata
+    end
 
     def optional_struct(a, b, f); end
 
     def get_arrow(infile)
       puts 'GET ARROW' if $verb
       # $_ =~ /^[#\s]*$/ && while infile.gets =~ /^[#\s]*$/;end
-      while infile.gets && ($_ =~ /^\s*#/ || $_ =~ /^\s*$/); end
+      while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
       @arrow = []
       a = []
-      puts $_ if $verb
-      raise 'ENOUGH ARROW DATA' unless $_
+      puts $LAST_READ_LINE if $verb
+      raise 'ENOUGH ARROW DATA' unless $LAST_READ_LINE
 
-      $_.split.each { |c| a << c.to_i - 1 }
+      $LAST_READ_LINE.split.each { |c| a << c.to_i - 1 }
       @arrow << a.dup
 
-      puts "arrow #{$_}" if $verb
+      puts "arrow #{$LAST_READ_LINE}" if $verb
       while infile.gets =~ /\d/
-        puts "arrow #{$_}" if $verb
-        raise 'ENOUGH ARROW DATA' unless $_
+        puts "arrow #{$LAST_READ_LINE}" if $verb
+        raise 'ENOUGH ARROW DATA' unless $LAST_READ_LINE
 
         a = []
-        $_.split.each { |c| a << c.to_i - 1 }
+        $LAST_READ_LINE.split.each { |c| a << c.to_i - 1 }
         @arrow << a.dup
       end
       @arrow = @arrow.compact if @arrow
@@ -153,15 +156,12 @@ module Number
     ###   #@block ||= @groups.select{|grp| grp.is_block? }
     ### end
     def get_structure
+      xmax, ymax = make_waku_pform(form_size)
       if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form_size # 3x3-4+5
-        xmax, ymax = make_waku_pform(form_size) # 枠を算出
         ban_initialize(@w, @n, xmax, ymax)
         # 印刷フォーム設定
-        @form = Number::Form.new([@w, xmax, ymax], @n)
-      else
-        xmax, ymax = make_waku_pform(form_size) # 枠を算出
-        @form = Number::Form.new([@w, xmax, ymax], @n)
       end
+      @form = Number::Form.new([@w, xmax, ymax], @n)
       # @block ||= @groups.select{|grp| grp.is_block? }
     end
 
@@ -194,5 +194,5 @@ module Number
       statistics && @count.each { |l, v| printf " Stat: %-10s %3d\n", l, v }
       form.out cells
     end
-  end # Groups
+  end
 end

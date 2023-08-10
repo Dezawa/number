@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../number/game'
 require_relative '../number/box'
 require_relative '../number/cell'
@@ -7,7 +9,7 @@ require_relative '../number/group_ability'
 require_relative '../number/game_types'
 
 RSpec.describe Number::Game, type: :model do
-  let(:data) { "123......\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n" }
+  let(:data) { String.new("123......\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n") }
   let(:infile) { StringIO.new(data, 'r+') }
   context :new do
     let(:game) { Number::Game.create(infile, '9', '') }

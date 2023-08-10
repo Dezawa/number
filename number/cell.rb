@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Number
   class Cell
     attr_accessor :game, :groups, :valu, :c, :ability, :grpList
@@ -24,7 +26,7 @@ module Number
     end
 
     def related_groups_no
-      holizontal, vertical, block, ather = grpList
+      holizontal, vertical, block, = grpList
       (@groups[block].line_groups_join_with +
         @groups[holizontal].block_groups_join_with +
         @groups[vertical].block_groups_join_with) - grpList
@@ -41,15 +43,15 @@ module Number
     end
 
     def vlist
-      @valu ? [@valu] : @ability  # .select{|a| a>0}
+      @valu ? [@valu] : @ability # .select{|a| a>0}
     end
 
     def is_even
-      vlist.select { |v| v.odd? }.size == 0
+      vlist.select(&:odd?).empty?
     end
 
     def is_odd
-      vlist.select { |v| v.even? }.size == 0
+      vlist.select(&:even?).empty?
     end
 
     def set_even(msg = nil)
@@ -106,7 +108,7 @@ module Number
              [v0]
            end
       v_remove = vv & @ability
-      if v_remove.size > 0
+      if v_remove.size.positive?
         print " rmAbility cell #{@c} v=[#{v_remove.join(',')}]. by #{msg}\n" if $Verb
         ret = $gsw = true
         @ability -= v_remove
@@ -120,5 +122,5 @@ module Number
         @groups[grp].rmCellAbility(v_remove, c, msg)
       end
     end
-  end  # class Cell
+  end
 end

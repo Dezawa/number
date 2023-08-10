@@ -1,4 +1,5 @@
 #!/usr/bin/ruby1.9
+# frozen_string_literal: true
 
 # 初期化
 # wdef* を読んで、隣同士のcelのリストを作る。
@@ -13,10 +14,11 @@
 #   dataの空白無に変更する
 #
 
-while gets && ($_ =~ /^\s*#/ || $_ =~ /^\s*$/); end
+require 'English'
+while gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
 (n, m, x, y) = split
-n = n.to_i
-m = m.to_i
+n.to_i
+m.to_i
 x = x.to_i
 y = y.to_i
 box = []
@@ -39,14 +41,10 @@ cel = 0
       cel += 1
       box[i][j] = cel
     end
+    (box[i][j]).zero? && next
+    printf "%-2d %-2d\n", box[i][j], box[i + 1][j] if (box[i + 1][j]).positive?
+    printf "%-2d %-2d\n", box[i][j], box[i][j + 1] if (box[i][j + 1]).positive?
   end
 end
 
 ## 計算
-(1..y).each do |j|
-  (1..x).each do |i|
-    box[i][j] == 0 && next
-    printf "%-2d %-2d\n", box[i][j], box[i + 1][j] if box[i + 1][j] > 0
-    printf "%-2d %-2d\n", box[i][j], box[i][j + 1] if box[i][j + 1] > 0
-  end
-end

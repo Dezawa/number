@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 # == ソフトの目的
 # これは「数独」とか「ナンバープレース(ナンプレ)とか一般的に呼ばれているパズルの解法ソフトです。
 #
@@ -44,6 +46,7 @@
 # 6. 各cellの値の間には NSP指定の時はべた打ち、無指定の時は空白文字を入れる
 #
 
+require 'English'
 $help = "
    -S   統計出力   どのテクニックが何回使われたか
    -s   構造出力   groupに属するcell、cellが属するgroup、arrow
@@ -118,10 +121,10 @@ class Numple
 
   def analyze_data
     infile.gets
-    game_type = (match = $_.match(Number::Game::IromonoReg)) ? match[0] : nil
-    sep = $_ =~ /NSP/ ? '' : /\s+/
-    while infile.gets && ($_ =~ /^\s*#/ || $_ =~ /^\s*$/); end
-    relay_list = $_.split
+    game_type = (match = $LAST_READ_LINE.match(Number::Game::IromonoReg)) ? match[0] : nil
+    sep = $LAST_READ_LINE =~ /NSP/ ? '' : /\s+/
+    while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
+    relay_list = $LAST_READ_LINE.split
     form = relay_list.shift
     form = '9' if form == 'STD'
     [form, sep, game_type]
@@ -159,15 +162,15 @@ def get_option
   p ['$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level',
      $stat, $strct, $verb, $Verb, $table, $test, $cout, $gout, $dbg, $level]
   # of get_option
-end # of get_option
+end
 
 # ###############################################3
 # DO Main
 ################################################
 if /numple.rb$/ =~ $PROGRAM_NAME
   get_option
-  if ARGV.size > 0
-    ARGV.each  do |infile|
+  if ARGV.size.positive?
+    ARGV.each do |infile|
       puts "############ #{infile} #######"
       numple = Numple.new(infile)
       numple.resolve
@@ -178,7 +181,7 @@ if /numple.rb$/ =~ $PROGRAM_NAME
       puts
     end
   else
-    main($stdin) || ret = 1
+    main($stdin) || 1
     game.output($stat, $count, $cout)
   end
 end

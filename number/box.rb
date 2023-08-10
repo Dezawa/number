@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Number
   class Box
     def initialize(n, x = nil, y = nil)

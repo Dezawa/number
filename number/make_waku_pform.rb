@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 ###############################
 MEMO = <<~EOMEMO
-  
+
   type="9-3-2-3" から　waku9-3-2-3, pform9-2-3 相当を作る
   箱の数　	Mnr   8 = 3+2+3 = 8
   箱の重なり段数  Dan   3 = type.split(/[-+]/).size
@@ -13,29 +15,29 @@ MEMO = <<~EOMEMO
     box数		Bnr  64	  Mnr*9 - Dnr
   Group数		Gnr 108   Lnr + Cnr + Gnr
   Cell数		Cnr 576	  Mnr * 81 - Dnr * 9 = 8*81 - 8*9 = 8*72
-  
+
   最初の箱の左上X座標を　0 とする。
   一段目の右端の箱の右上X座標は 0+ 3*9 + (3-1)*3 -1 = 32
-  
+
   二段目の左端,右端 X座標(X1L X1R)    X1L= 0 +/- 6, X1R=X1L+9*2+(2-1)*3-1
           :::
-  
+
   という考えで、8個の箱の左上端座標を得る box[0..7]=[0,0],,,
   一番左の箱のX座標が　0　となるようにする。
-  
+
   面全体の座標は ban[ Dan , Retsu ]
   箱一つづつ9x9のcellの座標を求め( box[*]+[l,r])
      該当する ban[ ] に　cellNo, line,raw,box 番号を入れる。
              line,raw は2つまで入る　groupとしては3〜5
              すでにcellNoが入っていたら　++しない
-  
+
   waku は
      ban[x,y].eachにて、cellNoが入っているものを出力する
   隣は x+/- 1, y+/-1 のbanを書き出す
-  
+
   pform　は
   　　。。。
-  
+
 EOMEMO
 ######################################
 # struct = ARGV.shift #"9" #9-3+4-3"
@@ -49,7 +51,7 @@ module Number
       @m = Math.sqrt(@n).to_i
       boxes, xsize, ysize = setBasePos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
 
-      xmax = xsize + 1;
+      xmax = xsize + 1
       ymax = ysize + 1
       @w = Array.new(xmax * ymax, nil)
       # 最終的には、有効なcellでは以下の構造の情報となる
@@ -64,11 +66,11 @@ module Number
       #        111111111n
       #        111111111n
       #        nnnnnnnnnn
-      boxes[0..m_nr].each { |box|
-  (box.y..box.y + @n - 1).each { |y|
-    (box.x..box.x + @n - 1).each { |x| @w[xmax * y + x] = 1 }
-  }
-      }
+      boxes[0..m_nr].each do |box|
+        (box.y..box.y + @n - 1).each do |y|
+          (box.x..box.x + @n - 1).each { |x| @w[xmax * y + x] = 1 }
+        end
+      end
       # 　有効なcellに頭からの通し番号を振る
       #  STDの場合
       #    boxは一つ
@@ -77,12 +79,12 @@ module Number
       #        72 .....        80 nil
       #        nnnnnnnnnn
       c = 0
-      (0..@w.size - 1).each { |x|
+      (0..@w.size - 1).each do |x|
         if @w[x]
           @w[x] = [c, []]
           c += 1
         end
-      }
+      end
       @size = c
 
       # $cells を作る。空で。 set_grpの準備
@@ -97,26 +99,26 @@ module Number
     end
 
     def ban_initialize(w, _n, xmax, ymax)
-      w.each { |ww|
+      w.each do |ww|
         next unless ww
 
-        j = ww[0]
+        ww[0]
         # pp [ww[0],ww[1]]
         # cell=@cells[ww[0]] = Cell.new(@groups,ww[0],@n,ww[1]) #(cell_nr,grp_list)
-        cell = @cells[ww[0]] = Number::Cell.new(self, ww[0], ww[1], @count) # (cell_nr,grp_list)
+        @cells[ww[0]] = Number::Cell.new(self, ww[0], ww[1], @count) # (cell_nr,grp_list)
         ww[1].each { |grp_no| @groups[grp_no].addcellList ww[0] }
-      }
+      end
       # get neighber
       @neigh = []
-      (0..ymax - 1).each { |y|
-  base = xmax * y
-      (0..xmax - 1).each { |x|
-        next unless w[base + x]
+      (0..ymax - 1).each do |y|
+        base = xmax * y
+        (0..xmax - 1).each do |x|
+          next unless w[base + x]
 
-        @neigh << [w[base + x][0], w[base + x + 1][0]]    if w[base + x + 1]
-        @neigh << [w[base + x][0], w[base + x + xmax][0]] if w[base + x + xmax]
-      }
-      }
+          @neigh << [w[base + x][0], w[base + x + 1][0]]    if w[base + x + 1]
+          @neigh << [w[base + x][0], w[base + x + xmax][0]] if w[base + x + xmax]
+        end
+      end
       initialize_group_ability
     end
 
@@ -129,68 +131,68 @@ module Number
       $stderr.printf "%d %d %d\n", n, cnr, gnr
 
       # cell-group
-      w.each { |ww|
+      w.each do |ww|
         warn ww.flatten.join(' ') if ww
-      }
+      end
 
       # neigber
-      (0..ymax - 1).each { |y|
-  base = xmax * y
-      (0..xmax - 1).each { |x|
-        next unless w[base + x]
+      (0..ymax - 1).each do |y|
+        base = xmax * y
+        (0..xmax - 1).each do |x|
+          next unless w[base + x]
 
-        warn "#{w[base + x][0]} #{w[base + x + 1][0]}"    if w[base + x + 1]
-        warn "#{w[base + x][0]} #{w[base + x + xmax][0]}" if w[base + x + xmax]
-      }
-      }
+          warn "#{w[base + x][0]} #{w[base + x + 1][0]}"    if w[base + x + 1]
+          warn "#{w[base + x][0]} #{w[base + x + xmax][0]}" if w[base + x + xmax]
+        end
+      end
     end
 
     def set_grp(boxes, bx, by, xmax, w, _sep)
-      maxgnr = boxes.size * @n * 2
+      boxes.size
       gnr = 0
       gnr = set_vertical_holizontal_group(gnr, boxes, xmax, w)
       gnr = set_block_group(gnr, boxes, bx, by, xmax, w)
       set_optional_group(gnr, boxes, bx, by, xmax, w)
-      
     end
 
     def set_optional_group(gnr, boxes, bx, by, xmax, w); end
 
     def set_block_group(gnr, boxes, bx, by, xmax, w)
-      boxes.each { |box|
-        (box.y..box.y + @n - 1).step(by).each { |y|
-          (box.x..box.x + @n - 1).step(bx).each { |x|
+      boxes.each do |box|
+        (box.y..box.y + @n - 1).step(by).each do |y|
+          (box.x..box.x + @n - 1).step(bx).each do |x|
             # next if w[xmax*y+x].nil?     #or w[xmax*y+x][1]
             next if w[xmax * y + x].nil?
+
             # @groups[gnr] =  Group.new(@cells,gnr,@n,:block)
             @groups[gnr] = Number::Group.new(self, gnr, :block, @count)
-            (y..y + by - 1).each { |yy|
+            (y..y + by - 1).each do |yy|
               (x..x + bx - 1).each { |xx| w[xmax * yy + xx][1] << gnr }
-            }
+            end
             gnr += 1
-          }
-        }
-      }
+          end
+        end
+      end
       gnr
     end
 
     def set_vertical_holizontal_group(gnr, boxes, xmax, w)
-      boxes.each { |box|
-        (box.y..box.y + @n - 1).each { |y|
+      boxes.each do |box|
+        (box.y..box.y + @n - 1).each do |y|
           # @groups[gnr] =  Group.new(@cells,gnr,@n,:holizontal)
-          @groups[gnr] =  Number::Group.new(self, gnr, :holizontal, @count)
-          (box.x..box.x + @n - 1).each { |x|
+          @groups[gnr] = Number::Group.new(self, gnr, :holizontal, @count)
+          (box.x..box.x + @n - 1).each do |x|
             w[xmax * y + x][1] << gnr
-          }
+          end
           gnr += 1
-        }
-        (box.x..box.x + @n - 1).each { |x|
+        end
+        (box.x..box.x + @n - 1).each do |x|
           # @groups[gnr] =  Group.new(@cells,gnr,@n,:vertical)
-          @groups[gnr] =  Number::Group.new(self, gnr, :vertical, count)
+          @groups[gnr] = Number::Group.new(self, gnr, :vertical, count)
           (box.y..box.y + @n - 1).each { |y| w[xmax * y + x][1] << gnr }
           gnr += 1
-        }
-      }
+        end
+      end
       gnr
     end
 
@@ -203,18 +205,17 @@ module Number
       bnr = -1
       xmin = 0
       xmax = 0
-      y = -6
-      (0..dan - 1).each { |dan|
+      (0..dan - 1).each do |dan|
         box.p = box + [offset[sign[dan]], 6]
         wbox.p = box.p
         xmin = wbox.x if xmin > wbox.x
-        (0..mult[dan] - 1).each { |_b|
+        (0..mult[dan] - 1).each do |_b|
           bnr += 1
           boxes[bnr] = Number::Box.new(@n, wbox.p)
           xmax = wbox.x + @n if xmax < wbox.x + @n
           wbox.p = wbox + [12, 0]
-        }
-      }
+        end
+      end
       if xmin != 0
         boxes.each { |b| b.x = (b.x - xmin) }
         xmax -= xmin
@@ -228,20 +229,23 @@ module Number
       n = mult.shift # Gameの基本サイズ
       if /\d+x\d+/ =~ n
         bx, by = n.split('x')
-        bx = bx.to_i; by = by.to_i; n = bx * by
+        bx = bx.to_i
+        by = by.to_i
+        n = bx * by
       else
-        n = n.to_i; bx = by = (Math.sqrt(n) + 0.2).to_i
+        n = n.to_i
+        bx = by = (Math.sqrt(n) + 0.2).to_i
       end
-      if mult.size == 0
+      if mult.empty?
         mult = [1]
         mnr = 1
         dan = 1
         sign = ['-']
       else
-        mult = mult.map { |c| c.to_i } # 各段のBOX数
+        mult = mult.map(&:to_i) # 各段のBOX数
         mnr =  mult.inject(0) { |s, i| s + i } # BOX数合計　箱の数　Mnr
         dan = mult.size # 箱の重なり段数  Dan   3 = struct.split(/[-+]/).size
-        sign = struct.split(/\d+/)[1..-1]
+        sign = struct.split(/\d+/)[1..]
       end
       # pp ["struct,n,mult,sign",struct,n,mult,sign]
       # pp ["Mnr,Dan",mnr,dan]

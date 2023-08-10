@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../numple'
 RSpec.describe Numple, type: :model do
   let(:std) { "#NSP\n" }
@@ -13,7 +15,7 @@ RSpec.describe Numple, type: :model do
     end
 
     it 'infile の残りはdata' do
-      infile = StringIO.new("#NSP \n9\n" + data, 'r+')
+      infile = StringIO.new("#NSP \n9\n#{data}", 'r+')
       numple = Numple.new(infile)
       numple.analyze_data
       expect(infile.read).to eq data
@@ -22,7 +24,7 @@ RSpec.describe Numple, type: :model do
 
   describe 'Game.createの実行' do
     it 'params' do
-      infile = StringIO.new("#NSP \n9\n" + data, 'r+')
+      infile = StringIO.new("#NSP \n9\n#{data}", 'r+')
       expect(Number::Game).to receive(:create) do |infile, form, sep, game_type|
         expect(infile).to eq(infile) and
           expect(form).to eq '9' and
@@ -30,7 +32,7 @@ RSpec.describe Numple, type: :model do
           expect(game_type).to eq({ game_type: nil })
       end
       numple = Numple.new(infile)
-      game = numple.create_game
+      numple.create_game
     end
   end
 end
