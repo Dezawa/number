@@ -75,6 +75,16 @@ require_relative 'number/resolver'
 require_relative 'number/make_waku_pform'
 require_relative 'number/group_ability'
 
+# 使い方
+# numple = Numplre.new(infile)
+#  infile :: STDIN :: 起動後keyBoad もしくは pipe で dataを流し込む
+#         :: IO :: data file を open、もしくは data文字列を StringIOにしたもの
+#         :: String  data file名
+# numple.resolve
+# puts numple.output_form  解出力
+# puts numple.cell_out     Cellの残された可能性出力
+#      numple.cell_ability  Cellの残された可能性のデータ
+# puts numple.output_statistics  統計出力
 class Numple
   attr_reader :infile, :game
   def initialize(infile)
@@ -85,7 +95,19 @@ class Numple
     game = create_game
     game.resolve
   end
+  
+  def output_form
+    game.output_form  # 解出力
+  end
 
+  def cell_out
+    game.cell_out     # Cellの残された可能性出力
+  end
+
+  def output_statistics
+    game.output_statistics  # 統計出力
+  end
+  
   def create_game
     form,sep, game_type = analyze_data
     @game = Number::Game.create(infile, form, sep, game_type: game_type)

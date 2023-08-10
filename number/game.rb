@@ -195,15 +195,33 @@ module Number
     #@block ||= @groups.select{|grp| grp.is_block? }
   end
 
+  ### 出力系 ###
+  # 版の出力。決まっていない所は . ピリオド
+  def output_form
+    form.out cells
+  end
+
+  # 使った技の統計
+  def output_statistics
+    @count.map{|l,v| " Stat: %-10s %3d\n" % [l, v]}.join
+  end
+  
+  # 未解決の cellがある場合、その残っている可能性をまとめる
+  # [ [cell_nr, [ 1, 5,,,] ]
+  def cell_ability
+    cells.select{|cell| cell.v.nil?}
+      .map{|cell| [cell.c,cell.ability]}
+  end
+  
+  # 未解決の cellがある場合、その残っている可能性を出力する。後方互換
+  # 2 : [ 3, 4]
   def cell_out
-    @cells.each{|cell|
-      cell.v || puts("#{cell.c} : #{cell.ability}")
-    }
+    cell_ability.map{|c,ability| "#{c} : #{ability}"}.join("\n")
   end
 
   def output(statistics, count, cellout)
     cellout && cell_out
-    statistics &&  $count.each{|l,v| printf " Stat: %-10s %3d\n",l,v}
+    statistics &&  @count.each{|l,v| printf " Stat: %-10s %3d\n",l,v}
     form.out cells
   end
 end # Groups

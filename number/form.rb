@@ -36,26 +36,26 @@ class Number::Form < Array
 
   end # def initialize
   
-  def out(cells,of=$of)
-    of.print "\n-----\n"
+  def out(cells)
     if @n > 9 
       sp =  3 ; fm1 = "%2d " ;fm2 = " . "
     else
       sp =  1 ; fm1 = "%1d"  ;fm2 = "."
     end
 
+    out = ''
     self.each{|l|
       l.each{|c| 
         if c
           w=cells[c].v
-          if w ;of.printf fm1,w ;else ;of.print fm2;end 
+          if w ; out << fm1 % w ; else ; out << fm2;end 
         else
-          of.print " "*sp
+          out <<  " "*sp
         end
       }
-      of.print "\n"
+      out << "\n"
     }
-    
+    out
   end
   
   def outAbility(cells,v)  
