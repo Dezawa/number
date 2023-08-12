@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Shinichiro Dezawa']
   spec.email         = 'dezawa@aliadne.net'
   spec.homepage      = 'https://github.com/your_username/my_gem'
-  spec.license       = 'GNU'
+  spec.license       = 'GPL-3.0'
 
   spec.files         = Dir["lib/**/*", "sample/*"]
   spec.require_paths = ['lib']
