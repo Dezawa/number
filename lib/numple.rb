@@ -18,8 +18,6 @@
 # == データ構造
 # 1. /^\s*#/ な行はコメント行です。但し1行めに限り意味を持つことがあります。
 # 2. 1行目は必ずコメント行にします。以下の文字列のどれかがあると意味を持ちます。
-#   NSP   : NoSPace これのみ他の文字列と併記可能です。9x9以下のときに有用です。
-#         :  「データの数字(など)の間にデータ区切りの空白文字を入れない」べた打ちするということを意味します
 #   ARROW : 色物 アロー の指定
 #   SUM   : 色物 サム の指定
 #   HUTOU : 色物 不等号 の指定
@@ -43,7 +41,7 @@
 #     3..5....6.7..  の様に 数値の指定のある所にはその数値を、そうでない所は数字以外を置く
 #     ただし、"e","o" はそのcellを偶数指定、奇数指定する。
 #     「9x9 のパズルだから9x9の形で書く」必要はない。81個のデータがあれば良い
-# 6. 各cellの値の間には NSP指定の時はべた打ち、無指定の時は空白文字を入れる
+# 6. 各cellの値の間には空白文字を入れる。ただし最大数字が9以下の場合は空白なしベタ打ちでもよい。
 #
 
 require 'English'
@@ -115,20 +113,9 @@ class Numple
   end
 
   def create_game
-    form, sep, game_type = analyze_data
-    @game = Number::Game.create(infile, form, sep, game_type: game_type)
+    @game = Number::Game.create(infile)
   end
 
-  def analyze_data
-    infile.gets
-    game_type = (match = $LAST_READ_LINE.match(Number::Game::IromonoReg)) ? match[0] : nil
-    sep = $LAST_READ_LINE =~ /NSP/ ? '' : /\s+/
-    while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
-    relay_list = $LAST_READ_LINE.split
-    form = relay_list.shift
-    form = '9' if form == 'STD'
-    [form, sep, game_type]
-  end
 end
 ################# end of Numple ###
 

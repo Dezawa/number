@@ -9,10 +9,10 @@ require_relative '../number/group_ability'
 require_relative '../number/game_types'
 
 RSpec.describe Number::Game, type: :model do
-  let(:data) { String.new("123......\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n") }
+  let(:data) { String.new("#\n9\n123......\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n") }
   let(:infile) { StringIO.new(data, 'r+') }
   context :new do
-    let(:game) { Number::Game.create(infile, '9', '') }
+    let(:game) { Number::Game.create(infile) }
 
     it 'groupは27' do
       expect(game.groups.size).to eq 3 * 9
@@ -45,7 +45,7 @@ RSpec.describe Number::Game, type: :model do
   describe '色物拡張' do
     Number::Game::Iromono.each do |game_type|
       it "#{game_type}がextendされる" do
-        game = Number::Game.new(infile, '9', '', game_type: "# NSP #{game_type}")
+        game = Number::Game.new(infile, '9', game_type: "#  #{game_type}")
         game.set_game_type
         expect(game.game_type).to eq game_type
       end
@@ -64,16 +64,56 @@ RSpec.describe Number::Game, type: :model do
 183594276".gsub(/\s/, '').split('').map(&:to_i)
   end
   describe '解' do
-    let(:game) { Number::Game.create(infile, '9', '') }
+    let(:game) { Number::Game.create(infile) }
     let(:infile) { open('./sample/np101001') }
-    before do
-      infile.gets
-      infile.gets
-    end
 
     it '解は' do
       game.resolve
       expect(game.cells.map(&:v)).to eq sult
     end
   end
+
+  describe 'self.form_and_game_type' do
+    let(:infile){ StringIO.new(data) }
+    context '# と 9あり' do
+      let(:data) { "#\n9\n111\n" }
+      it '9とnilが帰る' do
+        expect(Number::Game.form_and_game_type(infile)).to eq ['9', nil]
+      end
+    end
+    context '# ARROW と 9あり' do
+      let(:data) { "# ARROW\n9\n111\n" }
+      it '9とARROWが帰る' do
+        expect(Number::Game.form_and_game_type(infile)).to eq ['9', 'ARROW']
+      end
+    end
+    context '# NOMATCH と 9あり' do
+      let(:data) { "# NOMATCH\n9\n111\n" }
+      it '9とnilが帰る' do
+        expect(Number::Game.form_and_game_type(infile)).to eq ['9', nil]
+      end
+    end
+    context '# なしで 9あり' do
+      let(:data) { "9\n111\n" }
+      it '9とnilが帰る' do
+        expect(Number::Game.form_and_game_type(infile)).to eq ['9', nil]
+      end
+    end
+  end
 end
+__END__
+    Number::Game::Iromono.each do |game_type|
+      it '戻り値' do
+        infile = StringIO.new("# #{game_type}\n9\n" + data, 'r+')
+        numple = Numple.new(infile)
+        expect(numple.analyze_data).to eq [ game_type]
+      end
+    end
+      describe '#analyze_data' do
+    it 'infile の残りはdata' do
+      infile = StringIO.new("# \n9\n#{data}", 'r+')
+      numple = Numple.new(infile)
+      numple.analyze_data
+      expect(infile.read).to eq data
+    end
+  end

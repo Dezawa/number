@@ -7,7 +7,7 @@ module Number
         'SUM'
       end
 
-      # #NSP SUM
+      # # SUM
       # 9
       # ここに9x9データ
       # このあと sum cell0 cell..... を並べる

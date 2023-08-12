@@ -10,23 +10,42 @@ module Number
     IromonoReg = /#{Iromono.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
-    attr_accessor :groups, :cells, :gsize, :size, :form_size, :form, :arrow, :block, :n
+    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrow, :block, :n
     attr_reader :infile, :form, :sep, :game_type, :count
 
-    def self.create(infile, form_size, sep, game_type: nil)
-      instance = new(infile, form_size, sep, game_type: nil)
+    def self.create(infile)
+      form_type, game_type = form_and_game_type(infile)
+      instance = new(infile, form_type, game_type: nil)
       instance.set_game_type
       instance.get_structure
       instance.get_initialdata
       instance
     end
 
+    def self.form_and_game_type(infile)
+      line = infile.gets
+      if /\s*#/ =~ line
+        game_type = (match = line.match(Number::Game::IromonoReg)) ? match[0] : nil
+        line = infile.gets
+      else
+        game_type = nil
+      end
+      
+      while line =~ /^\s*#/ || line =~ /^\s*$/
+        line = infile.gets
+      end
+      relay_list = line.split
+      form = relay_list.shift
+      form = '9' if form == 'STD'
+      [form, game_type]
+    end
+    
     def optional_test; end
 
-    def initialize(infile, form_size, sep, game_type: nil)
+    def initialize(infile, arg_form_type, game_type: nil)
       @infile = infile
-      @form_size = form_size
-      @sep = sep
+      @form_type = arg_form_type
+      @sep = arg_form_type.to_i < 10 ? '' : /\s+/
       @game_type = game_type
       @groups = []
       @cells = []
@@ -156,8 +175,8 @@ module Number
     ###   #@block ||= @groups.select{|grp| grp.is_block? }
     ### end
     def get_structure
-      xmax, ymax = make_waku_pform(form_size)
-      if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form_size # 3x3-4+5
+      xmax, ymax = make_waku_pform(form_type)
+      if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form_type # 3x3-4+5
         ban_initialize(@w, @n, xmax, ymax)
         # 印刷フォーム設定
       end
