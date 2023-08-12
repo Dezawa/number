@@ -135,32 +135,32 @@ end
 def get_option
   opt = OptionParser.new
 
-  # opt.on('-q') {|v| $quiet = v }
-  opt.on('-S') { |v| $stat = v }
-  opt.on('-s') { |v| $strct = v }
-  opt.on('-v') { |v| $verb = v }
-  opt.on('-V') { |v| $Verb = v }
-  opt.on('-T') { |v| $table = v }
-  opt.on('-t') { |v| $test = v }
-  opt.on('-c') { |v| $cout = v }
-  opt.on('-g') { |v| $gout = v }
-  opt.on('-d') { |v| $dbg = v }
-  opt.on('-m') { |v| $mail = v }
+  # opt.on('-q') {|v| @quiet = v }
+  opt.on('-S') { |v| @stat = v }
+  opt.on('-s') { |v| @strct = v }
+  opt.on('-v') { |v| @verb = v }
+  opt.on('-V') { |v| @Verb = v }
+  opt.on('-T') { |v| @table = v }
+  opt.on('-t') { |v| @test = v }
+  opt.on('-c') { |v| @cout = v }
+  opt.on('-g') { |v| @gout = v }
+  opt.on('-d') { |v| @dbg = v }
+  opt.on('-m') { |v| @mail = v }
   # opt.on('- ""') {|v| $= v }
   # opt.on('- ""') {|v| $= v }
-  $level = 0
-  opt.on('-1') { |_v| $level = 1 }
+  @level = 0
+  opt.on('-1') { |_v| @level = 1 }
   opt.on('-h') do |_v|
-    puts $help
+    puts @help
     exit(0)
   end
 
   opt.parse!(ARGV)
 
-  return unless $dbg
+  return unless @dbg
 
-  p ['$stat,$strct,$verb,$Verb, $table,$test,$cout,$gout,$dbg,$level',
-     $stat, $strct, $verb, $Verb, $table, $test, $cout, $gout, $dbg, $level]
+  p ['@stat,@strct,@verb,@Verb, @table,@test,@cout,@gout,@dbg,@level',
+     @stat, @strct, @verb, @Verb, @table, @test, @cout, @gout, @dbg, @level]
   # of get_option
 end
 
@@ -175,14 +175,19 @@ if /numple.rb$/ =~ $PROGRAM_NAME
       numple = Numple.new(infile)
       numple.resolve
       puts numple.output_form # 解出力
-      puts numple.cell_out if $cout # Cellの残された可能性出力
+      puts numple.cell_out if @cout # Cellの残された可能性出力
       # numple.cell_ability  #Cellの残された可能性のデータ
-      puts numple.output_statistics if $stat # 統計出力
+      puts numple.output_statistics if @stat # 統計出力
       puts
     end
   else
-    main($stdin) || 1
-    game.output($stat, $count, $cout)
+    numple = Numple.new(STDIN)
+    numple.resolve
+    puts numple.output_form # 解出力
+    puts numple.cell_out if @cout # Cellの残された可能性出力
+    # numple.cell_ability  #Cellの残された可能性のデータ
+    puts numple.output_statistics if @stat # 統計出力
+    puts
   end
 end
 #   if $mail
