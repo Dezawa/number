@@ -1,5 +1,5 @@
 Gem::Specification.new do |spec|
-  spec.name          = 'numple'
+  spec.name          = 'number'
   spec.version       = '0.1.0'
   spec.summary       = 'Resolver of Number place'
   spec.description   = 'A detailed description of my gem.'
