@@ -23,21 +23,19 @@ module Number
     end
 
     def self.form_and_game_type(infile)
+      line = gets_skip_comment(infile)
+      game_type = (match = line.match(Number::Game::IromonoReg)) ? match[0] : nil
+      form_type = line.match(/(\d[-+x\d]*\d?)|STD/)[0]
+      form = '9' if form_type == 'STD'
+      [form_type, game_type]
+    end
+
+    def self.gets_skip_comment(infile)
       line = infile.gets
-      if /\s*#/ =~ line
-        game_type = (match = line.match(Number::Game::IromonoReg)) ? match[0] : nil
-        line = infile.gets
-      else
-        game_type = nil
-      end
-      
-      while line =~ /^\s*#/ || line =~ /^\s*$/
+      while  line =~ /^\s*#/ || line =~ /^\s*$/
         line = infile.gets
       end
-      relay_list = line.split
-      form = relay_list.shift
-      form = '9' if form == 'STD'
-      [form, game_type]
+      line
     end
     
     def optional_test; end

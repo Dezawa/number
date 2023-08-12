@@ -73,30 +73,27 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 
+  FormTypes =
+    [['# と 9あり', "#\n9\n111\n", ['9', nil]],
+     ['# と 9 ARROWあり', "#\n9 ARROW\n111\n", ['9', 'ARROW']],
+     ['# と 9 NOMATCHあり', "#\n9 NOMATCH\n111\n", ['9', nil]],
+     ['# なしで 9あり', "9\n111\n",['9', nil]],
+     ['# なしで 9 ARROWあり', "9 ARROW\n111\n",['9', 'ARROW']],
+     ['9 ARROW の間に空白なし',"9ARROW\n111\n", ['9', 'ARROW']],
+     ['頭に空行', "  \n9 ARROW\n111\n",['9', 'ARROW']],
+     ['頭にコメント行', "#  \n9 ARROW\n111\n",['9', 'ARROW']],
+     ['重層形式', "9-3+2-3 ARROW\n111\n",['9-3+2-3', 'ARROW']],
+     ]
+
+  
   describe 'self.form_and_game_type' do
     let(:infile){ StringIO.new(data) }
-    context '# と 9あり' do
-      let(:data) { "#\n9\n111\n" }
-      it '9とnilが帰る' do
-        expect(Number::Game.form_and_game_type(infile)).to eq ['9', nil]
-      end
-    end
-    context '# ARROW と 9あり' do
-      let(:data) { "# ARROW\n9\n111\n" }
-      it '9とARROWが帰る' do
-        expect(Number::Game.form_and_game_type(infile)).to eq ['9', 'ARROW']
-      end
-    end
-    context '# NOMATCH と 9あり' do
-      let(:data) { "# NOMATCH\n9\n111\n" }
-      it '9とnilが帰る' do
-        expect(Number::Game.form_and_game_type(infile)).to eq ['9', nil]
-      end
-    end
-    context '# なしで 9あり' do
-      let(:data) { "9\n111\n" }
-      it '9とnilが帰る' do
-        expect(Number::Game.form_and_game_type(infile)).to eq ['9', nil]
+    FormTypes.each do |comment, line, result|
+      context comment do
+        let(:data) { line }
+        it "#{result} が帰る" do
+          expect(Number::Game.form_and_game_type(infile)).to eq result
+        end
       end
     end
   end
