@@ -67,7 +67,7 @@ module Number
         2.times do |i|
           c = pair[i]
           c1 = pair[1 - i]
-          pp @cells[c].ability
+          # pp @cells[c].ability
           if @cells[c].even_only?
             @cells[c1].set_odd("#{c1} odd by pair[#{pair.join(',')}]")
             $gsw = true
