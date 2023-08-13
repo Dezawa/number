@@ -2,9 +2,9 @@
 
 module Number
   class Cell
-    attr_accessor :game, :groups, :valu, :c, :ability, :grpList
+    attr_accessor :game, :groups, :valu, :c, :ability, :grpList, :option
 
-    def initialize(arg_game, cell_no, arg_grpList, count)
+    def initialize(arg_game, cell_no, arg_grpList, count, option: {})
       @game = arg_game
       @n = @game.n
       @c = cell_no
@@ -14,6 +14,8 @@ module Number
       @groups = @game.groups
       @val = (1..@n).to_a
       @count = count
+      @option = option
+      #pp [:option,option]
     end
 
     def inspect
@@ -57,14 +59,14 @@ module Number
     def set_even(msg = nil)
       return nil if valu
 
-      puts(msg || "set even cell #{c}") if $verb
+      puts(msg || "set even cell #{c}") if option[:verb]
       (1..@n).step(2) { |v| rmAbility(v) }
     end
 
     def set_odd(msg = nil)
       return nil if valu
 
-      puts(msg || "set odd cell #{c}") if $verb
+      puts(msg || "set odd cell #{c}") if option[:verb]
       (2..@n).step(2) { |v| rmAbility(v) }
     end
 
@@ -85,7 +87,7 @@ module Number
       # $gsw = true
 
       # if v.nil? and @ability.size == 1 ; v= @ability[0] ; end
-      printf "Set cell %2d = %2d. by #{msg} \n", @c, v if $verb
+      printf "Set cell %2d = %2d. by #{msg} \n", @c, v if option[:verb]
 
       @valu = v
       msg = "#{msg} : cell #{@c}"
@@ -109,7 +111,7 @@ module Number
            end
       v_remove = vv & @ability
       if v_remove.size.positive?
-        print " rmAbility cell #{@c} v=[#{v_remove.join(',')}]. by #{msg}\n" if $Verb
+        print " rmAbility cell #{@c} v=[#{v_remove.join(',')}]. by #{msg}\n" if option[:verb]
         ret = $gsw = true
         @ability -= v_remove
         rmCellAbilityFromGroupsOfGroupList(v_remove)

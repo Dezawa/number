@@ -86,7 +86,7 @@ module Number
       ###
       def partner_is_even_or_odd
         sw = nil
-        puts 'partner_is_even_or_odd' if $verb
+        puts 'partner_is_even_or_odd' if option[:verb]
         @arrow.each do |arrow|
           next unless arrow[0]
 

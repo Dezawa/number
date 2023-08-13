@@ -282,7 +282,7 @@ module Number
                                                                               cg[1].g
                                                                             end.join ','}")
 
-                vsw = ret = $gsw = true
+                vsw = ret = option[:gsw] = true
               end
             end
           end
@@ -292,7 +292,7 @@ module Number
       end
       # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
       #
-      $cross = nil
+      option[:cross] = nil
       ret # false
     end
 

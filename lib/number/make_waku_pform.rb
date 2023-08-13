@@ -105,7 +105,7 @@ module Number
         ww[0]
         # pp [ww[0],ww[1]]
         # cell=@cells[ww[0]] = Cell.new(@groups,ww[0],@n,ww[1]) #(cell_nr,grp_list)
-        @cells[ww[0]] = Number::Cell.new(self, ww[0], ww[1], @count) # (cell_nr,grp_list)
+        @cells[ww[0]] = Number::Cell.new(self, ww[0], ww[1], @count, option: option) # (cell_nr,grp_list)
         ww[1].each { |grp_no| @groups[grp_no].addcellList ww[0] }
       end
       # get neighber

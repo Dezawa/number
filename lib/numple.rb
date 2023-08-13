@@ -89,10 +89,11 @@ require_relative 'number/make_waku_pform'
 require_relative 'number/group_ability'
 
 class Numple
-  attr_reader :infile, :game
+  attr_reader :infile, :game, :option
 
-  def initialize(infile)
+  def initialize(infile, option: {})
     @infile = infile.is_a?(String) ? open(infile) : infile
+    @option = option
   end
 
   def resolve
@@ -113,7 +114,7 @@ class Numple
   end
 
   def create_game
-    @game = Number::Game.create(infile)
+    @game = Number::Game.create(infile, option: option)
   end
 
 end
@@ -121,45 +122,42 @@ end
 
 def get_option
   opt = OptionParser.new
-
+  options = {}
   # opt.on('-q') {|v| @quiet = v }
-  opt.on('-S') { |v| @stat = v }
-  opt.on('-s') { |v| @strct = v }
-  opt.on('-v') { |v| @verb = v }
-  opt.on('-V') { |v| @Verb = v }
-  opt.on('-T') { |v| @table = v }
-  opt.on('-t') { |v| @test = v }
-  opt.on('-c') { |v| @cout = v }
-  opt.on('-g') { |v| @gout = v }
-  opt.on('-d') { |v| @dbg = v }
-  opt.on('-m') { |v| @mail = v }
+  opt.on('-S') { |v| options[:stat] = v }
+  opt.on('-s') { |v| options[:strct] = v }
+  opt.on('-v') { |v| options[:verb] = v }
+  opt.on('-V') { |v| options[:Verb] = v }
+  opt.on('-T') { |v| options[:table] = v }
+  opt.on('-t') { |v| options[:test] = v }
+  opt.on('-c') { |v| options[:cout] = v }
+  opt.on('-g') { |v| options[:gout] = v }
+  opt.on('-d') { |v| options[:dbg] = v }
+  opt.on('-m') { |v| options[:mail] = v }
   # opt.on('- ""') {|v| $= v }
   # opt.on('- ""') {|v| $= v }
   @level = 0
-  opt.on('-1') { |_v| @level = 1 }
+  opt.on('-1') { |_v| options[:level] = 1 }
   opt.on('-h') do |_v|
     puts @help
     exit(0)
   end
-
   opt.parse!(ARGV)
 
-  return unless @dbg
+  return options unless options[:dbg]
 
-  p ['@stat,@strct,@verb,@Verb, @table,@test,@cout,@gout,@dbg,@level',
-     @stat, @strct, @verb, @Verb, @table, @test, @cout, @gout, @dbg, @level]
-  # of get_option
+  options
 end
 
 # ###############################################3
 # DO Main
 ################################################
 if /numple.rb$/ =~ $PROGRAM_NAME
-  get_option
+  options = get_option
   if ARGV.size.positive?
     ARGV.each do |infile|
       puts "############ #{infile} #######"
-      numple = Numple.new(infile)
+      numple = Numple.new(infile, option: options)
       numple.resolve
       puts numple.output_form # 解出力
       puts numple.cell_out if @cout # Cellの残された可能性出力
@@ -168,7 +166,7 @@ if /numple.rb$/ =~ $PROGRAM_NAME
       puts
     end
   else
-    numple = Numple.new(STDIN)
+    numple = Numple.new(STDIN, option: options)
     numple.resolve
     puts numple.output_form # 解出力
     puts numple.cell_out if @cout # Cellの残された可能性出力

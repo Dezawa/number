@@ -12,7 +12,7 @@ module Number
       def optional_struct(_sep, _n, infile)
         get_arrow(infile)
         @arrow.sort! { |a, b| a.size <=> b.size }
-        # p @arrow if $verb
+        # p @arrow if optoin[:verb]
 
         @summax = 20
 
@@ -37,10 +37,10 @@ module Number
             cells.map { |c| arrow.index(c) }.sort
           end.uniq
         end
-        pp [@arrow, $arw_group] if $verb
+        pp [@arrow, $arw_group] if option[:verb]
 
         check || exit(1)
-        # pp $arw_group if $verb
+        # pp $arw_group if option[:verb]
       end
 
       def check
@@ -83,7 +83,7 @@ module Number
       #   products = [ [V1,v1,v4],[V1,v2,v6],[V2,v1,v6] ]  合計が sumとなる組み合わせ
       # val      = [ [V1,V2],[v1,v2],[v4,v6]       残った可能性
       def optional_test
-        if $verb
+        if option[:verb]
           print "sum arrow @summax=#{@summax}\n"
           p @arrow
         end
@@ -98,7 +98,7 @@ module Number
         @arrow.each_with_index do |arrow, i| # 指定されたcellに残っている値の配列  の配列
           # (0..arrow.size-1).each{|c| valus << @cells[arrow[c]].vlist }
           valus = arrow.map { |c| @cells[c].valu ? [@cells[c].valu] : @cells[c].vlist }
-          pp ['arrow', arrow, $arw_group[i], valus] if $verb
+          pp ['arrow', arrow, $arw_group[i], valus] if option[:verb]
 
           # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
           next if valus.flatten.size > @summax
@@ -116,9 +116,9 @@ module Number
                     end.compact.empty?
             # だめ
           end.compact
-          pp $arw_group if $test
-          pp @arrow if $test
-          pp products if $test
+          pp $arw_group if option[:test]
+          pp @arrow if option[:test]
+          pp products if option[:test]
           # 　products = [ [sum,v1,v2,v3],[sum,V1,V2,V3] ]
           #     合計を満たす値の組み合わせ
           #  これから、各cellの値の集合を求める

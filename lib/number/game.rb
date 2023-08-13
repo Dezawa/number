@@ -10,14 +10,15 @@ module Number
     IromonoReg = /#{Iromono.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
-    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrow, :block, :n
+    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrow, :block, :n, :option
     attr_reader :infile, :form, :sep, :game_type, :count
 
-    def self.create(infile)
+    def self.create(infile, option: {})
       form_type, game_type = form_and_game_type(infile)
-      instance = new(infile, form_type, game_type: nil)
+      instance = new(infile, form_type, game_type: game_type, option: option)
       instance.set_game_type
       instance.get_structure
+      instance.gout if option[:gout]
       instance.get_initialdata
       instance
     end
@@ -40,11 +41,12 @@ module Number
     
     def optional_test; end
 
-    def initialize(infile, arg_form_type, game_type: nil)
+    def initialize(infile, arg_form_type, game_type: nil, option: {})
       @infile = infile
       @form_type = arg_form_type
       @sep = arg_form_type.to_i < 10 ? '' : /\s+/
       @game_type = game_type
+      @option = option
       @groups = []
       @cells = []
       @count = Hash.new(0)
@@ -72,23 +74,23 @@ module Number
         sw |= rest_one
         sw |= reserv(2)
         sw |= prison(2)
-        print "\n prison(2) #{sw}" if $verb
+        print "\n prison(2) #{sw}" if option[:verb]
 
         next if optional_test
 
-        print "optional  #{sw}" if $verb
+        print "optional  #{sw}" if option[:verb]
 
         sw |= reserv(3)
-        print " reserv(3) #{sw}" if $verb
+        print " reserv(3) #{sw}" if option[:verb]
         sw |= prison(3)
-        print " prison(3) #{sw}" if $verb
+        print " prison(3) #{sw}" if option[:verb]
         sw |= reserv(4)
-        print " reserv(4) #{sw}" if $verb
+        print " reserv(4) #{sw}" if option[:verb]
         sw |= prison(4)
-        print " prison(4) #{sw}" if $verb
+        print " prison(4) #{sw}" if option[:verb]
         highClass.each do |method|
           sw |= method.call
-          print " method #{sw}" if $verb
+          print " method #{sw}" if option[:verb]
         end
         # puts count
         count -= 1
@@ -139,20 +141,20 @@ module Number
     def optional_struct(a, b, f); end
 
     def get_arrow(infile)
-      puts 'GET ARROW' if $verb
+      puts 'GET ARROW' if option[:verb]
       # $_ =~ /^[#\s]*$/ && while infile.gets =~ /^[#\s]*$/;end
       while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
       @arrow = []
       a = []
-      puts $LAST_READ_LINE if $verb
+      puts $LAST_READ_LINE if option[:verb]
       raise 'ENOUGH ARROW DATA' unless $LAST_READ_LINE
 
       $LAST_READ_LINE.split.each { |c| a << c.to_i - 1 }
       @arrow << a.dup
 
-      puts "arrow #{$LAST_READ_LINE}" if $verb
+      puts "arrow #{$LAST_READ_LINE}" if option[:verb]
       while infile.gets =~ /\d/
-        puts "arrow #{$LAST_READ_LINE}" if $verb
+        puts "arrow #{$LAST_READ_LINE}" if option[:verb]
         raise 'ENOUGH ARROW DATA' unless $LAST_READ_LINE
 
         a = []

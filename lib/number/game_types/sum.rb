@@ -127,7 +127,7 @@ module Number
       # val      = [ [v1,v2],[v4,v6]       残った可能性
 
       def optional_test
-        if $verb
+        if option[:verb]
           print 'sum arrow'
           p @arrow
         end
@@ -140,7 +140,7 @@ module Number
         @summax += 5
         $gsw = true if @summax < 40
         @arrow.each_with_index do |arrow, i|
-          # pp ["arrow",arrow,@summax] if $verb
+          # pp ["arrow",arrow,@summax] if option[:verb]
           valus = [] # 指定されたcellに残っている値の配列  の配列
           sum = arrow[0]
           (1..arrow.size - 1).each { |c| valus << @cells[arrow[c]].vlist }
@@ -160,8 +160,8 @@ module Number
           # ここに枝切りとして、同じ数字があったらだめ、を入れたいのだが、
           # 違うグループに属するcellの場合は許される？ のでややこしい
           #   だが、大物はこれがないと解けないのでとりあえずこれで入れておく
-          # pp valus if $verb
-          # pp  product_sum(sum,valus) if $verb
+          # pp valus if option[:verb]
+          # pp  product_sum(sum,valus) if option[:verb]
           products_all = valus.size == 1 ? valus : valus[0].product(*valus[1..])
           products = products_all.select do |vary|
             # products = product_sum(sum,valus).select{|vary|
@@ -173,10 +173,10 @@ module Number
 
           val.each_with_index do |vary, c|
             if vary.size == 1 # 一つに絞られたら、そのcellは決定
-              pp ["cell #{arrow[c + 1]}  fix", vary[0]] if $verb
+              pp ["cell #{arrow[c + 1]}  fix", vary[0]] if option[:verb]
               @cells[arrow[c + 1]].set(vary[0], 'sum') && $gsw = optsw = true
             elsif (vv = valus[c] - vary).size.positive?
-              pp ["cell #{arrow[c + 1]}  delete", vv] if $verb
+              pp ["cell #{arrow[c + 1]}  delete", vv] if option[:verb]
               @cells[arrow[c + 1]].rmAbility(vv, 'sum') && $gsw = optsw = true
             end
           end
