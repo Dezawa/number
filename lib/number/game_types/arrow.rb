@@ -22,9 +22,9 @@ module Number
         #     . . * * . . . . .      21,22 group 12
         #     . . . . . . . . .
         # 同じgroupに属するcell を集める
-        $arw_group = []
+        @arw_group = []
         @arrow.each_with_index do |arrow, i|
-          # $arw_group[i]=arrow[1..-1].map{|cellNo|
+          # @arw_group[i]=arrow[1..-1].map{|cellNo|
           groups = arrow[1..].map do |cellNo| # cell の group の集合を求める
             @cells[cellNo].grpList
           end.flatten.uniq
@@ -32,15 +32,15 @@ module Number
             cells = @groups[grpNo].cellList & arrow[1..]
             cells if cells.size > 1
           end.compact
-          $arw_group[i] = cellsSameGroup.map do |cells|
+          @arw_group[i] = cellsSameGroup.map do |cells|
             # そのcellはallowの何番目の要素か
             cells.map { |c| arrow.index(c) }.sort
           end.uniq
         end
-        pp [@arrow, $arw_group] if option[:verb]
+        pp [@arrow, @arw_group] if option[:verb]
 
         check || exit(1)
-        # pp $arw_group if option[:verb]
+        # pp @arw_group if option[:verb]
       end
 
       def check
@@ -72,7 +72,7 @@ module Number
       #
       # arrowのc1,c2,c3,,, が同じgroupに属している場合は同じ数字は入らない。
       # それを枝刈りするための情報。arrow毎に同じgroupに属するcellの集合
-      # $arw_group = [[[1,2],[1,3]] ,[  ] ]
+      # @arw_group = [[[1,2],[1,3]] ,[  ] ]
       #                 cell Noではなく、そのcellがarrayの何番目なのか、の位置情報
       #
       # 実行時
@@ -98,7 +98,7 @@ module Number
         @arrow.each_with_index do |arrow, i| # 指定されたcellに残っている値の配列  の配列
           # (0..arrow.size-1).each{|c| valus << @cells[arrow[c]].vlist }
           valus = arrow.map { |c| @cells[c].valu ? [@cells[c].valu] : @cells[c].vlist }
-          pp ['arrow', arrow, $arw_group[i], valus] if option[:verb]
+          pp ['arrow', arrow, @arw_group[i], valus] if option[:verb]
 
           # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
           next if valus.flatten.size > @summax
@@ -108,7 +108,7 @@ module Number
           # このうち、同じgroupに属するcellで同じ数字があるものはだめ
           products = valus[0].product(*valus[1..]).map do |vary|
             vary if (vary[0] == vary[1..].inject(0) { |s, v| s + v }) &&
-                    $arw_group[i].map do |cellIDs| # このarrowの同じgroupに属するcellID
+                    @arw_group[i].map do |cellIDs| # このarrowの同じgroupに属するcellID
                       true if # 重複があったら(true)
     cellIDs.map do |id|
       vary[id] # を値に変換し、
@@ -116,7 +116,7 @@ module Number
                     end.compact.empty?
             # だめ
           end.compact
-          pp $arw_group if option[:test]
+          pp @arw_group if option[:test]
           pp @arrow if option[:test]
           pp products if option[:test]
           # 　products = [ [sum,v1,v2,v3],[sum,V1,V2,V3] ]
@@ -147,7 +147,7 @@ module Number
 
         while (i = delete_arys.pop)
           @arrow.delete_at(i)
-          $arw_group.delete_at(i)
+          @arw_group.delete_at(i)
         end
         optsw # $gsw
       end

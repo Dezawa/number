@@ -8,7 +8,7 @@ module Number
         'XROSS'
       end
 
-      def set_optional_group(gnr, boxes, _bx, _by, xmax, w, _infile, _sep)
+      def set_optional_group(gnr, boxes, _bx, _by, xmax, w)
         # def add_xross_group(boxes,xmax,n,w,gsize)
         return 0 if boxes.size != 1
 
