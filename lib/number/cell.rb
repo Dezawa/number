@@ -4,20 +4,28 @@ module Number
   class Cell
     attr_accessor :game, :groups, :valu, :c, :ability, :grpList, :option
 
+    def self.create(arg_game, cell_no, arg_grpList, count, option: {})
+      cell = new(arg_game, cell_no, arg_grpList, count, option: option)
+      cell.setup
+    end
     def initialize(arg_game, cell_no, arg_grpList, count, option: {})
       @game = arg_game
-      @n = @game.n
       @c = cell_no
-      @ability = (1..@n).map { |v| v }
-      @valu = nil
       @grpList = arg_grpList
-      @groups = @game.groups
-      @val = (1..@n).to_a
       @count = count
       @option = option
       #pp [:option,option]
     end
 
+    def setup
+      @n = @game.n
+      @ability = (1..@n).map { |v| v }
+      @valu = nil
+      @val = (1..@n).to_a
+      @groups = @game.groups
+      self
+    end
+    
     def inspect
       super +
         %i[c valu grpList ability].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join
