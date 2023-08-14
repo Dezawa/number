@@ -19,7 +19,7 @@ module Number
         # def diff(arrow)
         sw = nil
         c = []
-        @arrow.each do |arw|
+        @arrows.each do |arw|
           (dif, c[0], c[1]) = arw
           k = []
           k[0] = []

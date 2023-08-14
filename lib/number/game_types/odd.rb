@@ -15,7 +15,7 @@ module Number
       # end
 
       def optional_test
-        @arrow.delete_if { |arrow| arrow[0].nil? }
+        @arrows.delete_if { |arrow| arrow[0].nil? }
 
         return true if partner_is_even_or_odd
 
@@ -80,14 +80,14 @@ module Number
       end
 
       def arrows_on_the(group)
-        @arrow.select { |arrow| (arrow & group.cellList).size == 2 }
+        @arrows.select { |arrow| (arrow & group.cellList).size == 2 }
       end
 
       ###
       def partner_is_even_or_odd
         sw = nil
         puts 'partner_is_even_or_odd' if option[:verb]
-        @arrow.each do |arrow|
+        @arrows.each do |arrow|
           next unless arrow[0]
 
           if set_even_if_partner_is_odd(arrow)

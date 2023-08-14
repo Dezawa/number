@@ -12,7 +12,7 @@ module Number
         'KIKA'
       end
 
-      def set_block_group(gnr, _boxes, _bx, _by, _xmax, w, infile, sep)
+      def set_block_group(gnr, _boxes, _bx, _by, _xmax, w)
         c = -1
         while c < @size
           while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end

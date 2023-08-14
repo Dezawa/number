@@ -50,14 +50,14 @@ module Number
         #    pairがともに一つのGroupに属し、かつそのgroupに残るe/oの可能性が
         #    一つしか残されていない場合、そのpair cellはそのe/oに予約される
         ##################
-        @arrow.delete_if do |pair|
+        @arrows.delete_if do |pair|
           # pp [@cells[pair[0]].ability[0],@cells[pair[1]].ability[0]]
           @cells[pair[0]].v && @cells[pair[1]].v
         end
 
-        @arrow.each do |pair|
-          only_test(pair) && @arrow.delete(pair)
-          reserve(pair) && @arrow.delete(pair)
+        @arrows.each do |pair|
+          only_test(pair) && @arrows.delete(pair)
+          reserve(pair) && @arrows.delete(pair)
         end
         $gsw
       end

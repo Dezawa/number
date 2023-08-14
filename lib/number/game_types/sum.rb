@@ -15,9 +15,9 @@ module Number
       ##############
       def optional_struct(_sep, _n, infile)
         get_arrow(infile)
-        @arrow.each { |arw| arw[0] += 1 }
-        @arrow.sort! { |a, b| a.size <=> b.size }
-        # pp @arrow
+        @arrows.each { |arw| arw[0] += 1 }
+        #@arrows.sort! { |a, b| a.size <=> b.size }
+        # pp @arrows
         print_struct if $check
         check || exit(1)
         hamidasi
@@ -27,7 +27,7 @@ module Number
 
       def print_struct
         cell = Array.new(81)
-        @arrow.each do |ary|
+        @arrows.each do |ary|
           v = ary[0]
           ary[1..].each { |c| cell[c - 1] = v }
         end
@@ -44,11 +44,11 @@ module Number
         # block毎に
         arrow = @groups.select { |grp| grp.type == :block }.map do |grp|
           grp.cellList
-          # @arrowの中にgroup のcellと一致するcellを含むものがあれば抜き出し
+          # @arrowsの中にgroup のcellと一致するcellを含むものがあれば抜き出し
           # その groupに属さないcellの一覧を用意する
           sum = 0
           cells = []
-          @arrow.map do |arw|
+          @arrows.map do |arw|
             # pp [ arw,arw[1..-1], grp.cellList,(arw[1..-1] & grp.cellList)]
             next unless (arw[1..] & grp.cellList).size.positive?
 
@@ -68,19 +68,19 @@ module Number
         end.compact
         # pp arrow
         # exit
-        @arrow += arrow
+        @arrows += arrow
       end
 
       def check
         return true unless $check
 
-        p @arrow
-        p @arrow.size
+        p @arrows
+        p @arrows.size
         $err = true
         para = []
         q = []
         (1..@size).each { |i| q << i }
-        @arrow.each do |a|
+        @arrows.each do |a|
           b = a.dup
           b.shift
           para << b
@@ -129,7 +129,7 @@ module Number
       def optional_test
         if option[:verb]
           print 'sum arrow'
-          p @arrow
+          p @workarrow
         end
         optsw = nil
         delete_arys = []

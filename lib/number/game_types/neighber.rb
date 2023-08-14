@@ -10,21 +10,21 @@ module Number
       end
 
       def optional_struct(_sep, _n, infile)
-        # @arrow は、隣同士で一つ違いのcellの組み合わせ
+        # @arrows は、隣同士で一つ違いのcellの組み合わせ
         # $neigh は、初期値は隣同士のcell、このmethodの結果、二つ以上違うcellの組み合わせとなる
         $summax = 20
-        @arrow = []
+        @arrows = []
         while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
         w = []
         $LAST_READ_LINE.split.each { |c| w << c.to_i }
-        @arrow << w
+        @arrows << w
         while infile.gets && $LAST_READ_LINE =~ /^\s*\d+\s+\d+/
           w = []
           $LAST_READ_LINE.split.each { |c| w << c.to_i }
-          @arrow << w
+          @arrows << w
         end
         $nei = @neigh.dup
-        @arrow.each do |arw|
+        @arrows.each do |arw|
           (0..arw.size - 2).each do |a|
             @neigh.delete(arw[a, 2].sort)
           end
@@ -101,7 +101,7 @@ module Number
         # 失敗で終わってしまうので、ある程度までは成功したことにする
         $summax += 5
 
-        @arrow.each do |arrow|
+        @arrows.each do |arrow|
           if $dbg
             print '## neighber arrow'
             p arrow

@@ -11,8 +11,8 @@ module Number
 
       def optional_struct(_sep, _n, infile)
         get_arrow(infile)
-        @arrow.sort! { |a, b| a.size <=> b.size }
-        # p @arrow if optoin[:verb]
+        @arrows.sort! { |a, b| a.size <=> b.size }
+        # p @arrows if optoin[:verb]
 
         @summax = 20
 
@@ -23,7 +23,7 @@ module Number
         #     . . . . . . . . .
         # 同じgroupに属するcell を集める
         @arw_group = []
-        @arrow.each_with_index do |arrow, i|
+        @arrows.each_with_index do |arrow, i|
           # @arw_group[i]=arrow[1..-1].map{|cellNo|
           groups = arrow[1..].map do |cellNo| # cell の group の集合を求める
             @cells[cellNo].grpList
@@ -37,7 +37,7 @@ module Number
             cells.map { |c| arrow.index(c) }.sort
           end.uniq
         end
-        pp [@arrow, @arw_group] if option[:verb]
+        pp [@arrows, @arw_group] if option[:verb]
 
         check || exit(1)
         # pp @arw_group if option[:verb]
@@ -46,13 +46,13 @@ module Number
       def check
         return true unless $strct
 
-        pp @arrow
-        p @arrow.size
+        pp @arrows
+        p @arrows.size
         $err = nil
         para = []
         q = []
         (1..@size).each { |i| q << i }
-        @arrow.each do |a|
+        @arrows.each do |a|
           b = a.dup
           para << b
         end
@@ -68,7 +68,7 @@ module Number
       end
 
       # 矢印の○のcellと矢印のcell のarry、のarry
-      # @arrow = [[sumCell,c1,c2,c3], [sumCell,c1,c2] ]
+      # @arrows = [[sumCell,c1,c2,c3], [sumCell,c1,c2] ]
       #
       # arrowのc1,c2,c3,,, が同じgroupに属している場合は同じ数字は入らない。
       # それを枝刈りするための情報。arrow毎に同じgroupに属するcellの集合
@@ -85,7 +85,7 @@ module Number
       def optional_test
         if option[:verb]
           print "sum arrow @summax=#{@summax}\n"
-          p @arrow
+          p @arrows
         end
         optsw = nil
         delete_arys = []
@@ -94,8 +94,8 @@ module Number
         # 少しずつ大きくする。  このとき小さすぎると一つも解決できず、
         # 失敗で終わってしまうので、ある程度までは成功したことにする
         @summax += 5 # ;  $gsw =  true  if @summax<50
-        # @arrow.each_with_index
-        @arrow.each_with_index do |arrow, i| # 指定されたcellに残っている値の配列  の配列
+        # @arrows.each_with_index
+        @arrows.each_with_index do |arrow, i| # 指定されたcellに残っている値の配列  の配列
           # (0..arrow.size-1).each{|c| valus << @cells[arrow[c]].vlist }
           valus = arrow.map { |c| @cells[c].valu ? [@cells[c].valu] : @cells[c].vlist }
           pp ['arrow', arrow, @arw_group[i], valus] if option[:verb]
@@ -117,7 +117,7 @@ module Number
             # だめ
           end.compact
           pp @arw_group if option[:test]
-          pp @arrow if option[:test]
+          pp @arrows if option[:test]
           pp products if option[:test]
           # 　products = [ [sum,v1,v2,v3],[sum,V1,V2,V3] ]
           #     合計を満たす値の組み合わせ
@@ -146,7 +146,7 @@ module Number
         end
 
         while (i = delete_arys.pop)
-          @arrow.delete_at(i)
+          @arrows.delete_at(i)
           @arw_group.delete_at(i)
         end
         optsw # $gsw

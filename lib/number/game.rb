@@ -10,7 +10,7 @@ module Number
     IromonoReg = /#{Iromono.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
-    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrow, :block, :n, :option
+    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :block, :n, :option
     attr_reader :infile, :form, :sep, :game_type, :count
 
     def self.create(infile, option: {})
@@ -135,7 +135,7 @@ module Number
       # dataファイルの後半にある arrow情報を得る
       # 標準では何もしないmethod
       optional_struct(sep, @n, infile)
-      # @arrow = @arrow.compact if @arrow
+      # @arrows = @arrows.compact if @arrows
     end
 
     def optional_struct(a, b, f); end
@@ -144,13 +144,13 @@ module Number
       puts 'GET ARROW' if option[:verb]
       # $_ =~ /^[#\s]*$/ && while infile.gets =~ /^[#\s]*$/;end
       while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
-      @arrow = []
+      @arrows = []
       a = []
       puts $LAST_READ_LINE if option[:verb]
       raise 'ENOUGH ARROW DATA' unless $LAST_READ_LINE
 
       $LAST_READ_LINE.split.each { |c| a << c.to_i - 1 }
-      @arrow << a.dup
+      @arrows << a.dup
 
       puts "arrow #{$LAST_READ_LINE}" if option[:verb]
       while infile.gets =~ /\d/
@@ -159,10 +159,10 @@ module Number
 
         a = []
         $LAST_READ_LINE.split.each { |c| a << c.to_i - 1 }
-        @arrow << a.dup
+        @arrows << a.dup
       end
-      @arrow = @arrow.compact if @arrow
-      @arrow = @arrow.sort { |a, b| b.size <=> a.size }
+      @arrows = @arrows.compact if @arrows
+      #@arrows = @arrows.sort { |a, b| b.size <=> a.size }
     end
 
     ### def structure(data,form,sep)

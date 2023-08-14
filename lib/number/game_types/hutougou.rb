@@ -11,21 +11,21 @@ module Number
       # module Optional
       def optional_struct(_sep, _n, infile)
         while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
-        @arrow = []
+        @arrows = []
         while $LAST_READ_LINE =~ /\d/
           a = []
           $LAST_READ_LINE.split.each { |c| a << c.to_i }
-          @arrow << a.dup
+          @arrows << a.dup
           infile.gets
         end
-        @neigh -= @arrow
+        @neigh -= @arrows
         # p $neigh
-        # p @arrow
+        # p @arrows
       end
       # end
 
       def optional_test
-        @arrow.each do |arw|
+        @arrows.each do |arw|
           l = arw[0]
           h = arw[1]
           llist = @cells[l].vlist
