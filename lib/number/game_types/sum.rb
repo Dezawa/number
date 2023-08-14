@@ -20,8 +20,9 @@ module Number
         # pp @arrows
         print_struct if $check
         check || exit(1)
-        hamidasi
-
+        #hamidasi
+        cell_fix_for_single_cell_arrow
+        
         @summax = 25
       end
 
@@ -37,6 +38,11 @@ module Number
         end
       end
 
+      def cell_fix_for_single_cell_arrow
+        @arrows.select{|arrow| arrow.size == 2}
+          .each{|arrow| @cells[arrow[1]].set(arrow[0], 'sum')}
+        @work_arrow = @arrows.select{|arrow| arrow.size > 2 }
+      end
       # block の正方形からはみ出している部分を取り出し、それの合計が
       # いくつになるかも arrowに追加する。
       # ただしはみ出しが一つのblockに入っていない場合は厄介だから無視。
@@ -139,53 +145,87 @@ module Number
         # 失敗で終わってしまうので、ある程度までは成功したことにする
         @summax += 5
         $gsw = true if @summax < 40
-        @arrow.each_with_index do |arrow, i|
+        @work_arrow.each_with_index do |arrow, arrow_idx|
+          next unless arrow
+
+          if arrow.size == 2
+            @cells[arrow[1]].set(arrow[0], 'sum') && $gsw = optsw = true
+            arrow = nil
+            next
+          end
           # pp ["arrow",arrow,@summax] if option[:verb]
           valus = [] # 指定されたcellに残っている値の配列  の配列
           sum = arrow[0]
-          (1..arrow.size - 1).each { |c| valus << @cells[arrow[c]].vlist }
+          arrow[1..-1].each { |cell_id| valus << @cells[cell_id].vlist }
 
           # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
           next if valus.flatten.size > @summax
-
-          # 高速化のための枝切りだが、変わらない。 0.1秒。。。
-          #  ここが働き出すまでに8秒、残り3秒弱
-          #    最初の 一セルfix までに  6秒
-          if valus.flatten.size == valus.size
-            # pp ["arw.delete_at",i,arrow]
-            delete_arys << i # arw.delete_at(i)
-            next # 一つ飛んじゃうな
-          end
-          # pp [valus.flatten.size ,valus.size,valus]
-          # ここに枝切りとして、同じ数字があったらだめ、を入れたいのだが、
-          # 違うグループに属するcellの場合は許される？ のでややこしい
-          #   だが、大物はこれがないと解けないのでとりあえずこれで入れておく
-          # pp valus if option[:verb]
-          # pp  product_sum(sum,valus) if option[:verb]
           products_all = valus.size == 1 ? valus : valus[0].product(*valus[1..])
-          products = products_all.select do |vary|
-            # products = product_sum(sum,valus).select{|vary|
-            sm = vary.inject(0) { |sm, v| sm + v.to_i }
-            sm == sum and vary.size == vary.uniq.size
-          end
-          val = products[0].zip(*products[1..])
-          val = val.map(&:uniq)
 
-          val.each_with_index do |vary, c|
-            if vary.size == 1 # 一つに絞られたら、そのcellは決定
-              pp ["cell #{arrow[c + 1]}  fix", vary[0]] if option[:verb]
-              @cells[arrow[c + 1]].set(vary[0], 'sum') && $gsw = optsw = true
-            elsif (vv = valus[c] - vary).size.positive?
-              pp ["cell #{arrow[c + 1]}  delete", vv] if option[:verb]
-              @cells[arrow[c + 1]].rmAbility(vv, 'sum') && $gsw = optsw = true
-            end
+          valu_set_ary = list_of_aviable_valu_set(arrow, products_all, sum)
+
+          if valu_set_ary.size == 1
+            # fix!
+            valu_set_ary.first.each_with_index{|val, idx|
+              @cells[arrow[idx + 1]].set(val, 'sum') && $gsw = optsw = true
+            }
+            @work_arrow[arrow_idx] = nil
+          else
+            # 可能性を削っていく
+            rm_ability(arrow_idx, valu_set_ary)
           end
-          while (i = delete_arys.pop); @arrow.delete_at(i); end
+          # while (i = delete_arys.pop); @arrows.delete_at(i); end
           if optsw
             @summax -= 5
             return true # 一つできたら全体見直しする
           end
         end
+      end
+
+      # arrayを構成する各cellの [残された可能性ある値]の組み合わせの中で
+      # 合計が sum になるものの組み合わせを返す。ただし、同じ値が有る場合は除く
+      # products_all :: [残された可能性ある値] のproduct
+      def list_of_aviable_valu_set(arrow, products_all, sum)
+        products_all
+          .select{|cells_value| cells_value.flatten.sum == sum}
+          .select{|cells_value|
+          cells_value.uniq.size == cells_value.size ||
+            is_allowable_dup?(arrow,cells_value)
+        }
+      end
+      
+      def valus_each_cells
+        products.inject{|sum,ary| sum.zip(ary)}.map{|a| a.flatten.uniq}
+      end
+      # sumを満たす値の組み合わせで同じ数字を使うものが有った場合、
+      # それらが同じ groupに属しているか否かで判定する
+      def is_allowable_dup?(arrow,sells_value)
+        return false if arrow.size == 3
+        duped_value = sells_value.tally.select{|v,c| c>1}.first&.first
+        return true unless duped_value
+        duped_index = sells_value.map.with_index{|v,idx| v == duped_value ? idx : nil }.compact
+
+        duped_cells = duped_index.map{|idx| @cells[arrow[idx+1]] }
+        duped_cells.map{|cell| cell.grpList}.flatten.tally.all?{|v,c| c == 1 }
+      end
+
+      # cell毎の残された可能性に基づき、cellのabilityを調整する
+      # valu_set_ary :: sum になる組み合わせのary
+      def rm_ability(arrow_idx, valu_set_ary)
+        values_of_each_cell = valu_set_ary.transpose
+        values_of_each_cell.each_with_index{|values, idx_on_arry|
+          cell_idx = @work_arrow[arrow_idx][idx_on_arry + 1]
+          if values.size == 1 # このcellはfix
+            @cells[cell_idx].set(values.first, 'sum') && $gsw = optsw = true
+          elsif values.size > 1
+            # @cells[cell_idx]の可能性を調整する
+            # 新たな可能性は values。既に消えている可能性もある
+            if (vv = values - @cells[cell_idx].ability).size.positive?
+              @cells[cell_idx].rmAbility(vv, 'sum') && $gsw = optsw = true
+            end
+          else # 可能性無し！ どっかおかしい
+          end
+        }
       end
     end
   end
