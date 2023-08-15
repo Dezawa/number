@@ -48,7 +48,7 @@ RSpec.describe Number::Game, type: :model do
     Number::Game::Iromono.each do |game_type|
       it "#{game_type}がextendされる" do
         game = Number::Game.new(infile, '9', game_type: game_type)
-        pp [game.game_type,game.game, game.object_id]
+        pp [game.game_type, game.game, game.object_id]
         game.set_game_type
         expect(game.game).to eq game_type
       end

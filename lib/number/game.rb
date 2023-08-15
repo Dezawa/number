@@ -52,7 +52,7 @@ module Number
     def game
       'NOMAL'
     end
-    
+
     def set_game_type
       required = IromonoReg =~ game_type ? "./game_types/#{::Regexp.last_match(0).downcase}" : nil
       return unless required
