@@ -8,13 +8,14 @@ module Number
       cell = new(arg_game, cell_no, arg_grpList, count, option: option)
       cell.setup
     end
+
     def initialize(arg_game, cell_no, arg_grpList, count, option: {})
       @game = arg_game
       @c = cell_no
       @grpList = arg_grpList
       @count = count
       @option = option
-      #pp [:option,option]
+      # pp [:option,option]
     end
 
     def setup
@@ -25,7 +26,7 @@ module Number
       @groups = @game.groups
       self
     end
-    
+
     def inspect
       super +
         %i[c valu grpList ability].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join

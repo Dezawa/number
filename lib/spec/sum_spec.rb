@@ -10,18 +10,16 @@ require_relative '../number/game_types'
 require_relative '../number/game_types/sum'
 
 RSpec.describe Number::Game, type: :model do
-
   let(:game) do
     game = Number::Game.new('', '9', game_type: 'SUM')
     game.extend Number::GameTypes::GameType
   end
 
   context :list_of_aviable_valu_set do
-    cell1 = [1,2,3]
-    cell2 = [2,3,4]
-    cell3 = [3,4,5]
-    
-      
+    cell1 = [1, 2, 3]
+    cell2 = [2, 3, 4]
+    cell3 = [3, 4, 5]
+
     before do
       allow(game).to receive(:is_allowable_dup?).and_return(true)
     end
@@ -30,7 +28,7 @@ RSpec.describe Number::Game, type: :model do
       it 'sum=9のとき7組できる' do
         sum = 9
         products_all = cell1.product(cell2, cell3)
-        expect(game.list_of_aviable_valu_set([3,4,5,6],products_all, sum).size)
+        expect(game.list_of_aviable_valu_set([3, 4, 5, 6], products_all, sum).size)
           .to eq 7
       end
     end
@@ -49,23 +47,23 @@ RSpec.describe Number::Game, type: :model do
 
     before do
       # cell20は c-idx20、すなわち21番め
-      game.cells = [nil]*20+[cell20,cell21,cell22,cell23]+[nil]*5+[cell29,cell30,nil]
+      game.cells = [nil] * 20 + [cell20, cell21, cell22, cell23] + [nil] * 5 + [cell29, cell30, nil]
     end
     it '横一直線のとき同じ数字があるとfalse' do
-      sells_value = [ 1,2,1]
-      expect(game.is_allowable_dup?(arrow1,sells_value)).to eq false
+      sells_value = [1, 2, 1]
+      expect(game.is_allowable_dup?(arrow1, sells_value)).to eq false
     end
     it '横一直線のとき同じ数字がないとtrue' do
-      sells_value = [ 1,2,4]
-      expect(game.is_allowable_dup?(arrow1,sells_value)).to eq true
+      sells_value = [1, 2, 4]
+      expect(game.is_allowable_dup?(arrow1, sells_value)).to eq true
     end
     it 'コの字のとき1,2つ目に同じ数字があるとfalse' do
-      sells_value = [ 1,1,3]
-      expect(game.is_allowable_dup?(arrow2,sells_value)).to eq false
+      sells_value = [1, 1, 3]
+      expect(game.is_allowable_dup?(arrow2, sells_value)).to eq false
     end
     it 'コの字のとき1,3つ目に同じ数字が有ってもtrue' do
-      sells_value = [ 1,2,1]
-      expect(game.is_allowable_dup?(arrow2,sells_value)).to eq true
+      sells_value = [1, 2, 1]
+      expect(game.is_allowable_dup?(arrow2, sells_value)).to eq true
     end
   end
 end

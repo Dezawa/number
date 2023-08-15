@@ -24,7 +24,11 @@ module Number
     end
 
     def gout
-      pp(groups.map { |grp| ["Group #{grp.g}:",grp.cellList]}) #.ability.map { |abl| [grp.g, abl] if (abl[0]).positive? }.compact })
+      pp( # .ability.map { |abl| [grp.g, abl] if (abl[0]).positive? }.compact })
+        groups.map do |grp|
+          ["Group #{grp.g}:", grp.cellList]
+        end
+      )
     end
 
     def cout

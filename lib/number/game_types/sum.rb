@@ -16,13 +16,13 @@ module Number
       def optional_struct(_sep, _n, infile)
         get_arrow(infile)
         @arrows.each { |arw| arw[0] += 1 }
-        #@arrows.sort! { |a, b| a.size <=> b.size }
+        # @arrows.sort! { |a, b| a.size <=> b.size }
         # pp @arrows
         print_struct if $check
         check || exit(1)
-        #hamidasi
+        # hamidasi
         cell_fix_for_single_cell_arrow
-        
+
         @summax = 25
       end
 
@@ -39,10 +39,11 @@ module Number
       end
 
       def cell_fix_for_single_cell_arrow
-        @arrows.select{|arrow| arrow.size == 2}
-          .each{|arrow| @cells[arrow[1]].set(arrow[0], 'sum')}
-        @work_arrow = @arrows.select{|arrow| arrow.size > 2 }
+        @arrows.select { |arrow| arrow.size == 2 }
+               .each { |arrow| @cells[arrow[1]].set(arrow[0], 'sum') }
+        @work_arrow = @arrows.select { |arrow| arrow.size > 2 }
       end
+
       # block の正方形からはみ出している部分を取り出し、それの合計が
       # いくつになるかも arrowに追加する。
       # ただしはみ出しが一つのblockに入っていない場合は厄介だから無視。
@@ -160,15 +161,16 @@ module Number
 
           # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
           next if valus.flatten.size > @summax
+
           products_all = valus.size == 1 ? valus : valus[0].product(*valus[1..])
 
           valu_set_ary = list_of_aviable_valu_set(arrow, products_all, sum)
 
           if valu_set_ary.size == 1
             # fix!
-            valu_set_ary.first.each_with_index{|val, idx|
+            valu_set_ary.first.each_with_index do |val, idx|
               @cells[arrow[idx + 1]].set(val, 'sum') && $gsw = optsw = true
-            }
+            end
             @work_arrow[arrow_idx] = nil
           else
             # 可能性を削っていく
@@ -187,33 +189,36 @@ module Number
       # products_all :: [残された可能性ある値] のproduct
       def list_of_aviable_valu_set(arrow, products_all, sum)
         products_all
-          .select{|cells_value| cells_value.flatten.sum == sum}
-          .select{|cells_value|
+          .select { |cells_value| cells_value.flatten.sum == sum }
+          .select do |cells_value|
           cells_value.uniq.size == cells_value.size ||
-            is_allowable_dup?(arrow,cells_value)
-        }
+            is_allowable_dup?(arrow, cells_value)
+        end
       end
-      
+
       def valus_each_cells
-        products.inject{|sum,ary| sum.zip(ary)}.map{|a| a.flatten.uniq}
+        products.inject { |sum, ary| sum.zip(ary) }.map { |a| a.flatten.uniq }
       end
+
       # sumを満たす値の組み合わせで同じ数字を使うものが有った場合、
       # それらが同じ groupに属しているか否かで判定する
-      def is_allowable_dup?(arrow,sells_value)
+      def is_allowable_dup?(arrow, sells_value)
         return false if arrow.size == 3
-        duped_value = sells_value.tally.select{|v,c| c>1}.first&.first
-        return true unless duped_value
-        duped_index = sells_value.map.with_index{|v,idx| v == duped_value ? idx : nil }.compact
 
-        duped_cells = duped_index.map{|idx| @cells[arrow[idx+1]] }
-        duped_cells.map{|cell| cell.grpList}.flatten.tally.all?{|v,c| c == 1 }
+        duped_value = sells_value.tally.select { |_v, c| c > 1 }.first&.first
+        return true unless duped_value
+
+        duped_index = sells_value.map.with_index { |v, idx| v == duped_value ? idx : nil }.compact
+
+        duped_cells = duped_index.map { |idx| @cells[arrow[idx + 1]] }
+        duped_cells.map { |cell| cell.grpList }.flatten.tally.all? { |_v, c| c == 1 }
       end
 
       # cell毎の残された可能性に基づき、cellのabilityを調整する
       # valu_set_ary :: sum になる組み合わせのary
       def rm_ability(arrow_idx, valu_set_ary)
         values_of_each_cell = valu_set_ary.transpose
-        values_of_each_cell.each_with_index{|values, idx_on_arry|
+        values_of_each_cell.each_with_index do |values, idx_on_arry|
           cell_idx = @work_arrow[arrow_idx][idx_on_arry + 1]
           if values.size == 1 # このcellはfix
             @cells[cell_idx].set(values.first, 'sum') && $gsw = optsw = true
@@ -223,9 +228,8 @@ module Number
             if (vv = values - @cells[cell_idx].ability).size.positive?
               @cells[cell_idx].rmAbility(vv, 'sum') && $gsw = optsw = true
             end
-          else # 可能性無し！ どっかおかしい
           end
-        }
+        end
       end
     end
   end

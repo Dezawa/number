@@ -116,7 +116,6 @@ class Numple
   def create_game
     @game = Number::Game.create(infile, option: option)
   end
-
 end
 ################# end of Numple ###
 

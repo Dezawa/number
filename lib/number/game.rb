@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require 'English'
 require_relative './make_waku_pform'
 require_relative './resolver'
 
 module Number
   class Game
-    Iromono = %w[ARROW SUM KIKA XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL].freeze
+    Iromono = %w[ARROW KIKA SUM XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL].freeze
     IromonoReg = /#{Iromono.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
@@ -33,12 +32,10 @@ module Number
 
     def self.gets_skip_comment(infile)
       line = infile.gets
-      while  line =~ /^\s*#/ || line =~ /^\s*$/
-        line = infile.gets
-      end
+      line = infile.gets while line =~ /^\s*#/ || line =~ /^\s*$/
       line
     end
-    
+
     def optional_test; end
 
     def initialize(infile, arg_form_type, game_type: nil, option: {})
@@ -166,7 +163,7 @@ module Number
         @arrows << a.dup
       end
       @arrows = @arrows.compact if @arrows
-      #@arrows = @arrows.sort { |a, b| b.size <=> a.size }
+      # @arrows = @arrows.sort { |a, b| b.size <=> a.size }
     end
 
     ### def structure(data,form,sep)
