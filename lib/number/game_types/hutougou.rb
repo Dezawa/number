@@ -14,7 +14,7 @@ module Number
         @arrows = []
         while $LAST_READ_LINE =~ /\d/
           a = []
-          $LAST_READ_LINE.split.each { |c| a << c.to_i }
+          $LAST_READ_LINE.split.each { |c| a << c.to_i - 1 }
           @arrows << a.dup
           infile.gets
         end
