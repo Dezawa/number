@@ -4,7 +4,7 @@
 module Number
   module GameTypes
     module GameType
-      def game_type
+      def game
         'XROSS'
       end
 

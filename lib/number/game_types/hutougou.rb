@@ -4,7 +4,7 @@ require 'English'
 module Number
   module GameTypes
     module GameType
-      def game_type
+      def game
         'HUTOUGOU'
       end
 
