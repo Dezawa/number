@@ -45,7 +45,7 @@
 #
 
 require 'English'
-$help = "
+@help = "
    -S   統計出力   どのテクニックが何回使われたか
    -s   構造出力   groupに属するcell、cellが属するgroup、arrow
    -v   おしゃべり 状況変更毎に表示。 テクニック使用、cell確定
@@ -88,11 +88,12 @@ require_relative 'number/resolver'
 require_relative 'number/make_waku_pform'
 require_relative 'number/group_ability'
 
+# ナンプレのフロントエンド
 class Numple
   attr_reader :infile, :game, :option
 
   def initialize(infile, option: {})
-    @infile = infile.is_a?(String) ? open(infile) : infile
+    @infile = infile.is_a?(String) ? File.open(infile) : infile
     @option = option
   end
 

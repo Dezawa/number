@@ -28,7 +28,7 @@ RSpec.describe Number::Game, type: :model do
 
     context 'cell[0]は' do
       it 'group 0,9,18 に属する' do
-        expect(game.cells[0].grpList).to eq [0, 9, 18]
+        expect(game.cells[0].grp_list).to eq [0, 9, 18]
       end
       it 'abirityは[]' do
         expect(game.cells[0].ability).to eq []
@@ -36,7 +36,7 @@ RSpec.describe Number::Game, type: :model do
     end
     context 'cell[3]は' do
       it 'group 0,12,18 に属する' do
-        expect(game.cells[3].grpList).to eq [0, 12, 19]
+        expect(game.cells[3].grp_list).to eq [0, 12, 19]
       end
       it 'abirityは123以外' do
         expect(game.cells[3].ability).to eq [4, 5, 6, 7, 8, 9]
@@ -45,7 +45,7 @@ RSpec.describe Number::Game, type: :model do
   end
 
   describe '色物拡張' do
-    Number::Game::Iromono.each do |game_type|
+    Number::Game::IROMONO.each do |game_type|
       it "#{game_type}がextendされる" do
         game = Number::Game.new(infile, '9', game_type: game_type)
         pp [game.game_type, game.game, game.object_id]
@@ -89,7 +89,7 @@ RSpec.describe Number::Game, type: :model do
 
   describe 'self.form_and_game_type' do
     let(:infile) { StringIO.new(data) }
-    FormTypes.each do |comment, line, result|
+    FORM_TYPES.each do |comment, line, result|
       context comment do
         let(:data) { line }
         it "#{result} が帰る" do
@@ -100,7 +100,7 @@ RSpec.describe Number::Game, type: :model do
   end
 end
 __END__
-    Number::Game::Iromono.each do |game_type|
+    Number::Game::IROMONO.each do |game_type|
       it '戻り値' do
         infile = StringIO.new("# #{game_type}\n9\n" + data, 'r+')
         numple = Numple.new(infile)

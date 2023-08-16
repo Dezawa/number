@@ -2,6 +2,7 @@
 
 module Number
   module GameTypes
+    # SUMのextend
     module GameType
       def game
         'SUM'
@@ -66,8 +67,8 @@ module Number
           # そのcellが一つのgrpに属していたら登録する
           next unless cells.size.positive?
 
-          g_list = @cells[cells[0]].grpList
-          cells[1..].each { |c| g_list &= @cells[c].grpList }
+          g_list = @cells[cells[0]].grp_list
+          cells[1..].each { |c| g_list &= @cells[c].grp_list }
           if g_list.size.positive?
             # pp [sum,cells]
             cells.unshift(sum - 45)
@@ -79,11 +80,11 @@ module Number
       end
 
       def check
-        return true unless $check
+        return true unless @check
 
         p @arrows
         p @arrows.size
-        $err = true
+        @err = true
         para = []
         q = []
         (1..@size).each { |i| q << i }
@@ -98,12 +99,12 @@ module Number
         qq = (q - para).sort
         if qq.size.positive?
           $stderr.print "Optional Para is missing   #{qq.join(',')}\n"
-          # $err=true
+          # @err=true
         end
         qq = (para - q).sort
         if qq.size.positive?
           $stderr.print "Optional Para is tomuch   #{qq.join(',')}\n"
-          $err = nil
+          @err = nil
         end
 
         if p.size != para.size
@@ -113,15 +114,15 @@ module Number
             $stderr.print " #{qq[i]}" if qq[i] == qq[i + 1]
           end
           $stderr.print "\n"
-          $err = nil
+          @err = nil
         end
         qq = (para - q).sort
         if qq.size.positive?
           $stderr.print "Optional Para value is wrong   #{qq.join(',')}\n"
-          $err = nil
+          @err = nil
         end
 
-        $err
+        @err
       end
 
       # end
@@ -144,12 +145,12 @@ module Number
         # 少しずつ大きくする。  このとき小さすぎると一つも解決できず、
         # 失敗で終わってしまうので、ある程度までは成功したことにする
         @summax += 5
-        $gsw = true if @summax < 40
+        @gsw = true if @summax < 40
         @work_arrow.each_with_index do |arrow, arrow_idx|
           next unless arrow
 
           if arrow.size == 2
-            @cells[arrow[1]].set(arrow[0], 'sum') && $gsw = optsw = true
+            @cells[arrow[1]].set(arrow[0], 'sum') && @gsw = optsw = true
             arrow = nil
             next
           end
@@ -168,7 +169,7 @@ module Number
           if valu_set_ary.size == 1
             # fix!
             valu_set_ary.first.each_with_index do |val, idx|
-              @cells[arrow[idx + 1]].set(val, 'sum') && $gsw = optsw = true
+              @cells[arrow[idx + 1]].set(val, 'sum') && @gsw = optsw = true
             end
             @work_arrow[arrow_idx] = nil
           else
@@ -191,7 +192,7 @@ module Number
           .select { |cells_value| cells_value.flatten.sum == sum }
           .select do |cells_value|
           cells_value.uniq.size == cells_value.size ||
-            is_allowable_dup?(arrow, cells_value)
+            allowable_dup?(arrow, cells_value)
         end
       end
 
@@ -201,7 +202,7 @@ module Number
 
       # sumを満たす値の組み合わせで同じ数字を使うものが有った場合、
       # それらが同じ groupに属しているか否かで判定する
-      def is_allowable_dup?(arrow, sells_value)
+      def allowable_dup?(arrow, sells_value)
         return false if arrow.size == 3
 
         duped_value = sells_value.tally.select { |_v, c| c > 1 }.first&.first
@@ -210,7 +211,7 @@ module Number
         duped_index = sells_value.map.with_index { |v, idx| v == duped_value ? idx : nil }.compact
 
         duped_cells = duped_index.map { |idx| @cells[arrow[idx + 1]] }
-        duped_cells.map(&:grpList).flatten.tally.all? { |_v, c| c == 1 }
+        duped_cells.map(&:grp_list).flatten.tally.all? { |_v, c| c == 1 }
       end
 
       # cell毎の残された可能性に基づき、cellのabilityを調整する
@@ -220,12 +221,12 @@ module Number
         values_of_each_cell.each_with_index do |values, idx_on_arry|
           cell_idx = @work_arrow[arrow_idx][idx_on_arry + 1]
           if values.size == 1 # このcellはfix
-            @cells[cell_idx].set(values.first, 'sum') && $gsw = true
+            @cells[cell_idx].set(values.first, 'sum') && @gsw = true
           elsif values.size > 1
             # @cells[cell_idx]の可能性を調整する
             # 新たな可能性は values。既に消えている可能性もある
             if (vv = values - @cells[cell_idx].ability).size.positive?
-              @cells[cell_idx].rmAbility(vv, 'sum') && $gsw = true
+              @cells[cell_idx].rm_ability(vv, 'sum') && @gsw = true
             end
           end
         end

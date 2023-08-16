@@ -2,6 +2,7 @@
 
 module Number
   module GameTypes
+    # 偶奇のextend
     module GameType
       def game
         'ODD'
@@ -45,10 +46,10 @@ module Number
         sw = nil
         cellss_not_included.each do |cno|
           cell = cells[cno]
-          if cell.is_odd
+          if cell.odd?
             odd -= 1
             cells_not_included.delete(cno)
-          elsif cell.is_even
+          elsif cell.even?
             even -= 1
             cells_not_included.delete(cno)
           end
@@ -74,7 +75,7 @@ module Number
         group.cell_list - arrows.inject([]) { |cells, arrow| cells | arrow }
       end
 
-      def cell_is_odd?(_cell, _group, arrows)
+      def cell_odd?(_cell, _group, arrows)
         even = game_scale / 2 - arrows.size
         true if even.zero?
       end
@@ -90,7 +91,7 @@ module Number
         @arrows.each do |arrow|
           next unless arrow[0]
 
-          if set_even_if_partner_is_odd(arrow)
+          if set_even_if_partner_odd?(arrow)
             sw = true
             next
           elsif  set_odd_if_partner_is_even(arrow)
@@ -103,9 +104,9 @@ module Number
 
       def set_odd_if_partner_is_even(arrow)
         c1, c2 = arrow
-        if @cells[c1].is_odd
+        if @cells[c1].odd?
           @cells[c2].set_even
-        elsif @cells[c2].is_odd
+        elsif @cells[c2].odd?
           @cells[c1].set_even
         else
           return nil
@@ -117,9 +118,9 @@ module Number
 
       def set_even_if_partner_is_odd(arrow)
         c1, c2 = arrow
-        if @cells[c1].is_even
+        if @cells[c1].even?
           @cells[c2].set_odd
-        elsif @cells[c2].is_even
+        elsif @cells[c2].even?
           @cells[c1].set_odd
         else
           return nil

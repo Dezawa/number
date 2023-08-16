@@ -37,11 +37,11 @@ module Number
     end
 
     def line_groups_join_with
-      cell_list.inject([]) { |g_nrs, c| g_nrs | @cells[c].grpList } - [g]
+      cell_list.inject([]) { |g_nrs, c| g_nrs | @cells[c].grp_list } - [g]
     end
 
     def block_groups_join_with
-      cell_list.inject([]) { |g_nrs, c| g_nrs << @cells[c].grpList[2] }.uniq
+      cell_list.inject([]) { |g_nrs, c| g_nrs << @cells[c].grp_list[2] }.uniq
     end
 
     def rmCellAbility(v0, cell_no, msg = nil)
@@ -60,17 +60,17 @@ module Number
     end
 
     # このgroupの値 v
-    def rmAbility(v, except_cells = [], msg = '')
+    def rm_ability(rm_value, except_cells = [], msg = '')
       # このgrpに属する各cellの値vの可能性を調べ、残っていたら
       # 可能性を削除する
       # ただし、array except_cells  にある cell はいじらない。
       # vが配列の場合は、その中をすべて
-      v = [v] unless v.instance_of?(Array)
+      v = [rm_value] unless v.instance_of?(Array)
       rm_cells = @cell_list - except_cells
       ret = nil
       rm_cells.each do |c0| # (0..game_scale-1).each{|c| c0=@cell_list[c]
         if (@cells[c0].ability & v).size.positive?
-          @cells[c0].rmAbility(v, msg)
+          @cells[c0].rm_ability(v, msg)
           ret = true
         end
       end

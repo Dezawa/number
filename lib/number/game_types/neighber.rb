@@ -4,6 +4,7 @@
 require 'English'
 module Number
   module GameTypes
+    # NEIGHBERのextend
     module GameType
       def game
         'NEIGHBER'
@@ -81,11 +82,11 @@ module Number
             next unless (v0 - v).abs < 2
 
             if $dbg
-              print 'rmAbility by neiber '
+              print 'rm_ability by neiber '
               p neigh
             end
-            c.rmAbility(v, "rmAbility by neiber test1:cell #{neighber}=#{v0}")
-            ret = $gsw = $optsw = true
+            c.rm_ability(v, "rm_ability by neiber test1:cell #{neighber}=#{v0}")
+            ret = @gsw = $optsw = true
           end
         end
         ret
@@ -155,8 +156,8 @@ module Number
               # それ以外の数字をそのcellの可能性から消す
               vv = @cells[arrow[c]].vlist - w[c]
               if vv.size.positive?
-                @cells[arrow[c]].rmAbility(vv, "rmAbility by neiber test2[#{arrow.join(',')}]")
-                ret = $gsw = $optsw = true
+                @cells[arrow[c]].rm_ability(vv, "rm_ability by neiber test2[#{arrow.join(',')}]")
+                ret = @gsw = $optsw = true
               end
             end
           end
@@ -201,7 +202,7 @@ module Number
           v = cell1.vlist
           v += [v[0] + 1, v[0] - 1, v[1] + 1, v[1] - 1].uniq.select(&:positive?)
           nei.each do |c|
-            cells[c].rmAbility(v, "neighber test3 cells #{c1},#{c2}") &&
+            cells[c].rm_ability(v, "neighber test3 cells #{c1},#{c2}") &&
               ret = $optsw = true
           end
         end
@@ -241,7 +242,7 @@ module Number
             if vs[1] - vs[0] == 1
               if vs[2] - vs[1] == 1
                 # 3連続ならまん中の数をまん中のcellから外す
-                @cells[c1].rmAbility(vs[1], 'neighber test4')
+                @cells[c1].rm_ability(vs[1], 'neighber test4')
               else
                 # 2連続と片割れ だったら、片割れをまん中にセット。
                 @cells[c1].set(vs[2])

@@ -4,12 +4,13 @@
 # ○のcell番号 arrowのcell番号達
 module Number
   module GameTypes
+    # ARROWのextend
     module GameType
       def game
         'ARROW'
       end
 
-      def optional_struct(_sep, _n, infile)
+      def optional_struct(_sep, _game_scale, infile)
         get_arrow(infile)
         @arrows.sort! { |a, b| a.size <=> b.size }
         # p @arrows if optoin[:verb]
@@ -24,15 +25,15 @@ module Number
         # 同じgroupに属するcell を集める
         @arw_group = []
         @arrows.each_with_index do |arrow, i|
-          # @arw_group[i]=arrow[1..-1].map{|cellNo|
-          groups = arrow[1..].map do |cellNo| # cell の group の集合を求める
-            @cells[cellNo].grpList
+          # @arw_group[i]=arrow[1..-1].map{|cell_no|
+          groups = arrow[1..].map do |cell_no| # cell の group の集合を求める
+            @cells[cell_no].grp_list
           end.flatten.uniq
-          cellsSameGroup = groups.map do |grpNo|
-            cells = @groups[grpNo].cell_list & arrow[1..]
+          cells_same_group = groups.map do |grp_no|
+            cells = @groups[grp_no].cell_list & arrow[1..]
             cells if cells.size > 1
           end.compact
-          @arw_group[i] = cellsSameGroup.map do |cells|
+          @arw_group[i] = cells_same_group.map do |cells|
             # そのcellはallowの何番目の要素か
             cells.map { |c| arrow.index(c) }.sort
           end.uniq
@@ -48,7 +49,7 @@ module Number
 
         pp @arrows
         p @arrows.size
-        $err = nil
+        @err = nil
         para = []
         q = []
         (1..@size).each { |i| q << i }
@@ -93,7 +94,7 @@ module Number
         # 効率化のため組み合わせの数が大きくならないように制限する数を
         # 少しずつ大きくする。  このとき小さすぎると一つも解決できず、
         # 失敗で終わってしまうので、ある程度までは成功したことにする
-        @summax += 5 # ;  $gsw =  true  if @summax<50
+        @summax += 5 # ;  @gsw =  true  if @summax<50
         # @arrows.each_with_index
         @arrows.each_with_index do |arrow, i| # 指定されたcellに残っている値の配列  の配列
           # (0..arrow.size-1).each{|c| valus << @cells[arrow[c]].vlist }
@@ -129,8 +130,8 @@ module Number
             vv = vals - newvalus[i]
             next unless vv.size.positive?
 
-            @cells[arrow[i]].rmAbility(vv, 'arrow')
-            $gsw = true
+            @cells[arrow[i]].rm_ability(vv, 'arrow')
+            @gsw = true
             if newvalus[i].size == 1 # 結果一つになれば決定
               optsw = true
               @cells[arrow[i]].set(newvalus[i][0])
@@ -149,7 +150,7 @@ module Number
           @arrows.delete_at(i)
           @arw_group.delete_at(i)
         end
-        optsw # $gsw
+        optsw # @gsw
       end
     end
   end

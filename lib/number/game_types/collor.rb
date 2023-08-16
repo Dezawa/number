@@ -4,12 +4,13 @@
 require 'English'
 module Number
   module GameTypes
+    # COLLORのextend
     module GameType
       def game
         'COLLOR'
       end
 
-      def set_optional_group(gnr, _boxes, _bx, _by, _xmax, w, infile, _sep)
+      def set_optional_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku, infile, _sep)
         #    puts gnr
         while infile.gets !~ /^([\d\s]+$)/; end
         while $LAST_READ_LINE =~ /^([\d\s]+$)/
@@ -17,7 +18,7 @@ module Number
             #        puts $_
             @groups[gnr] = Number::Group.new(self, gnr, :option, @count)
             $LAST_READ_LINE.split.each do |cell| # これらのcellがそのgrp
-              ww = w.assoc(cell.to_i - 1)
+              ww = waku.assoc(cell.to_i - 1)
               ww[1] << gnr
             end
             gnr += 1

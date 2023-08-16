@@ -19,6 +19,7 @@ end
 
 module Number
   module GameTypes
+    # CUPCELLのextend
     module GameType
       def game
         'CUPCELL'
@@ -26,7 +27,7 @@ module Number
 
       # coding: euc-jp
       # module Optional
-      def optional_struct(_sep, _n, infile)
+      def optional_struct(_sep, _game_scale, infile)
         get_arrow(infile)
       end
       # end
@@ -59,7 +60,7 @@ module Number
           only_test(pair) && @arrows.delete(pair)
           reserve(pair) && @arrows.delete(pair)
         end
-        $gsw
+        @gsw
       end
 
       def only_test(pair)
@@ -70,13 +71,13 @@ module Number
           # pp @cells[c].ability
           if @cells[c].even_only?
             @cells[c1].set_odd("#{c1} odd by pair[#{pair.join(',')}]")
-            $gsw = true
+            @gsw = true
             return true
           end
           next unless @cells[c].odd_only?
 
           @cells[c1].set_even("#{c1} even by pair[#{pair.join(',')}]")
-          $gsw = true
+          @gsw = true
           return true
         end
         false
@@ -106,7 +107,7 @@ module Number
           # このevenの値が予約される
           v = even[0][0]
           # pp "# このevenの値が予約される #{v}"
-          groups.each { |grp| @groups[grp].rmAbility(v, pair, "cupcell [#{pair.join(',')}]") }
+          groups.each { |grp| @groups[grp].rm_ability(v, pair, "cupcell [#{pair.join(',')}]") }
         end
 
         # oddについて調べる
@@ -115,7 +116,7 @@ module Number
 
         # このevenの値が予約される
         v = (odd[0] & odd[1])[0]
-        groups.each { |grp| @groups[grp].rmAbility(v, pair, "cupcell [#{pair.join(',')}]") }
+        groups.each { |grp| @groups[grp].rm_ability(v, pair, "cupcell [#{pair.join(',')}]") }
       end
       # class Groups
       #  extend GroupsCupcell

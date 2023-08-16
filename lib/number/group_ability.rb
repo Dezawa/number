@@ -14,9 +14,9 @@ module Number
       # @ability[0]= GroupAbility.new(0,cell_list.dup,0)
     end
 
-    def rmCellAbility(v0, cell_no, _msg = nil)
+    def rm_cell_ability(values, cell_no, _msg = nil)
       # このgrpの値 v　から指定cellの可能性をなくす
-      v0.each { |v| @ability[v].rmCellAbility(cell_no) }
+      values.each { |v| @ability[v].rm_cell_ability(cell_no) }
     end
 
     def fixed_by_rest_one
@@ -60,7 +60,7 @@ module Number
       @v = arg_v
     end
 
-    def rmCellAbility(cell_no, msg = nil)
+    def rm_cell_ability(cell_no, msg = nil)
       return unless cell_list.delete(cell_no)
 
       @rest -= 1

@@ -3,6 +3,7 @@
 require 'English'
 module Number
   module GameTypes
+    # 不等号のextemd
     module GameType
       def game
         'HUTOUGOU'
@@ -32,8 +33,8 @@ module Number
           hlist = @cells[h].vlist
           lrm = @cells[l].vlist.select { |v| v >= hlist.last }
           hrm = @cells[h].vlist.select { |v| v <= llist[0] }
-          lrm.size.positive? && @cells[l].rmAbility(lrm, "HUTOUGOU cell[#{l}]<cell[#{h}]")
-          hrm.size.positive? && @cells[h].rmAbility(hrm, "HUTOUGOU cell[#{l}]<cell[#{h}]")
+          lrm.size.positive? && @cells[l].rm_ability(lrm, "HUTOUGOU cell[#{l}]<cell[#{h}]")
+          hrm.size.positive? && @cells[h].rm_ability(hrm, "HUTOUGOU cell[#{l}]<cell[#{h}]")
         end
       end
     end

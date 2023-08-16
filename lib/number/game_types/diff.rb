@@ -2,6 +2,7 @@
 
 module Number
   module GameTypes
+    # DIFFのextend
     module GameType
       def game
         'DIFF'
@@ -43,7 +44,7 @@ module Number
             elsif w[i].size.positive? # 二つ以上だったら、
               # それ以外の数字をそのcellの可能性から消す
               vv = @cells[c[i]].vlist - w[i]
-              ret = @cells[c[i]].rmAbility(vv)
+              ret = @cells[c[i]].rm_ability(vv)
               sw ||= ret
             end
           end

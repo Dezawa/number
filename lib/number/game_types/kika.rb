@@ -7,12 +7,13 @@
 require 'English'
 module Number
   module GameTypes
+    # 幾何のextend
     module GameType
       def game
         'KIKA'
       end
 
-      def set_block_group(gnr, _boxes, _bx, _by, _xmax, w)
+      def set_block_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku)
         c = -1
         while c < @size
           while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
@@ -21,10 +22,10 @@ module Number
             next if /\d+/ !~ d
 
             c += 1
-            c += 1 if w[c].nil? ##
+            c += 1 if waku[c].nil? ##
             puts "c=#{c} d=#{d}  @size=#{@size} " if $dbg
-            puts "$kika: w[c] of c is #{c}, cell=#{w[c][0]},w[c][1]=#{w[c][1]}" if $dbg
-            w[c][1] << d.to_i + gnr - 1
+            puts "$kika: waku[c] of c is #{c}, cell=#{w[c][0]},waku[c][1]=#{w[c][1]}" if $dbg
+            waku[c][1] << d.to_i + gnr - 1
           end
         end
         (gnr..gnr + game_scale - 1).each { |g| @groups[g] = Number::Group.new(self, g, :block, @count) }

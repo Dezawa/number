@@ -4,13 +4,14 @@ require_relative './make_waku_pform'
 require_relative './resolver'
 
 module Number
+  # mail class
   class Game
-    Iromono = %w[ARROW KIKA SUM XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL].freeze
-    IromonoReg = /#{Iromono.join('|')}/.freeze
+    IROMONO = %w[ARROW KIKA SUM XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL].freeze
+    IROMONO_REG = /#{IROMONO.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
     attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :block, :n, :game_scale, :option
-    attr_reader :infile, :form, :sep, :game_type, :count
+    attr_reader :infile, :sep, :game_type, :count
 
     def self.create(infile, option: {})
       form_type, game_type = form_and_game_type(infile)
@@ -24,7 +25,7 @@ module Number
 
     def self.form_and_game_type(infile)
       line = gets_skip_comment(infile)
-      game_type = (match = line.match(Number::Game::IromonoReg)) ? match[0] : nil
+      game_type = (match = line.match(Number::Game::IROMONO_REG)) ? match[0] : nil
       form_type = line.match(/(\d[-+x\d]*\d?)|STD/)[0]
       form_type = '9' if form_type == 'STD'
       [form_type, game_type]
@@ -54,7 +55,7 @@ module Number
     end
 
     def set_game_type
-      required = IromonoReg =~ game_type ? "./game_types/#{::Regexp.last_match(0).downcase}" : nil
+      required = IROMONO_REG =~ game_type ? "./game_types/#{::Regexp.last_match(0).downcase}" : nil
       return unless required
 
       require_relative required
@@ -89,7 +90,7 @@ module Number
         print " reserv(4) #{sw}" if option[:verb]
         sw |= prison(4)
         print " prison(4) #{sw}" if option[:verb]
-        highClass.each do |method|
+        high_class.each do |method|
           sw |= method.call
           print " method #{sw}" if option[:verb]
         end
@@ -127,7 +128,7 @@ module Number
               @cells[c].set_cell(vv, 'initialize')
             else
               vv = @val - vlst.map!(&:to_i)
-              @cells[c].rmAbility(vv, 'initialize')
+              @cells[c].rm_ability(vv, 'initialize')
             end
           end
           c += 1
@@ -139,7 +140,7 @@ module Number
       # @arrows = @arrows.compact if @arrows
     end
 
-    def optional_struct(a, b, f); end
+    def optional_struct(sep, game_scale, infile); end
 
     def get_arrow(infile)
       puts 'GET ARROW' if option[:verb]

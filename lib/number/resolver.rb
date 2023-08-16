@@ -6,7 +6,7 @@ module Number
     def cogroup(cells)
       return [] if cells.empty?
 
-      cells[1..].inject(@cells[cells[0]].grpList) { |groups, c| groups & @cells[c].grpList }
+      cells[1..].inject(@cells[cells[0]].grp_list) { |groups, c| groups & @cells[c].grp_list }
     end
 
     def cocell(grps)
@@ -74,7 +74,7 @@ module Number
             @count["prison#{v_num}"] += 1
             # このcellを含むgrpの 他のcellにあるｖの可能性を消す
             cogroup(cc).each do |grp0|
-              @groups[grp0].rmAbility(valus, cc,
+              @groups[grp0].rm_ability(valus, cc,
                                       "prison#{v_num} grp #{grp.g} val #{valus} cell #{cc}")
             end
             prison_done[v_num] << cc
@@ -109,7 +109,7 @@ module Number
           next unless (rm_cells.map { |c| @cells[c].ability }.flatten - values).size.positive?
 
           rm_cells.each do |c|
-            @cells[c].rmAbility(rm_value,
+            @cells[c].rm_ability(rm_value,
                                 "reserve#{v_num} group #{group.g} cells#{rm_cells} v=#{values}")
           end
           @count["reserv#{v_num}"] += 1
@@ -184,7 +184,7 @@ module Number
           # cell c と cell_nrs の共通group のcellから、v1,v2の可能性を削除する
           cell_pair.each do |cell|
             (ret |= groups[cogroup([c, cell.c]).first]
-            .rmAbility(values, cells_on_the_co_group_and_block(c, cell.c),
+            .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c),
                        "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" \
                        " 対角線[#{cell_pair[0].c},#{cell_pair[1].c}] values=#{values} "))
           end
@@ -200,19 +200,19 @@ module Number
         # 4. そのうち 共通するgroupが無いものを残す
         #
         cell1.ability == cell2.ability &&
-          (cell1.grpList & cell2.grpList).empty?
+          (cell1.grp_list & cell2.grp_list).empty?
       end
     end
 
     # 二つのcellを対角線とする長方形の残りのcell
     def theother_cells_of_rectangle_which_made_by_diagonal_of(cells)
-      xross_cells = cells[0].grpList.product(cells[1].grpList)
+      xross_cells = cells[0].grp_list.product(cells[1].grp_list)
                             .map { |grps| cocell(grps) }.flatten
       xross_cells.size == 2 ? xross_cells : []
     end
 
-    def cells_not_on_the_V_or_H_group_of_the_group_of(cell)
-      h, v, b = cells[cell].grpList.sort
+    def cells_not_on_the_v_or_h_group_of_the_group_of(cell)
+      h, v, b = cells[cell].grp_list.sort
       groups[b].cell_list - groups[h].cell_list - groups[v].cell_list
     end
 
@@ -224,7 +224,7 @@ module Number
     # cell c と cell_nr の共通group のcell　でかつ c のblock上のもの
     def cells_on_the_co_group_and_block(c0, c1)
       (groups[cogroup([c0, c1]).first].cell_list &
-        groups[cells[c0].grpList.max].cell_list) - [c0] + [c1]
+        groups[cells[c0].grp_list.max].cell_list) - [c0] + [c1]
     end
 
     ##########################
@@ -251,7 +251,7 @@ module Number
     # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
     #
 
-    def crossTeiin
+    def cross_teiin
       ret = false
       h_v_table = %i[holizontal vertical]
       # h_v
@@ -281,7 +281,7 @@ module Number
                 co_grp1[2]
               end.flatten.uniq
               rm_grps.each do |g|
-                next unless @groups[g].rmAbility(v, except_cells,
+                next unless @groups[g].rm_ability(v, except_cells,
                                                  "crossTeiin v=#{v}, grps=#{cmb_grp.map do |cg|
                                                                               cg[1].g
                                                                             end.join ','}")
@@ -328,8 +328,8 @@ module Number
 
     # そのための関数
 
-    def highClass
-      [method(:crossTeiin), method(:curb)]
+    def high_class
+      [method(:cross_teiin), method(:curb)]
     end
   end
 end

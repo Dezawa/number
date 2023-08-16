@@ -3,12 +3,13 @@
 # module Optional
 module Number
   module GameTypes
+    # XROSSのextend
     module GameType
       def game
         'XROSS'
       end
 
-      def set_optional_group(gnr, boxes, _bx, _by, xmax, w)
+      def set_optional_group(gnr, boxes, _group_width, _group_hight, xmax, w)
         # def add_xross_group(boxes,xmax,n,w,gsize)
         return 0 if boxes.size != 1
 

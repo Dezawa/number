@@ -45,7 +45,7 @@ module Number
   module GamePform
     def make_waku_pform(struct)
       n, mult, sign, m_nr, dan = get_baseSize(struct)
-      @game_scale, bx, by = n
+      @game_scale, group_width, group_hight = n
       @val = (1..game_scale).to_a
 
       @m = Math.sqrt(game_scale).to_i
@@ -67,8 +67,8 @@ module Number
       #        111111111n
       #        nnnnnnnnnn
       boxes[0..m_nr].each do |box|
-        (box.y..box.y + game_scale - 1).each do |y|
-          (box.x..box.x + game_scale - 1).each { |x| @w[xmax * y + x] = 1 }
+        (box.y_pos..box.y_pos + game_scale - 1).each do |y|
+          (box.x_pos..box.x_pos + game_scale - 1).each { |x| @w[xmax * y + x] = 1 }
         end
       end
       # 　有効なcellに頭からの通し番号を振る
@@ -91,15 +91,15 @@ module Number
       @cells  = []
 
       # $grps を作る。 空サイズで作った後埋める
-      @gsize = set_grp(boxes, bx, by, xmax, @w, sep)
+      @gsize = set_grp(boxes, group_width, group_hight, xmax, @w, sep)
 
       # pp $cells
       # pp $grps
       [xmax, ymax]
     end
 
-    def ban_initialize(w, _n, xmax, ymax)
-      w.each do |ww|
+    def ban_initialize(waku, _n, xmax, ymax)
+      waku.each do |ww|
         next unless ww
 
         ww[0]
@@ -113,10 +113,10 @@ module Number
       (0..ymax - 1).each do |y|
         base = xmax * y
         (0..xmax - 1).each do |x|
-          next unless w[base + x]
+          next unless waku[base + x]
 
-          @neigh << [w[base + x][0], w[base + x + 1][0]]    if w[base + x + 1]
-          @neigh << [w[base + x][0], w[base + x + xmax][0]] if w[base + x + xmax]
+          @neigh << [waku[base + x][0], waku[base + x + 1][0]]    if waku[base + x + 1]
+          @neigh << [waku[base + x][0], waku[base + x + xmax][0]] if waku[base + x + xmax]
         end
       end
       initialize_group_ability
@@ -126,48 +126,27 @@ module Number
       @groups.each { |grp| grp.ability.setup_initial(grp.cell_list) }
     end
 
-    def waku_out(w, n, gnr, cnr, xmax, ymax)
-      # size
-      $stderr.printf "%d %d %d\n", n, cnr, gnr
-
-      # cell-group
-      w.each do |ww|
-        warn ww.flatten.join(' ') if ww
-      end
-
-      # neigber
-      (0..ymax - 1).each do |y|
-        base = xmax * y
-        (0..xmax - 1).each do |x|
-          next unless w[base + x]
-
-          warn "#{w[base + x][0]} #{w[base + x + 1][0]}"    if w[base + x + 1]
-          warn "#{w[base + x][0]} #{w[base + x + xmax][0]}" if w[base + x + xmax]
-        end
-      end
-    end
-
-    def set_grp(boxes, bx, by, xmax, w, _sep)
+    def set_grp(boxes, group_width, group_hight, xmax, waku, _sep)
       boxes.size
       gnr = 0
-      gnr = set_vertical_holizontal_group(gnr, boxes, xmax, w)
-      gnr = set_block_group(gnr, boxes, bx, by, xmax, w)
-      set_optional_group(gnr, boxes, bx, by, xmax, w)
+      gnr = set_vertical_holizontal_group(gnr, boxes, xmax, waku)
+      gnr = set_block_group(gnr, boxes, group_width, group_hight, xmax, waku)
+      set_optional_group(gnr, boxes, group_width, group_hight, xmax, waku)
     end
 
-    def set_optional_group(gnr, boxes, bx, by, xmax, w); end
+    def set_optional_group(gnr, boxes, group_width, group_hight, xmax, waku); end
 
-    def set_block_group(gnr, boxes, bx, by, xmax, w)
+    def set_block_group(gnr, boxes, group_width, group_hight, xmax, waku)
       boxes.each do |box|
-        (box.y..box.y + game_scale - 1).step(by).each do |y|
-          (box.x..box.x + game_scale - 1).step(bx).each do |x|
-            # next if w[xmax*y+x].nil?     #or w[xmax*y+x][1]
-            next if w[xmax * y + x].nil?
+        (box.y_pos..box.y_pos + game_scale - 1).step(group_hight).each do |y|
+          (box.x_pos..box.x_pos + game_scale - 1).step(group_width).each do |x|
+            # next if waku[xmax*y+x].nil?     #or waku[xmax*y+x][1]
+            next if waku[xmax * y + x].nil?
 
             # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:block)
             @groups[gnr] = Number::Group.new(self, gnr, :block, @count)
-            (y..y + by - 1).each do |yy|
-              (x..x + bx - 1).each { |xx| w[xmax * yy + xx][1] << gnr }
+            (y..y + group_hight - 1).each do |yy|
+              (x..x + group_width - 1).each { |xx| waku[xmax * yy + xx][1] << gnr }
             end
             gnr += 1
           end
@@ -176,27 +155,27 @@ module Number
       gnr
     end
 
-    def set_vertical_holizontal_group(gnr, boxes, xmax, w)
+    def set_vertical_holizontal_group(gnr, boxes, xmax, waku)
       boxes.each do |box|
-        (box.y..box.y + game_scale - 1).each do |y|
+        (box.y_pos..box.y_pos + game_scale - 1).each do |y|
           # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:holizontal)
           @groups[gnr] = Number::Group.new(self, gnr, :holizontal, @count)
-          (box.x..box.x + game_scale - 1).each do |x|
-            w[xmax * y + x][1] << gnr
+          (box.x_pos..box.x_pos + game_scale - 1).each do |x|
+            waku[xmax * y + x][1] << gnr
           end
           gnr += 1
         end
-        (box.x..box.x + game_scale - 1).each do |x|
+        (box.x_pos..box.x_pos + game_scale - 1).each do |x|
           # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:vertical)
           @groups[gnr] = Number::Group.new(self, gnr, :vertical, count)
-          (box.y..box.y + game_scale - 1).each { |y| w[xmax * y + x][1] << gnr }
+          (box.y_pos..box.y_pos + game_scale - 1).each { |y| waku[xmax * y + x][1] << gnr }
           gnr += 1
         end
       end
       gnr
     end
 
-    def setBasePos(mult, sign, mnr, dan)
+    def base_pos(mult, sign, mnr, dans)
       offset = { '-' => 6, '+' => -6 }
       boxes = Array.new(mnr)
 
@@ -208,11 +187,11 @@ module Number
       (0..dan - 1).each do |dan|
         box.p = box + [offset[sign[dan]], 6]
         wbox.p = box.p
-        xmin = wbox.x if xmin > wbox.x
+        xmin = wbox.x_pos if xmin > wbox.x_pos
         (0..mult[dan] - 1).each do |_b|
           bnr += 1
           boxes[bnr] = Number::Box.new(game_scale, wbox.p)
-          xmax = wbox.x + game_scale if xmax < wbox.x + game_scale
+          xmax = wbox.x_pos + game_scale if xmax < wbox.x_pos + game_scale
           wbox.p = wbox + [12, 0]
         end
       end
@@ -221,20 +200,20 @@ module Number
         xmax -= xmin
       end
 
-      [boxes, xmax, box.y + game_scale]
+      [boxes, xmax, box.y_pos + game_scale]
     end
 
-    def get_baseSize(struct)
+    def base_size(struct)
       mult = struct.split(/[-+]/) #
       n = mult.shift # Gameの基本サイズ
       if /\d+x\d+/ =~ n
-        bx, by = n.split('x')
-        bx = bx.to_i
-        by = by.to_i
-        n = bx * by
+        group_width, group_hight = n.split('x')
+        group_width = group_width.to_i
+        group_hight = group_hight.to_i
+        n = group_width * group_hight
       else
         n = n.to_i
-        bx = by = (Math.sqrt(n) + 0.2).to_i
+        group_width = group_hight = (Math.sqrt(n) + 0.2).to_i
       end
       if mult.empty?
         mult = [1]
@@ -249,7 +228,7 @@ module Number
       end
       # pp ["struct,n,mult,sign",struct,n,mult,sign]
       # pp ["Mnr,Dan",mnr,dan]
-      [[n, bx, by], mult, sign, mnr, dan]
+      [[n, group_width, group_hight], mult, sign, mnr, dan]
     end
   end
 end
