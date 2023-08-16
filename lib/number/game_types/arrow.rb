@@ -29,7 +29,7 @@ module Number
             @cells[cellNo].grpList
           end.flatten.uniq
           cellsSameGroup = groups.map do |grpNo|
-            cells = @groups[grpNo].cellList & arrow[1..]
+            cells = @groups[grpNo].cell_list & arrow[1..]
             cells if cells.size > 1
           end.compact
           @arw_group[i] = cellsSameGroup.map do |cells|

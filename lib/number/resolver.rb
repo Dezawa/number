@@ -12,7 +12,7 @@ module Number
     def cocell(grps)
       return [] if grps.size < 2
 
-      grps[1..].inject(groups[grps[0]].cellList) { |cells, group| cells & groups[group].cellList }
+      grps[1..].inject(groups[grps[0]].cell_list) { |cells, group| cells & groups[group].cell_list }
     end
 
     def fill?
@@ -26,7 +26,7 @@ module Number
     def gout
       pp( # .ability.map { |abl| [grp.g, abl] if (abl[0]).positive? }.compact })
         groups.map do |grp|
-          ["Group #{grp.g}:", grp.cellList]
+          ["Group #{grp.g}:", grp.cell_list]
         end
       )
     end
@@ -65,7 +65,7 @@ module Number
       # 残り可能性の数　2,,v_num なcellを拾い上げる
       # 同じ「残り可能性」なcellの組み合わせを探し、v_numあればhit
       @groups.each do |grp|
-        cells = grp.cellList.select { |c| @cells[c].valurest > 1 && @cells[c].valurest <= v_num }
+        cells = grp.cell_list.select { |c| @cells[c].valurest > 1 && @cells[c].valurest <= v_num }
         cells.combination(v_num) do |cc|
           next if prison_done[v_num].include? cc
 
@@ -123,7 +123,7 @@ module Number
     def sum_of_cells_and_values(abilitys)
       abilitys.each_with_object([[], []]) do |ac, vc| # ac = [ count,[cells],value]
         vc[0] << ac.v # [2]  # value
-        vc[1] |= ac.cellList # [1]  # cell
+        vc[1] |= ac.cell_list # [1]  # cell
       end
     end
 
@@ -213,7 +213,7 @@ module Number
 
     def cells_not_on_the_V_or_H_group_of_the_group_of(cell)
       h, v, b = cells[cell].grpList.sort
-      groups[b].cellList - groups[h].cellList - groups[v].cellList
+      groups[b].cell_list - groups[h].cell_list - groups[v].cell_list
     end
 
     # cellsのabilityに値v0,v1があるか
@@ -223,8 +223,8 @@ module Number
 
     # cell c と cell_nr の共通group のcell　でかつ c のblock上のもの
     def cells_on_the_co_group_and_block(c0, c1)
-      (groups[cogroup([c0, c1]).first].cellList &
-        groups[cells[c0].grpList.max].cellList) - [c0] + [c1]
+      (groups[cogroup([c0, c1]).first].cell_list &
+        groups[cells[c0].grpList.max].cell_list) - [c0] + [c1]
     end
 
     ##########################
@@ -307,7 +307,7 @@ module Number
                     (count > 1) #      grp を集め
 
         # (2) そのcellを共有する:verticalなgroupを集める。[co_groups]
-        cells = grp.ability[v].cellList
+        cells = grp.ability[v].cell_list
         co_groups = cells.map { |c| cogroup([c]).select { |g| @groups[g].type == v_h }.flatten }
         [count, grp, cells, co_groups]
       end.compact

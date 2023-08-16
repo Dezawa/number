@@ -85,7 +85,7 @@ RSpec.describe Number::Game, type: :model do
      ['9 ARROW の間に空白なし', "9ARROW\n111\n", %w[9 ARROW]],
      ['頭に空行', "  \n9 ARROW\n111\n", %w[9 ARROW]],
      ['頭にコメント行', "#  \n9 ARROW\n111\n", %w[9 ARROW]],
-     ['重層形式', "9-3+2-3 ARROW\n111\n", ['9-3+2-3', 'ARROW']]]
+     ['重層形式', "9-3+2-3 ARROW\n111\n", ['9-3+2-3', 'ARROW']]].freeze
 
   describe 'self.form_and_game_type' do
     let(:infile) { StringIO.new(data) }

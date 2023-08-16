@@ -165,7 +165,7 @@ if /numple.rb$/ =~ $PROGRAM_NAME
       puts
     end
   else
-    numple = Numple.new(STDIN, option: options)
+    numple = Numple.new($stdin, option: options)
     numple.resolve
     puts numple.output_form # 解出力
     puts numple.cell_out if @cout # Cellの残された可能性出力

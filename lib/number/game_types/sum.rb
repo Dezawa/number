@@ -50,17 +50,17 @@ module Number
       def hamidasi
         # block毎に
         arrow = @groups.select { |grp| grp.type == :block }.map do |grp|
-          grp.cellList
+          grp.cell_list
           # @arrowsの中にgroup のcellと一致するcellを含むものがあれば抜き出し
           # その groupに属さないcellの一覧を用意する
           sum = 0
           cells = []
           @arrows.map do |arw|
-            # pp [ arw,arw[1..-1], grp.cellList,(arw[1..-1] & grp.cellList)]
-            next unless (arw[1..] & grp.cellList).size.positive?
+            # pp [ arw,arw[1..-1], grp.cell_list,(arw[1..-1] & grp.cell_list)]
+            next unless (arw[1..] & grp.cell_list).size.positive?
 
             sum += arw[0]
-            cells += (arw[1..] - grp.cellList)
+            cells += (arw[1..] - grp.cell_list)
             # pp [arw,sum,cells]
           end
           # そのcellが一つのgrpに属していたら登録する
@@ -139,7 +139,6 @@ module Number
           p @workarrow
         end
         optsw = nil
-        delete_arys = []
 
         # 効率化のため組み合わせの数が大きくならないように制限する数を
         # 少しずつ大きくする。  このとき小さすぎると一つも解決できず、
@@ -157,7 +156,7 @@ module Number
           # pp ["arrow",arrow,@summax] if option[:verb]
           valus = [] # 指定されたcellに残っている値の配列  の配列
           sum = arrow[0]
-          arrow[1..-1].each { |cell_id| valus << @cells[cell_id].vlist }
+          arrow[1..].each { |cell_id| valus << @cells[cell_id].vlist }
 
           # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
           next if valus.flatten.size > @summax
@@ -211,7 +210,7 @@ module Number
         duped_index = sells_value.map.with_index { |v, idx| v == duped_value ? idx : nil }.compact
 
         duped_cells = duped_index.map { |idx| @cells[arrow[idx + 1]] }
-        duped_cells.map { |cell| cell.grpList }.flatten.tally.all? { |_v, c| c == 1 }
+        duped_cells.map(&:grpList).flatten.tally.all? { |_v, c| c == 1 }
       end
 
       # cell毎の残された可能性に基づき、cellのabilityを調整する
@@ -221,12 +220,12 @@ module Number
         values_of_each_cell.each_with_index do |values, idx_on_arry|
           cell_idx = @work_arrow[arrow_idx][idx_on_arry + 1]
           if values.size == 1 # このcellはfix
-            @cells[cell_idx].set(values.first, 'sum') && $gsw = optsw = true
+            @cells[cell_idx].set(values.first, 'sum') && $gsw = true
           elsif values.size > 1
             # @cells[cell_idx]の可能性を調整する
             # 新たな可能性は values。既に消えている可能性もある
             if (vv = values - @cells[cell_idx].ability).size.positive?
-              @cells[cell_idx].rmAbility(vv, 'sum') && $gsw = optsw = true
+              @cells[cell_idx].rmAbility(vv, 'sum') && $gsw = true
             end
           end
         end

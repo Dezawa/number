@@ -9,9 +9,9 @@ module Number
       @ability = [] # Hash.new #{|h,k| h[k] = [game_scale,[],k] }
     end
 
-    def setup_initial(cellList)
-      (1..game_scale).each { |v| @ability[v] = Number::GroupAbility.new(game_scale, cellList.dup, v) }
-      # @ability[0]= GroupAbility.new(0,cellList.dup,0)
+    def setup_initial(cell_list)
+      (1..game_scale).each { |v| @ability[v] = Number::GroupAbility.new(game_scale, cell_list.dup, v) }
+      # @ability[0]= GroupAbility.new(0,cell_list.dup,0)
     end
 
     def rmCellAbility(v0, cell_no, _msg = nil)
@@ -26,7 +26,7 @@ module Number
     def combination_of_ability_of_rest_is_less_or_equal(v_num)
       @ability[1..].select { |abl| abl.rest > 1 and abl.rest <= v_num }
                    .combination(v_num)
-                   .select { |abl_cmb| abl_cmb.inject([]) { |cells, abl| cells | abl.cellList }.size == v_num }
+                   .select { |abl_cmb| abl_cmb.inject([]) { |cells, abl| cells | abl.cell_list }.size == v_num }
       # [[[2,[28,29],7], [2,[28,29],9]]]
     end
 
@@ -44,7 +44,7 @@ module Number
 
     def dup
       ablty = clone
-      ablty.ability[1..].each { |abl| abl.cellList = abl.cellList.dup }
+      ablty.ability[1..].each { |abl| abl.cell_list = abl.cell_list.dup }
       ablty
     end
   end
@@ -52,27 +52,27 @@ end
 
 module Number
   class GroupAbility
-    attr_accessor :rest, :cellList, :v
+    attr_accessor :rest, :cell_list, :v
 
-    def initialize(arg_n, arg_cellList, arg_v)
-      @cellList = arg_cellList
+    def initialize(arg_n, arg_cell_list, arg_v)
+      @cell_list = arg_cell_list
       @rest = arg_n
       @v = arg_v
     end
 
     def rmCellAbility(cell_no, msg = nil)
-      return unless cellList.delete(cell_no)
+      return unless cell_list.delete(cell_no)
 
       @rest -= 1
       puts msg if msg
     end
 
     def inspect
-      "[#{rest},[#{cellList.join(',')}],#{v}]"
+      "[#{rest},[#{cell_list.join(',')}],#{v}]"
     end
 
     def dump
-      [rest, cellList, v]
+      [rest, cell_list, v]
     end
   end
 end

@@ -106,7 +106,7 @@ module Number
         # pp [ww[0],ww[1]]
         # cell=@cells[ww[0]] = Cell.new(@groups,ww[0],game_scale,ww[1]) #(cell_nr,grp_list)
         @cells[ww[0]] = Number::Cell.create(self, ww[0], ww[1], @count, option: option) # (cell_nr,grp_list)
-        ww[1].each { |grp_no| @groups[grp_no].addcellList ww[0] }
+        ww[1].each { |grp_no| @groups[grp_no].addcell_list ww[0] }
       end
       # get neighber
       @neigh = []
@@ -123,7 +123,7 @@ module Number
     end
 
     def initialize_group_ability
-      @groups.each { |grp| grp.ability.setup_initial(grp.cellList) }
+      @groups.each { |grp| grp.ability.setup_initial(grp.cell_list) }
     end
 
     def waku_out(w, n, gnr, cnr, xmax, ymax)

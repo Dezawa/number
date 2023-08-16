@@ -2,7 +2,7 @@
 
 module Number
   class Group
-    attr_accessor :game, :cells, :n, :game_scale, :g, :ability, :cellList, :atrivute, :count
+    attr_accessor :game, :cells, :n, :game_scale, :g, :ability, :cell_list, :atrivute, :count
 
     def initialize(arg_game, arg_g, atr = [], count)
       @game = arg_game
@@ -10,14 +10,14 @@ module Number
       @g = arg_g
       @cells = @game.cells
       @ability = Number::GroupAbilities.new(game_scale)
-      @cellList = []
+      @cell_list = []
       @atrivute = atr # :holizontal :vertical  :block
       @count = count
     end
 
     def inspect
       "#<Group:#{object_id} " +
-        %i[g atrivute cellList].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join +
+        %i[g atrivute cell_list].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join +
         "\n  @ability=[\n" +
         @ability.ability.map { |abl| "         #{abl.inspect}" }.join("\n")
     end
@@ -26,10 +26,10 @@ module Number
       @atrivute
     end
 
-    attr_reader :g, :cellList
+    attr_reader :g, :cell_list
 
-    def addcellList(a)
-      @cellList << a
+    def addcell_list(a)
+      @cell_list << a
     end
 
     def is_block?
@@ -37,11 +37,11 @@ module Number
     end
 
     def line_groups_join_with
-      cellList.inject([]) { |g_nrs, c| g_nrs | @cells[c].grpList } - [g]
+      cell_list.inject([]) { |g_nrs, c| g_nrs | @cells[c].grpList } - [g]
     end
 
     def block_groups_join_with
-      cellList.inject([]) { |g_nrs, c| g_nrs << @cells[c].grpList[2] }.uniq
+      cell_list.inject([]) { |g_nrs, c| g_nrs << @cells[c].grpList[2] }.uniq
     end
 
     def rmCellAbility(v0, cell_no, msg = nil)
@@ -51,7 +51,7 @@ module Number
     def set_cell_if_some_value_s_ability_is_rest_one
       sw = nil
       ability.fixed_by_rest_one.each do |cellData|
-        if @cells[cellData.cellList.first].set(cellData.v, "grp(#{g}).ability #{cellData.cellList}")
+        if @cells[cellData.cell_list.first].set(cellData.v, "grp(#{g}).ability #{cellData.cell_list}")
           @count[:Group_ability_is_rest_one] += 1
           sw = true
         end
@@ -66,9 +66,9 @@ module Number
       # ただし、array except_cells  にある cell はいじらない。
       # vが配列の場合は、その中をすべて
       v = [v] unless v.instance_of?(Array)
-      rm_cells = @cellList - except_cells
+      rm_cells = @cell_list - except_cells
       ret = nil
-      rm_cells.each do |c0| # (0..game_scale-1).each{|c| c0=@cellList[c]
+      rm_cells.each do |c0| # (0..game_scale-1).each{|c| c0=@cell_list[c]
         if (@cells[c0].ability & v).size.positive?
           @cells[c0].rmAbility(v, msg)
           ret = true

@@ -224,7 +224,7 @@ module Number
         ret = false
         # 1-18のグループから7つづつ46の三つ組について調べる
         (0..@groups.size / 3 * 2 - 1).each do |g|
-          cells = @groups[g].cellList
+          cells = @groups[g].cell_list
           (0..@n - 3).each do |i|
             c0 = cells[i]
             c1 = cells[i + 1]

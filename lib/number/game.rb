@@ -26,7 +26,7 @@ module Number
       line = gets_skip_comment(infile)
       game_type = (match = line.match(Number::Game::IromonoReg)) ? match[0] : nil
       form_type = line.match(/(\d[-+x\d]*\d?)|STD/)[0]
-      form = '9' if form_type == 'STD'
+      form_type = '9' if form_type == 'STD'
       [form_type, game_type]
     end
 
