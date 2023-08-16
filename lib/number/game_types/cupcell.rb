@@ -6,13 +6,13 @@ module Number
     def even_only?
       @valu&.even? ||
         !@valu &&  @ability.select(&:odd?).empty?
-      # (1..@n).step(2).map{|v| @ability[v] if @ability[v]>0 }.compact.size==0
+      # (1..game_scale).step(2).map{|v| @ability[v] if @ability[v]>0 }.compact.size==0
     end
 
     def odd_only?
       @valu&.odd? ||
         !@valu &&  @ability.select(&:even?).empty?
-      # (2..@n).step(2).map{|v| @ability[v] if @ability[v]> 0 }.compact.size==0
+      # (2..game_scale).step(2).map{|v| @ability[v] if @ability[v]> 0 }.compact.size==0
     end
   end
 end

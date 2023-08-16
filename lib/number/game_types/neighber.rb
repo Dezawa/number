@@ -12,7 +12,7 @@ module Number
       def optional_struct(_sep, _n, infile)
         # @arrows は、隣同士で一つ違いのcellの組み合わせ
         # $neigh は、初期値は隣同士のcell、このmethodの結果、二つ以上違うcellの組み合わせとなる
-        $summax = 20
+        @summax = 20
         @arrows = []
         while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
         w = []
@@ -99,7 +99,7 @@ module Number
         # 効率化のため組み合わせの数が大きくならないように制限する数を
         # 少しずつ大きくする。  このとき小さすぎると一つも解決できず、
         # 失敗で終わってしまうので、ある程度までは成功したことにする
-        $summax += 5
+        @summax += 5
 
         @arrows.each do |arrow|
           if $dbg
@@ -116,7 +116,7 @@ module Number
           s =  arrow.map { |c| @cells[c].vlist }
 
           # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
-          next if s.flatten.size > $summax
+          next if s.flatten.size > @summax
 
           # 侯補絞りこみ
           # 残っている値の全組み合わせの中で、ひとつずつ増減しているものを残す
@@ -225,7 +225,7 @@ module Number
         # 1-18のグループから7つづつ46の三つ組について調べる
         (0..@groups.size / 3 * 2 - 1).each do |g|
           cells = @groups[g].cell_list
-          (0..@n - 3).each do |i|
+          (0..game_scale - 3).each do |i|
             c0 = cells[i]
             c1 = cells[i + 1]
             c2 = cells[i + 2]

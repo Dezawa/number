@@ -27,8 +27,8 @@ module Number
             w[c][1] << d.to_i + gnr - 1
           end
         end
-        (gnr..gnr + @n - 1).each { |g| @groups[g] = Number::Group.new(self, g, :block, @count) }
-        gnr += @n
+        (gnr..gnr + game_scale - 1).each { |g| @groups[g] = Number::Group.new(self, g, :block, @count) }
+        gnr += game_scale
         gnr
       end
     end

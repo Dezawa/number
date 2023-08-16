@@ -2,7 +2,7 @@
 
 module Number
   class Cell
-    attr_accessor :game, :groups, :valu, :c, :ability, :grpList, :option
+    attr_accessor :game, :groups, :valu, :c, :ability, :grpList, :option, :game_scale
 
     def self.create(arg_game, cell_no, arg_grpList, count, option: {})
       cell = new(arg_game, cell_no, arg_grpList, count, option: option)
@@ -19,7 +19,7 @@ module Number
     end
 
     def setup
-      game_scale = @game.game_scale
+      @game_scale = @game.game_scale
       @ability = (1..game_scale).map { |v| v }
       @valu = nil
       @val = (1..game_scale).to_a

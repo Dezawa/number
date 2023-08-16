@@ -32,8 +32,8 @@ module Number
       end
 
       def even_or_odd_can_fix_if_4cupcells_is_in_the(group)
-        even = @n / 2
-        odd = (@n + 1) / 2
+        even = game_scale / 2
+        odd = (game_scale + 1) / 2
         arrows = arrows_on_the(group)
         odd  -= arrows.size
         even -= arrows.size
@@ -75,7 +75,7 @@ module Number
       end
 
       def cell_is_odd?(_cell, _group, arrows)
-        even = @n / 2 - arrows.size
+        even = game_scale / 2 - arrows.size
         true if even.zero?
       end
 

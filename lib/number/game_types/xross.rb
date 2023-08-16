@@ -14,9 +14,9 @@ module Number
 
         x, y = boxes[0].p
         base0 = y * xmax + x
-        base1 = base0 + @n - 1
+        base1 = base0 + game_scale - 1
         2.times { |g| @groups[gnr + g] = Number::Group.new(self, gnr + g, :xross, @count) }
-        (0..@n - 1).each  do |i|
+        (0..game_scale - 1).each  do |i|
           w[base0 + (xmax + 1) * i][1] << gnr
           w[base1 + (xmax - 1) * i][1] << gnr + 1
         end

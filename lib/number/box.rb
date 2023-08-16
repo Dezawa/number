@@ -3,7 +3,6 @@
 module Number
   class Box
     def initialize(n, x = nil, y = nil)
-      @n = n
       @position = []
       @position = x if x.instance_of?(Array)
       @position = [x, y] unless y.nil?
