@@ -45,10 +45,10 @@ module Number
   module GamePform
     def make_waku_pform(struct)
       n, mult, sign, m_nr, dan = get_baseSize(struct)
-      @n, bx, by = n
-      @val = (1..@n).to_a
+      @game_scale, bx, by = n
+      @val = (1..game_scale).to_a
 
-      @m = Math.sqrt(@n).to_i
+      @m = Math.sqrt(game_scale).to_i
       boxes, xsize, ysize = setBasePos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
 
       xmax = xsize + 1
@@ -67,8 +67,8 @@ module Number
       #        111111111n
       #        nnnnnnnnnn
       boxes[0..m_nr].each do |box|
-        (box.y..box.y + @n - 1).each do |y|
-          (box.x..box.x + @n - 1).each { |x| @w[xmax * y + x] = 1 }
+        (box.y..box.y + game_scale - 1).each do |y|
+          (box.x..box.x + game_scale - 1).each { |x| @w[xmax * y + x] = 1 }
         end
       end
       # 　有効なcellに頭からの通し番号を振る
@@ -104,7 +104,7 @@ module Number
 
         ww[0]
         # pp [ww[0],ww[1]]
-        # cell=@cells[ww[0]] = Cell.new(@groups,ww[0],@n,ww[1]) #(cell_nr,grp_list)
+        # cell=@cells[ww[0]] = Cell.new(@groups,ww[0],game_scale,ww[1]) #(cell_nr,grp_list)
         @cells[ww[0]] = Number::Cell.create(self, ww[0], ww[1], @count, option: option) # (cell_nr,grp_list)
         ww[1].each { |grp_no| @groups[grp_no].addcellList ww[0] }
       end
@@ -159,12 +159,12 @@ module Number
 
     def set_block_group(gnr, boxes, bx, by, xmax, w)
       boxes.each do |box|
-        (box.y..box.y + @n - 1).step(by).each do |y|
-          (box.x..box.x + @n - 1).step(bx).each do |x|
+        (box.y..box.y + game_scale - 1).step(by).each do |y|
+          (box.x..box.x + game_scale - 1).step(bx).each do |x|
             # next if w[xmax*y+x].nil?     #or w[xmax*y+x][1]
             next if w[xmax * y + x].nil?
 
-            # @groups[gnr] =  Group.new(@cells,gnr,@n,:block)
+            # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:block)
             @groups[gnr] = Number::Group.new(self, gnr, :block, @count)
             (y..y + by - 1).each do |yy|
               (x..x + bx - 1).each { |xx| w[xmax * yy + xx][1] << gnr }
@@ -178,18 +178,18 @@ module Number
 
     def set_vertical_holizontal_group(gnr, boxes, xmax, w)
       boxes.each do |box|
-        (box.y..box.y + @n - 1).each do |y|
-          # @groups[gnr] =  Group.new(@cells,gnr,@n,:holizontal)
+        (box.y..box.y + game_scale - 1).each do |y|
+          # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:holizontal)
           @groups[gnr] = Number::Group.new(self, gnr, :holizontal, @count)
-          (box.x..box.x + @n - 1).each do |x|
+          (box.x..box.x + game_scale - 1).each do |x|
             w[xmax * y + x][1] << gnr
           end
           gnr += 1
         end
-        (box.x..box.x + @n - 1).each do |x|
-          # @groups[gnr] =  Group.new(@cells,gnr,@n,:vertical)
+        (box.x..box.x + game_scale - 1).each do |x|
+          # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:vertical)
           @groups[gnr] = Number::Group.new(self, gnr, :vertical, count)
-          (box.y..box.y + @n - 1).each { |y| w[xmax * y + x][1] << gnr }
+          (box.y..box.y + game_scale - 1).each { |y| w[xmax * y + x][1] << gnr }
           gnr += 1
         end
       end
@@ -200,8 +200,8 @@ module Number
       offset = { '-' => 6, '+' => -6 }
       boxes = Array.new(mnr)
 
-      box = Number::Box.new(@n, -6, -6)
-      wbox = Number::Box.new(@n)
+      box = Number::Box.new(game_scale, -6, -6)
+      wbox = Number::Box.new(game_scale)
       bnr = -1
       xmin = 0
       xmax = 0
@@ -211,8 +211,8 @@ module Number
         xmin = wbox.x if xmin > wbox.x
         (0..mult[dan] - 1).each do |_b|
           bnr += 1
-          boxes[bnr] = Number::Box.new(@n, wbox.p)
-          xmax = wbox.x + @n if xmax < wbox.x + @n
+          boxes[bnr] = Number::Box.new(game_scale, wbox.p)
+          xmax = wbox.x + game_scale if xmax < wbox.x + game_scale
           wbox.p = wbox + [12, 0]
         end
       end
@@ -221,7 +221,7 @@ module Number
         xmax -= xmin
       end
 
-      [boxes, xmax, box.y + @n]
+      [boxes, xmax, box.y + game_scale]
     end
 
     def get_baseSize(struct)

@@ -19,10 +19,10 @@ module Number
     end
 
     def setup
-      @n = @game.n
-      @ability = (1..@n).map { |v| v }
+      game_scale = @game.game_scale
+      @ability = (1..game_scale).map { |v| v }
       @valu = nil
-      @val = (1..@n).to_a
+      @val = (1..game_scale).to_a
       @groups = @game.groups
       self
     end
@@ -69,14 +69,14 @@ module Number
       return nil if valu
 
       puts(msg || "set even cell #{c}") if option[:verb]
-      (1..@n).step(2) { |v| rmAbility(v) }
+      (1..game_scale).step(2) { |v| rmAbility(v) }
     end
 
     def set_odd(msg = nil)
       return nil if valu
 
       puts(msg || "set odd cell #{c}") if option[:verb]
-      (2..@n).step(2) { |v| rmAbility(v) }
+      (2..game_scale).step(2) { |v| rmAbility(v) }
     end
 
     def set_if_valurest_equal_1

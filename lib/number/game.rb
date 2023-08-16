@@ -9,7 +9,7 @@ module Number
     IromonoReg = /#{Iromono.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
-    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :block, :n, :option
+    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :block, :n, :game_scale, :option
     attr_reader :infile, :form, :sep, :game_type, :count
 
     def self.create(infile, option: {})
@@ -135,7 +135,7 @@ module Number
       end
       # dataファイルの後半にある arrow情報を得る
       # 標準では何もしないmethod
-      optional_struct(sep, @n, infile)
+      optional_struct(sep, game_scale, infile)
       # @arrows = @arrows.compact if @arrows
     end
 
@@ -169,19 +169,23 @@ module Number
     ### def structure(data,form,sep)
     ###   if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form # 3x3-4+5
     ###     xmax,ymax = make_waku_pform_new(data,form,sep)  # 枠を算出
-    ###     ban_initialize(@w,@n,xmax,ymax)
+    ###     ban_initialize(@w,game_scale,xmax,ymax)
     ###     #印刷フォーム設定
-    ###     @form=Number::Form.new([@w,xmax,ymax],@n)
+    ###     @form=Number::Form.new([@w,xmax,ymax],game_scale)
     ###   end
     ###   #@block ||= @groups.select{|grp| grp.is_block? }
     ### end
+    def struct_reg
+      /^\s*\d+(x\d+|(x\d)?([-+]\d+)+)\s*$/
+    end
+
     def get_structure
       xmax, ymax = make_waku_pform(form_type)
-      if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form_type # 3x3-4+5
-        ban_initialize(@w, @n, xmax, ymax)
-        # 印刷フォーム設定
-      end
-      @form = Number::Form.new([@w, xmax, ymax], @n)
+      # if struct_reg =~ form_type # 3x3-4+5
+      ban_initialize(@w, game_scale, xmax, ymax)
+      # 印刷フォーム設定
+      # end
+      @form = Number::Form.new([@w, xmax, ymax], game_scale)
       # @block ||= @groups.select{|grp| grp.is_block? }
     end
 

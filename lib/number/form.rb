@@ -3,8 +3,10 @@
 require 'English'
 module Number
   class Form < Array
+    attr_accessor :game_scale
+
     def initialize(p_form, n)
-      @n = n
+      @game_scale = n
       if p_form.instance_of?(Array)
         # [ w,xmax,ymax ]
         w, xmax, ymax = p_form
@@ -45,7 +47,7 @@ module Number
     end
 
     def out(cells)
-      if @n > 9
+      if game_scale > 9
         sp =  3
         fm1 = '%2d '
         fm2 = ' . '
@@ -78,7 +80,7 @@ module Number
             w = cells[c].ability.include?(v) ? v : nil
             w ? (printf '%2d', w) : (print ' .')
           else
-            print ' ' * (@n > 9 ? 3 : 2) # **** [1]*3
+            print ' ' * (game_scale > 9 ? 3 : 2) # **** [1]*3
           end
         end
         print "\n"
@@ -88,12 +90,12 @@ module Number
       (1..@lines).each do |l|
         self[l].each do |se|
           if (se[0]).zero?
-            print ' ' * se[1] * (@n > 9 ? 3 : 2) # **** [1]*3
+            print ' ' * se[1] * (game_scale > 9 ? 3 : 2) # **** [1]*3
           else
             (se[0]..se[1]).each do |c|
               w = cells[c].ability[v]
               w ? (printf '%2d', w) : (print ' .')
-              print @n > 9 ? ' ' : ''
+              print game_scale > 9 ? ' ' : ''
             end
           end
         end

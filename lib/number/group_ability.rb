@@ -2,15 +2,15 @@
 
 module Number
   class GroupAbilities
-    attr_accessor :n, :ability
+    attr_accessor :game_scale, :ability
 
     def initialize(arg_n)
-      @n = arg_n
-      @ability = [] # Hash.new #{|h,k| h[k] = [@n,[],k] }
+      @game_scale = arg_n
+      @ability = [] # Hash.new #{|h,k| h[k] = [game_scale,[],k] }
     end
 
     def setup_initial(cellList)
-      (1..@n).each { |v| @ability[v] = Number::GroupAbility.new(@n, cellList.dup, v) }
+      (1..game_scale).each { |v| @ability[v] = Number::GroupAbility.new(game_scale, cellList.dup, v) }
       # @ability[0]= GroupAbility.new(0,cellList.dup,0)
     end
 

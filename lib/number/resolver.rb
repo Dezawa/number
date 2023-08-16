@@ -258,7 +258,7 @@ module Number
       h_v_table.each_with_index  do |h_v, idx|
         v_h = h_v_table[1 - idx] # 　holizontal と :vertical について
         # value
-        (1..@n).each do |v| # (1) 値v　をとり得る
+        (1..game_scale).each do |v| # (1) 値v　をとり得る
           vsw = false
           grps1 = groups_remain_2_or_m_cells_of_value_is(h_v, v_h, v)
           #  [count , grp,  cells, co_groups]

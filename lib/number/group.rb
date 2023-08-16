@@ -2,14 +2,14 @@
 
 module Number
   class Group
-    attr_accessor :game, :cells, :n, :g, :ability, :cellList, :atrivute, :count
+    attr_accessor :game, :cells, :n, :game_scale, :g, :ability, :cellList, :atrivute, :count
 
     def initialize(arg_game, arg_g, atr = [], count)
       @game = arg_game
-      @n = @game.n
+      game_scale = @game.game_scale
       @g = arg_g
       @cells = @game.cells
-      @ability = Number::GroupAbilities.new(@n)
+      @ability = Number::GroupAbilities.new(game_scale)
       @cellList = []
       @atrivute = atr # :holizontal :vertical  :block
       @count = count
@@ -68,7 +68,7 @@ module Number
       v = [v] unless v.instance_of?(Array)
       rm_cells = @cellList - except_cells
       ret = nil
-      rm_cells.each do |c0| # (0..@n-1).each{|c| c0=@cellList[c]
+      rm_cells.each do |c0| # (0..game_scale-1).each{|c| c0=@cellList[c]
         if (@cells[c0].ability & v).size.positive?
           @cells[c0].rmAbility(v, msg)
           ret = true
