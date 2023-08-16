@@ -26,14 +26,8 @@ module Number
       @atrivute
     end
 
-    attr_reader :g, :cell_list
-
-    def addcell_list(a)
-      @cell_list << a
-    end
-
-    def is_block?
-      @atrivute == :block
+    def addcell_list(cell)
+      @cell_list << cell
     end
 
     def line_groups_join_with

@@ -10,7 +10,7 @@ module Number
     IROMONO_REG = /#{IROMONO.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
-    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :block, :n, :game_scale, :option
+    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :n, :game_scale, :option
     attr_reader :infile, :sep, :game_type, :count
 
     def self.create(infile, option: {})
@@ -60,10 +60,6 @@ module Number
 
       require_relative required
       extend Number::GameTypes::GameType
-    end
-
-    def block
-      @block ||= @groups.select(&:is_block?)
     end
 
     def resolve
@@ -167,15 +163,6 @@ module Number
       # @arrows = @arrows.sort { |a, b| b.size <=> a.size }
     end
 
-    ### def structure(data,form,sep)
-    ###   if /^\s*\d+(x\d+)?([-+]\d+)*\s*$/ =~ form # 3x3-4+5
-    ###     xmax,ymax = make_waku_pform_new(data,form,sep)  # 枠を算出
-    ###     ban_initialize(@w,game_scale,xmax,ymax)
-    ###     #印刷フォーム設定
-    ###     @form=Number::Form.new([@w,xmax,ymax],game_scale)
-    ###   end
-    ###   #@block ||= @groups.select{|grp| grp.is_block? }
-    ### end
     def struct_reg
       /^\s*\d+(x\d+|(x\d)?([-+]\d+)+)\s*$/
     end
@@ -187,7 +174,6 @@ module Number
       # 印刷フォーム設定
       # end
       @form = Number::Form.new([@w, xmax, ymax], game_scale)
-      # @block ||= @groups.select{|grp| grp.is_block? }
     end
 
     ### 出力系 ###

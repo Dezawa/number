@@ -19,10 +19,6 @@ module Number
       @cells.select { |cell| cell.v.nil? }.empty?
     end
 
-    def set_g(g)
-      @g = g
-    end
-
     def gout
       pp( # .ability.map { |abl| [grp.g, abl] if (abl[0]).positive? }.compact })
         groups.map do |grp|

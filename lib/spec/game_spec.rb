@@ -99,19 +99,3 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 end
-__END__
-    Number::Game::IROMONO.each do |game_type|
-      it '戻り値' do
-        infile = StringIO.new("# #{game_type}\n9\n" + data, 'r+')
-        numple = Numple.new(infile)
-        expect(numple.analyze_data).to eq [ game_type]
-      end
-    end
-      describe '#analyze_data' do
-    it 'infile の残りはdata' do
-      infile = StringIO.new("# \n9\n#{data}", 'r+')
-      numple = Numple.new(infile)
-      numple.analyze_data
-      expect(infile.read).to eq data
-    end
-  end

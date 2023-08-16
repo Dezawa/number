@@ -91,7 +91,6 @@ module Number
 
     def set_cell(val, msg = 'rest one')
       return nil if @valu || val && !@ability.include?(val)
-      # @gsw = true
 
       # if v.nil? and @ability.size == 1 ; v= @ability[0] ; end
       printf "Set cell %2d = %2d. by #{msg} \n", @c, val if option[:verb]

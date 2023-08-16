@@ -44,41 +44,6 @@ module Number
                .each { |arrow| @cells[arrow[1]].set(arrow[0], 'sum') }
         @work_arrow = @arrows.select { |arrow| arrow.size > 2 }
       end
-
-      # block の正方形からはみ出している部分を取り出し、それの合計が
-      # いくつになるかも arrowに追加する。
-      # ただしはみ出しが一つのblockに入っていない場合は厄介だから無視。
-      def hamidasi
-        # block毎に
-        arrow = @groups.select { |grp| grp.type == :block }.map do |grp|
-          grp.cell_list
-          # @arrowsの中にgroup のcellと一致するcellを含むものがあれば抜き出し
-          # その groupに属さないcellの一覧を用意する
-          sum = 0
-          cells = []
-          @arrows.map do |arw|
-            # pp [ arw,arw[1..-1], grp.cell_list,(arw[1..-1] & grp.cell_list)]
-            next unless (arw[1..] & grp.cell_list).size.positive?
-
-            sum += arw[0]
-            cells += (arw[1..] - grp.cell_list)
-            # pp [arw,sum,cells]
-          end
-          # そのcellが一つのgrpに属していたら登録する
-          next unless cells.size.positive?
-
-          g_list = @cells[cells[0]].grp_list
-          cells[1..].each { |c| g_list &= @cells[c].grp_list }
-          if g_list.size.positive?
-            # pp [sum,cells]
-            cells.unshift(sum - 45)
-          end
-        end.compact
-        # pp arrow
-        # exit
-        @arrows += arrow
-      end
-
       def check
         return true unless @check
 
