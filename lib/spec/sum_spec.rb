@@ -21,7 +21,7 @@ RSpec.describe Number::Game, type: :model do
     cell3 = [3, 4, 5]
 
     before do
-      allow(game).to receive(:is_allowable_dup?).and_return(true)
+      allow(game).to receive(:allowable_dup?).and_return(true)
     end
 
     context "#{cell1},#{cell2},#{cell3} の組み合わせでは" do
@@ -51,19 +51,19 @@ RSpec.describe Number::Game, type: :model do
     end
     it '横一直線のとき同じ数字があるとfalse' do
       sells_value = [1, 2, 1]
-      expect(game.is_allowable_dup?(arrow1, sells_value)).to eq false
+      expect(game.allowable_dup?(arrow1, sells_value)).to eq false
     end
     it '横一直線のとき同じ数字がないとtrue' do
       sells_value = [1, 2, 4]
-      expect(game.is_allowable_dup?(arrow1, sells_value)).to eq true
+      expect(game.allowable_dup?(arrow1, sells_value)).to eq true
     end
     it 'コの字のとき1,2つ目に同じ数字があるとfalse' do
       sells_value = [1, 1, 3]
-      expect(game.is_allowable_dup?(arrow2, sells_value)).to eq false
+      expect(game.allowable_dup?(arrow2, sells_value)).to eq false
     end
     it 'コの字のとき1,3つ目に同じ数字が有ってもtrue' do
       sells_value = [1, 2, 1]
-      expect(game.is_allowable_dup?(arrow2, sells_value)).to eq true
+      expect(game.allowable_dup?(arrow2, sells_value)).to eq true
     end
   end
 end
