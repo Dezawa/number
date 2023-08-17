@@ -19,6 +19,7 @@ FORM_TYPES =
    ['頭にコメント行', "#  \n9 ARROW\n111\n", %w[9 ARROW]],
    ['重層形式', "9-3+2-3 ARROW\n111\n", ['9-3+2-3', 'ARROW']]].freeze
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe Number::Game, type: :model do
   let(:data) do
     String.new("#\n9\n123......\n#{".........\n" * 8}")
@@ -99,3 +100,4 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

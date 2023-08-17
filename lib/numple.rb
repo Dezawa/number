@@ -119,7 +119,7 @@ class Numple
   end
 end
 ################# end of Numple ###
-
+# rubocop: disable Metrics/MethodLength
 def options
   opt = OptionParser.new
   option = {}
@@ -147,6 +147,7 @@ def options
 
   option
 end
+# rubocop: enable Metrics/MethodLength
 
 # ###############################################3
 # DO Main

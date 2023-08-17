@@ -92,7 +92,7 @@ module Number
     # それらの cell にはn他の値は入れない
     #
     def reserv(v_num)
-      # group において、可能性ある cell が v_num個以下の値を探す
+      # group において、可能性ある cell が v_num個以下の数字を探す
       # それらの v_num個のcombinationのうち、
       # cell数が v_num 個であるものを得る
       # それらの cell ではそれらの値以外ははいらない
@@ -179,13 +179,8 @@ module Number
           )
 
           # cell c と cell_nrs の共通group のcellから、v1,v2の可能性を削除する
-          cell_pair.each do |cell|
-            msg = "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" \
-                  " 対角線[#{cell_pair[0].c},#{cell_pair[1].c}] values=#{values} "
+          rm_values_from_cells_and_group(values, c, cell_pair, cogroup)
 
-            ret |= groups[cogroup([c, cell.c]).first]
-                   .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
-          end
         end
       end
       nil
@@ -225,6 +220,15 @@ module Number
         groups[cells[cell0].grp_list.max].cell_list) - [cell0] + [cell1]
     end
 
+    def rm_values_from_cells_and_group(values, cell, cell_pair, cogroup)
+      cell_pair.each do |cell|
+        msg = "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" \
+              " 対角線[#{cell_pair[0].c},#{cell_pair[1].c}] values=#{values} "
+
+        ret |= groups[cogroup([c, cell.c]).first]
+                 .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
+      end
+    end
     ##########################
     # こういう関係で１があるとき、＊の位置に１があったらそれは削除
     # *.1..1..1
@@ -268,22 +272,12 @@ module Number
             grps1.select { |grp| grp[0] <= g_nums }
                  .combination(g_nums).each do |cmb_grp|
               # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
-              next unless (rm_grps = cmb_grp.map do |grp|
-                             grp[3]
-                           end.flatten.uniq).size == g_nums
-
+              rm_grps = cmb_grp.map { |grp| grp[3] }.flatten.uniq
+              next unless rm_grps.size == g_nums
+              
               # (5) このco_groupsから値vの可能性を削除する。except cells
               # pp [v,cmb_grp[3]]
-              except_cells = cmb_grp.map do |co_grp1|
-                co_grp1[2]
-              end.flatten.uniq
-              rm_grps.each do |g|
-                msg = "cross_teiin v=#{v}, grps=#{cmb_grp.map { |cg| cg[1].g }.join(',')}"
-                removed = @groups[g].rm_ability(v, except_cells, msg)
-                next unless removed
-
-                vsw = ret = option[:gsw] = true
-              end
+              rm_v_from_co_groups(v, cmb_grp, rm_grps)
             end
           end
           @count['X wing'] += 1 if vsw
@@ -296,10 +290,24 @@ module Number
       ret # false
     end
 
+    def rm_v_from_co_groups(value, cmb_grp, rm_grps)
+      except_cells = cmb_grp.map do |co_grp1|
+        co_grp1[2]
+      end.flatten.uniq
+      rm_grps.each do |g|
+        msg = "cross_teiin v=#{value}, grps=#{cmb_grp.map { |cg| cg[1].g }.join(',')}"
+        removed = @groups[g].rm_ability(value, except_cells, msg)
+        next unless removed
+        
+        vsw = ret = option[:gsw] = true
+      end
+    end
+    
     def groups_remain_2_or_m_cells_of_value_is(h_v, v_h, valu)
       @groups.map do |grp|
+        count = grp.ability[valu].rest
         next unless (grp.type == h_v) && # 　　 :holizontal なgroupについて、
-                    ((count = grp.ability[valu].rest) <= @m) && # 値valu　をとり得るcellの数が2,,@m である
+                    (count <= @m) && # 値valu　をとり得るcellの数が2,,@m である
                     (count > 1) #      grp を集め
 
         # (2) そのcellを共有する:verticalなgroupを集める。[co_groups]

@@ -9,6 +9,7 @@ require_relative '../number/group_ability'
 require_relative '../number/game_types'
 require_relative '../number/game_types/sum'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe Number::Game, type: :model do
   let(:game) do
     game = Number::Game.new('', '9', game_type: 'SUM')
@@ -34,17 +35,17 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 
-  context :is_allowable_dup do
-    #             [sum,c-idx,c-idx,c-idx] c-idx は0から
-    let(:arrow1) { [9, 21, 22, 23] } # 横一直線
-    let(:arrow2) { [9, 21, 30, 29] } # Lの字 21、29は共通Groupなし
-    let(:cell20) { Number::Cell.new(nil, 20, [2, 11, 18], 0) }
-    let(:cell21) { Number::Cell.new(nil, 21, [2, 12, 19], 0) }
-    let(:cell22) { Number::Cell.new(nil, 22, [2, 13, 19], 0) }
-    let(:cell23) { Number::Cell.new(nil, 23, [2, 14, 19], 0) }
-    let(:cell30) { Number::Cell.new(nil, 30, [3, 12, 21], 0) }
-    let(:cell29) { Number::Cell.new(nil, 29, [3, 11, 22], 0) }
+  #             [sum,c-idx,c-idx,c-idx] c-idx は0から
+  let(:arrow1) { [9, 21, 22, 23] } # 横一直線
+  let(:arrow2) { [9, 21, 30, 29] } # Lの字 21、29は共通Groupなし
+  let(:cell20) { Number::Cell.new(nil, 20, [2, 11, 18], 0) }
+  let(:cell21) { Number::Cell.new(nil, 21, [2, 12, 19], 0) }
+  let(:cell22) { Number::Cell.new(nil, 22, [2, 13, 19], 0) }
+  let(:cell23) { Number::Cell.new(nil, 23, [2, 14, 19], 0) }
+  let(:cell30) { Number::Cell.new(nil, 30, [3, 12, 21], 0) }
+  let(:cell29) { Number::Cell.new(nil, 29, [3, 11, 22], 0) }
 
+  context :is_allowable_dup do
     before do
       # cell20は c-idx20、すなわち21番め
       game.cells = [nil] * 20 + [cell20, cell21, cell22, cell23] + [nil] * 5 + [cell29, cell30, nil]
@@ -67,3 +68,4 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
