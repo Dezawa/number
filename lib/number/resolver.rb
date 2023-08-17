@@ -70,8 +70,8 @@ module Number
             @count["prison#{v_num}"] += 1
             # このcellを含むgrpの 他のcellにあるｖの可能性を消す
             cogroup(cc).each do |grp0|
-              @groups[grp0].rm_ability(valus, cc,
-                                      "prison#{v_num} grp #{grp.g} val #{valus} cell #{cc}")
+              msg = "prison#{v_num} grp #{grp.g} val #{valus} cell #{cc}"
+              @groups[grp0].rm_ability(valus, cc, msg)
             end
             prison_done[v_num] << cc
             return true
@@ -105,8 +105,8 @@ module Number
           next unless (rm_cells.map { |c| @cells[c].ability }.flatten - values).size.positive?
 
           rm_cells.each do |c|
-            @cells[c].rm_ability(rm_value,
-                                "reserve#{v_num} group #{group.g} cells#{rm_cells} v=#{values}")
+            msg = "reserve#{v_num} group #{group.g} cells#{rm_cells} v=#{values}"
+            @cells[c].rm_ability(rm_value, msg)
           end
           @count["reserv#{v_num}"] += 1
           prison_done[v_num] << rm_cells
@@ -172,17 +172,18 @@ module Number
           next unless c
 
           values = cell_pair.first.ability
-          next if have_cells_ability_values( # 6
-            cells_not_on_the_V_or_H_group_of_the_group_of(c), # 5.
+          next if cells_ability_values?( # 6
+            cells_not_on_the_v_or_h_group_of_the_group_of(c), # 5.
             values
           )
 
           # cell c と cell_nrs の共通group のcellから、v1,v2の可能性を削除する
           cell_pair.each do |cell|
-            (ret |= groups[cogroup([c, cell.c]).first]
-            .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c),
-                       "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" \
-                       " 対角線[#{cell_pair[0].c},#{cell_pair[1].c}] values=#{values} "))
+            msg = "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" <<
+                  " 対角線[#{cell_pair[0].c},#{cell_pair[1].c}] values=#{values} "
+            
+            ret |= groups[cogroup([c, cell.c]).first]
+                      .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
           end
         end
       end
@@ -263,9 +264,8 @@ module Number
           # g_nums
           (2..@m).each do |g_nums|
             # combination
-            grps1.select do |grp|
-              grp[0] <= g_nums
-            end.combination(g_nums).each do |cmb_grp|
+            grps1.select{ |grp| grp[0] <= g_nums}
+              .combination(g_nums).each do |cmb_grp|
               # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
               next unless (rm_grps = cmb_grp.map do |grp|
                              grp[3]
@@ -277,10 +277,9 @@ module Number
                 co_grp1[2]
               end.flatten.uniq
               rm_grps.each do |g|
-                next unless @groups[g].rm_ability(v, except_cells,
-                                                 "crossTeiin v=#{v}, grps=#{cmb_grp.map do |cg|
-                                                                              cg[1].g
-                                                                            end.join ','}")
+                msg = "cross_teiin v=#{v}, grps=#{cmb_grp.map { |cg| cg[1].g }.join(',')}"
+                removed = @groups[g].rm_ability(v, except_cells, msg)
+                next unless removed
 
                 vsw = ret = option[:gsw] = true
               end

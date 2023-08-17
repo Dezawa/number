@@ -17,9 +17,9 @@ module Number
     end
 
     def inspect
-      "#<Group:#{object_id} " +
-        %i[g atrivute cell_list].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join +
-        "\n  @ability=[\n" +
+      "#<Group:#{object_id} " <<
+        %i[g atrivute cell_list].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join <<
+        "\n  @ability=[\n" <<
         @ability.ability.map { |abl| "         #{abl.inspect}" }.join("\n")
     end
 
