@@ -2,6 +2,7 @@
 
 # < Array
 module Number
+  # 解法
   module Resolver
     def cogroup(cells)
       return [] if cells.empty?

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Number
+  # Groupに残された可能性
   class GroupAbilities
     attr_accessor :game_scale, :ability
 
@@ -51,6 +52,7 @@ module Number
 end
 
 module Number
+  # Groupに残された可能性
   class GroupAbility
     attr_accessor :rest, :cell_list, :v
 

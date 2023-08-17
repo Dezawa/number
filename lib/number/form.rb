@@ -2,61 +2,22 @@
 
 require 'English'
 module Number
+  # ややこしい出力のためのhelper
   class Form < Array
     attr_accessor :game_scale
 
     def initialize(p_form, game_scale)
       @game_scale = game_scale
-      if p_form.instance_of?(Array)
-        # [ w,xmax,ymax ]
-        w, xmax, ymax = p_form
-        (0..ymax - 2).each { |i| push(w[i * xmax, xmax].map { |ww| ww ? ww[0] : nil }) }
-        @lines = ymax - 1
-        # pp self
-      elsif p_form.instance_of?(String)
-        file = open(p_form)
-        while file.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
-        @lines = $LAST_READ_LINE.to_i
-        # 9 -3 9 -3 9 -3 9
-        # 45*3
-        #-6 9 -3 9 -3 9
-        clm = 0
-        line = 0
-        while file.gets
-          next unless $LAST_READ_LINE !~ /^\s*#/ && $LAST_READ_LINE !~ /^\s*$/
 
-          wk = $LAST_READ_LINE.split(/\*/)
-          mlt = wk[1] ? wk[1].to_i : 1
-          (1..mlt).each do |_k|
-            line += 1
-            self[line] = []
-            wk[0].split.each do |n0|
-              nn = n0.to_i
-              if nn.positive?
-                self[line] << [clm + 1, clm + nn]
-                clm += nn
-              else
-                self[line] << [0, -nn]
-              end
-            end
-          end
-        end
-        file.close
-        print "*** error p_form lines miss ***\n" if @lines != line
-      end
+      # [ w,xmax,ymax ]
+      w, xmax, ymax = p_form
+      (0..ymax - 2).each { |i| push(w[i * xmax, xmax].map { |ww| ww ? ww[0] : nil }) }
+      @lines = ymax - 1
+      # pp self
     end
 
     def out(cells)
-      if game_scale > 9
-        sp =  3
-        fm1 = '%2d '
-        fm2 = ' . '
-      else
-        sp =  1
-        fm1 = '%1d'
-        fm2 = '.'
-      end
-
+      sp, fm1, fm2 = define_fmt
       out = String.new
       each  do |l|
         l.each do |c|
@@ -72,6 +33,18 @@ module Number
       out
     end
 
+    def define_fmt
+      if game_scale > 9
+        sp =  3
+        fm1 = '%2d '
+        fm2 = ' . '
+      else
+        sp =  1
+        fm1 = '%1d'
+        fm2 = '.'
+      end
+      [sp, fm1, fm2]
+    end
     # def outAbility(cells, v)
     #   print "\n-----\n"
     #   each  do |l|

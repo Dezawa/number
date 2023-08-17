@@ -8,9 +8,20 @@ require_relative '../number/group'
 require_relative '../number/group_ability'
 require_relative '../number/game_types'
 
+FORM_TYPES =
+  [['# と 9あり', "#\n9\n111\n", ['9', nil]],
+   ['# と 9 ARROWあり', "#\n9 ARROW\n111\n", %w[9 ARROW]],
+   ['# と 9 NOMATCHあり', "#\n9 NOMATCH\n111\n", ['9', nil]],
+   ['# なしで 9あり', "9\n111\n", ['9', nil]],
+   ['# なしで 9 ARROWあり', "9 ARROW\n111\n", %w[9 ARROW]],
+   ['9 ARROW の間に空白なし', "9ARROW\n111\n", %w[9 ARROW]],
+   ['頭に空行', "  \n9 ARROW\n111\n", %w[9 ARROW]],
+   ['頭にコメント行', "#  \n9 ARROW\n111\n", %w[9 ARROW]],
+   ['重層形式', "9-3+2-3 ARROW\n111\n", ['9-3+2-3', 'ARROW']]].freeze
+
 RSpec.describe Number::Game, type: :model do
   let(:data) do
-    String.new("#\n9\n123......\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n")
+    String.new("#\n9\n123......\n#{".........\n" * 8}")
   end
   let(:infile) { StringIO.new(data, 'r+') }
   context :new do
@@ -75,17 +86,6 @@ RSpec.describe Number::Game, type: :model do
       expect(game.cells.map(&:v)).to eq sult
     end
   end
-
-  FormTypes =
-    [['# と 9あり', "#\n9\n111\n", ['9', nil]],
-     ['# と 9 ARROWあり', "#\n9 ARROW\n111\n", %w[9 ARROW]],
-     ['# と 9 NOMATCHあり', "#\n9 NOMATCH\n111\n", ['9', nil]],
-     ['# なしで 9あり', "9\n111\n", ['9', nil]],
-     ['# なしで 9 ARROWあり', "9 ARROW\n111\n", %w[9 ARROW]],
-     ['9 ARROW の間に空白なし', "9ARROW\n111\n", %w[9 ARROW]],
-     ['頭に空行', "  \n9 ARROW\n111\n", %w[9 ARROW]],
-     ['頭にコメント行', "#  \n9 ARROW\n111\n", %w[9 ARROW]],
-     ['重層形式', "9-3+2-3 ARROW\n111\n", ['9-3+2-3', 'ARROW']]].freeze
 
   describe 'self.form_and_game_type' do
     let(:infile) { StringIO.new(data) }
