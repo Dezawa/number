@@ -118,6 +118,7 @@ class Numple
     @game = Number::Game.create(infile, option: option)
   end
 end
+
 ################# end of Numple ###
 # rubocop: disable Metrics/MethodLength
 def options

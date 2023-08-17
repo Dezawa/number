@@ -62,21 +62,18 @@ module Number
       # 残り可能性の数　2,,v_num なcellを拾い上げる
       # 同じ「残り可能性」なcellの組み合わせを探し、v_numあればhit
       @groups.each do |grp|
-        cells = grp.cell_list.select { |c| @cells[c].valurest > 1 && @cells[c].valurest <= v_num }
-        cells.combination(v_num) do |cc|
-          next if prison_done[v_num].include? cc
-
-          valus = cc.map { |c| @cells[c].ability }.inject([]) { |val, abl| val | abl }
-          if valus.size == v_num #  このgrpでこれらのcellは vals が定員
-            @count["prison#{v_num}"] += 1
-            # このcellを含むgrpの 他のcellにあるｖの可能性を消す
-            cogroup(cc).each do |grp0|
-              msg = "prison#{v_num} grp #{grp.g} val #{valus} cell #{cc}"
-              @groups[grp0].rm_ability(valus, cc, msg)
-            end
-            prison_done[v_num] << cc
-            return true
+        prisonable_cells(grp, v_num)
+          .each do |cc, _values|
+          # if valus.size == v_num #  このgrpでこれらのcellは vals が定員
+          @count["prison#{v_num}"] += 1
+          # このcellを含むgrpの 他のcellにあるｖの可能性を消す
+          cogroup(cc).each do |grp0|
+            msg = "prison#{v_num} grp #{grp.g} val #{@valus} cell #{cc}"
+            @groups[grp0].rm_ability(@valus, cc, msg)
           end
+          prison_done[v_num] << cc
+          return true
+          # end
         end
       end
       nil
@@ -84,6 +81,16 @@ module Number
 
     def prison_done
       @prison_done ||= Hash.new { |h, k| h[k] = [] }
+    end
+
+    def prisonable_cells(grp, v_num)
+      cells = grp.cell_list.select { |c| @cells[c].valurest > 1 && @cells[c].valurest <= v_num }
+      cells.combination(v_num).reject do |cc|
+        prison_done[v_num].include? cc
+      end.map do |cc|
+        values = cc.map { |c| @cells[c].ability }.inject([]) { |val, abl| val | abl }
+        [cc, values] if values.size == v_num
+      end.compact
     end
 
     ###########################################################
@@ -165,7 +172,6 @@ module Number
       # 4. それらを対角線とする長方形の残りの頂点のcell C,Dを得る
       # 5. C,D 各々が属する block上で、AC,BC 上にないcell(4つ)を求め
       # 6. その4つのcellにV1,V2 がありうるか見る）
-      ret = nil
       cell_combinations_rest_is_2_and_same_value.map do |cell_pair| # 1,2,3 残り可能性二つのcell
         # pp ["curb",cell_pair.map{|cell| cell.c}]
         theother_cells_of_rectangle_which_made_by_diagonal_of(cell_pair) # 4.その対角線のcell [0, 53]
@@ -180,7 +186,6 @@ module Number
 
           # cell c と cell_nrs の共通group のcellから、v1,v2の可能性を削除する
           rm_values_from_cells_and_group(values, c, cell_pair, cogroup)
-
         end
       end
       nil
@@ -220,13 +225,13 @@ module Number
         groups[cells[cell0].grp_list.max].cell_list) - [cell0] + [cell1]
     end
 
-    def rm_values_from_cells_and_group(values, cell, cell_pair, cogroup)
+    def rm_values_from_cells_and_group(values, _cell, cell_pair, _cogroup)
       cell_pair.each do |cell|
         msg = "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" \
               " 対角線[#{cell_pair[0].c},#{cell_pair[1].c}] values=#{values} "
 
-        ret |= groups[cogroup([c, cell.c]).first]
-                 .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
+        ret | groups[cogroup([c, cell.c]).first]
+              .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
       end
     end
     ##########################
@@ -274,7 +279,7 @@ module Number
               # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
               rm_grps = cmb_grp.map { |grp| grp[3] }.flatten.uniq
               next unless rm_grps.size == g_nums
-              
+
               # (5) このco_groupsから値vの可能性を削除する。except cells
               # pp [v,cmb_grp[3]]
               rm_v_from_co_groups(v, cmb_grp, rm_grps)
@@ -298,11 +303,11 @@ module Number
         msg = "cross_teiin v=#{value}, grps=#{cmb_grp.map { |cg| cg[1].g }.join(',')}"
         removed = @groups[g].rm_ability(value, except_cells, msg)
         next unless removed
-        
-        vsw = ret = option[:gsw] = true
+
+        option[:gsw] = true
       end
     end
-    
+
     def groups_remain_2_or_m_cells_of_value_is(h_v, v_h, valu)
       @groups.map do |grp|
         count = grp.ability[valu].rest

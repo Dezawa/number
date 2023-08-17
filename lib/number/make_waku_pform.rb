@@ -140,10 +140,10 @@ module Number
     def set_block_group(gnr, boxes, group_width, group_hight, xmax, waku)
       boxes.each do |box|
         (box.y_pos..box.y_pos + game_scale - 1).step(group_hight).each do |y|
-          (box.x_pos..box.x_pos + game_scale - 1).step(group_width).each do |x|
+          (box.x_pos..box.x_pos + game_scale - 1).step(group_width).reject do |x|
             # next if waku[xmax*y+x].nil?     #or waku[xmax*y+x][1]
-            next if waku[xmax * y + x].nil?
-
+            waku[xmax * y + x].nil?
+          end.each do |x|
             # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:block)
             @groups[gnr] = Number::Group.new(self, gnr, @count, :block)
             (y..y + group_hight - 1).each do |yy|
@@ -159,21 +159,29 @@ module Number
     def set_vertical_holizontal_group(gnr, boxes, xmax, waku)
       boxes.each do |box|
         (box.y_pos..box.y_pos + game_scale - 1).each do |y|
-          # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:holizontal)
-          @groups[gnr] = Number::Group.new(self, gnr, @count, :holizontal)
-          (box.x_pos..box.x_pos + game_scale - 1).each do |x|
-            waku[xmax * y + x][1] << gnr
-          end
+          holizontal_group(gnr, box, xmax, waku, y)
           gnr += 1
         end
         (box.x_pos..box.x_pos + game_scale - 1).each do |x|
-          # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:vertical)
-          @groups[gnr] = Number::Group.new(self, gnr, count, :vertical)
-          (box.y_pos..box.y_pos + game_scale - 1).each { |y| waku[xmax * y + x][1] << gnr }
+          vertical_group(gnr, box, waku, xmax, x)
           gnr += 1
         end
       end
       gnr
+    end
+
+    def holizontal_group(gnr, box, xmax, waku, y_pos)
+      # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:holizontal)
+      @groups[gnr] = Number::Group.new(self, gnr, @count, :holizontal)
+      (box.x_pos..box.x_pos + game_scale - 1).each do |x|
+        waku[xmax * y_pos + x][1] << gnr
+      end
+    end
+
+    def vertical_group(gnr, box, waku, xmax, x_pos)
+      # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:vertical)
+      @groups[gnr] = Number::Group.new(self, gnr, count, :vertical)
+      (box.y_pos..box.y_pos + game_scale - 1).each { |y| waku[xmax * y + x_pos][1] << gnr }
     end
 
     def base_pos(mult, sign, mnr, dans)
@@ -205,7 +213,13 @@ module Number
     end
 
     def base_size(struct)
-      mult = struct.split(/[-+]/) #
+      mult = struct.split(/[-+]/)
+      n, group_width, group_hight = mult_params(mult)
+      mult, mnr, dan, sign = mult_struct(mult)
+      [[n, group_width, group_hight], mult, sign, mnr, dan]
+    end
+
+    def mult_params(mult)
       n = mult.shift # Gameの基本サイズ
       if /\d+x\d+/ =~ n
         group_width, group_hight = n.split('x')
@@ -216,6 +230,10 @@ module Number
         n = n.to_i
         group_width = group_hight = (Math.sqrt(n) + 0.2).to_i
       end
+      [n, group_width, group_hight]
+    end
+
+    def mult_struct(mult)
       if mult.empty?
         mult = [1]
         mnr = 1
@@ -229,7 +247,7 @@ module Number
       end
       # pp ["struct,n,mult,sign",struct,n,mult,sign]
       # pp ["Mnr,Dan",mnr,dan]
-      [[n, group_width, group_hight], mult, sign, mnr, dan]
+      [mult, mnr, dan, sign]
     end
   end
 end
