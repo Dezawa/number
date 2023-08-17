@@ -28,7 +28,7 @@ module Number
             waku[c][1] << d.to_i + gnr - 1
           end
         end
-        (gnr..gnr + game_scale - 1).each { |g| @groups[g] = Number::Group.new(self, g, :block, @count) }
+        (gnr..gnr + game_scale - 1).each { |g| @groups[g] = Number::Group.new(self, g, @count, :block) }
         gnr += game_scale
         gnr
       end

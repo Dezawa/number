@@ -145,7 +145,7 @@ module Number
             next if waku[xmax * y + x].nil?
 
             # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:block)
-            @groups[gnr] = Number::Group.new(self, gnr, :block, @count)
+            @groups[gnr] = Number::Group.new(self, gnr, @count, :block)
             (y..y + group_hight - 1).each do |yy|
               (x..x + group_width - 1).each { |xx| waku[xmax * yy + xx][1] << gnr }
             end
@@ -160,7 +160,7 @@ module Number
       boxes.each do |box|
         (box.y_pos..box.y_pos + game_scale - 1).each do |y|
           # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:holizontal)
-          @groups[gnr] = Number::Group.new(self, gnr, :holizontal, @count)
+          @groups[gnr] = Number::Group.new(self, gnr, @count, :holizontal)
           (box.x_pos..box.x_pos + game_scale - 1).each do |x|
             waku[xmax * y + x][1] << gnr
           end
@@ -168,7 +168,7 @@ module Number
         end
         (box.x_pos..box.x_pos + game_scale - 1).each do |x|
           # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:vertical)
-          @groups[gnr] = Number::Group.new(self, gnr, :vertical, count)
+          @groups[gnr] = Number::Group.new(self, gnr, count, :vertical)
           (box.y_pos..box.y_pos + game_scale - 1).each { |y| waku[xmax * y + x][1] << gnr }
           gnr += 1
         end

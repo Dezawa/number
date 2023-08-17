@@ -16,7 +16,7 @@ module Number
         while $LAST_READ_LINE =~ /^([\d\s]+$)/
           if ::Regexp.last_match(1) && $LAST_READ_LINE =~ /\d/
             #        puts $_
-            @groups[gnr] = Number::Group.new(self, gnr, :option, @count)
+            @groups[gnr] = Number::Group.new(self, gnr, @count, :option)
             $LAST_READ_LINE.split.each do |cell| # これらのcellがそのgrp
               ww = waku.assoc(cell.to_i - 1)
               ww[1] << gnr

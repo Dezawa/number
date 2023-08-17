@@ -16,7 +16,7 @@ module Number
         x, y = boxes[0].p
         base0 = y * xmax + x
         base1 = base0 + game_scale - 1
-        2.times { |g| @groups[gnr + g] = Number::Group.new(self, gnr + g, :xross, @count) }
+        2.times { |g| @groups[gnr + g] = Number::Group.new(self, gnr + g, @count, :xross) }
         (0..game_scale - 1).each  do |i|
           waku[base0 + (xmax + 1) * i][1] << gnr
           waku[base1 + (xmax - 1) * i][1] << gnr + 1

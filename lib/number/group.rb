@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 module Number
+  # 行、列、ブロックを総称
   class Group
     attr_accessor :game, :cells, :n, :game_scale, :g, :ability, :cell_list, :atrivute, :count
 
-    def initialize(arg_game, arg_g, atr = [], count)
+    def initialize(arg_game, arg_g, count, atr = [])
       @game = arg_game
       game_scale = @game.game_scale
       @g = arg_g
