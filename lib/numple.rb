@@ -120,44 +120,43 @@ class Numple
 end
 ################# end of Numple ###
 
-def get_option
+def options
   opt = OptionParser.new
-  options = {}
+  option = {}
   # opt.on('-q') {|v| @quiet = v }
-  opt.on('-S') { |v| options[:stat] = v }
-  opt.on('-s') { |v| options[:strct] = v }
-  opt.on('-v') { |v| options[:verb] = v }
-  opt.on('-V') { |v| options[:Verb] = v }
-  opt.on('-T') { |v| options[:table] = v }
-  opt.on('-t') { |v| options[:test] = v }
-  opt.on('-c') { |v| options[:cout] = v }
-  opt.on('-g') { |v| options[:gout] = v }
-  opt.on('-d') { |v| options[:dbg] = v }
-  opt.on('-m') { |v| options[:mail] = v }
+  opt.on('-S') { |v| option[:stat] = v }
+  opt.on('-s') { |v| option[:strct] = v }
+  opt.on('-v') { |v| option[:verb] = v }
+  opt.on('-V') { |v| option[:Verb] = v }
+  opt.on('-T') { |v| option[:table] = v }
+  opt.on('-t') { |v| option[:test] = v }
+  opt.on('-c') { |v| option[:cout] = v }
+  opt.on('-g') { |v| option[:gout] = v }
+  opt.on('-d') { |v| option[:dbg] = v }
+  opt.on('-m') { |v| option[:mail] = v }
   # opt.on('- ""') {|v| $= v }
   # opt.on('- ""') {|v| $= v }
   @level = 0
-  opt.on('-1') { |_v| options[:level] = 1 }
+  opt.on('-1') { |_v| option[:level] = 1 }
   opt.on('-h') do |_v|
     puts @help
     exit(0)
   end
   opt.parse!(ARGV)
+  return option unless option[:dbg]
 
-  return options unless options[:dbg]
-
-  options
+  option
 end
 
 # ###############################################3
 # DO Main
 ################################################
 if /numple.rb$/ =~ $PROGRAM_NAME
-  options = get_option
+  option = options
   if ARGV.size.positive?
     ARGV.each do |infile|
       puts "############ #{infile} #######"
-      numple = Numple.new(infile, option: options)
+      numple = Numple.new(infile, option: option)
       numple.resolve
       puts numple.output_form # 解出力
       puts numple.cell_out if @cout # Cellの残された可能性出力
@@ -166,7 +165,7 @@ if /numple.rb$/ =~ $PROGRAM_NAME
       puts
     end
   else
-    numple = Numple.new($stdin, option: options)
+    numple = Numple.new($stdin, option: option)
     numple.resolve
     puts numple.output_form # 解出力
     puts numple.cell_out if @cout # Cellの残された可能性出力

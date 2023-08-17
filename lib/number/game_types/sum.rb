@@ -14,12 +14,12 @@ module Number
       # このあと sum cell0 cell..... を並べる
 
       ##############
-      def optional_struct(_sep, _n, infile)
+      def optional_struct(_sep, _game_scle, infile)
         get_arrow(infile)
         @arrows.each { |arw| arw[0] += 1 }
         # @arrows.sort! { |a, b| a.size <=> b.size }
         # pp @arrows
-        print_struct if $check
+        print_struct if @check
         check || exit(1)
         # hamidasi
         cell_fix_for_single_cell_arrow

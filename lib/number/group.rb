@@ -38,14 +38,14 @@ module Number
       cell_list.inject([]) { |g_nrs, c| g_nrs << @cells[c].grp_list[2] }.uniq
     end
 
-    def rmCellAbility(v0, cell_no, msg = nil)
-      @ability.rmCellAbility(v0, cell_no, msg)
+    def rm_cell_ability(values, cell_no, msg = nil)
+      @ability.rm_cell_ability(values, cell_no, msg)
     end
 
     def set_cell_if_some_value_s_ability_is_rest_one
       sw = nil
-      ability.fixed_by_rest_one.each do |cellData|
-        if @cells[cellData.cell_list.first].set(cellData.v, "grp(#{g}).ability #{cellData.cell_list}")
+      ability.fixed_by_rest_one.each do |cell_data|
+        if @cells[cell_data.cell_list.first].set(cell_data.v, "grp(#{g}).ability #{cell_data.cell_list}")
           @count[:Group_ability_is_rest_one] += 1
           sw = true
         end

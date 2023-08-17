@@ -9,7 +9,7 @@ module Number
         'XROSS'
       end
 
-      def set_optional_group(gnr, boxes, _group_width, _group_hight, xmax, w)
+      def set_optional_group(gnr, boxes, _group_width, _group_hight, xmax, waku)
         # def add_xross_group(boxes,xmax,n,w,gsize)
         return 0 if boxes.size != 1
 
@@ -18,8 +18,8 @@ module Number
         base1 = base0 + game_scale - 1
         2.times { |g| @groups[gnr + g] = Number::Group.new(self, gnr + g, :xross, @count) }
         (0..game_scale - 1).each  do |i|
-          w[base0 + (xmax + 1) * i][1] << gnr
-          w[base1 + (xmax - 1) * i][1] << gnr + 1
+          waku[base0 + (xmax + 1) * i][1] << gnr
+          waku[base1 + (xmax - 1) * i][1] << gnr + 1
         end
         gnr + 2
       end

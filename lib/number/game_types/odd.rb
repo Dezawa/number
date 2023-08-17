@@ -9,7 +9,7 @@ module Number
       end
 
       # module Optional
-      def optional_struct(_sep, _n, infile)
+      def optional_struct(_sep, _game_scale, infile)
         get_arrow(infile)
         # @arrow=Hash[*@arrow.map{|c1,c2| [[c1,c2],[c2,c1]]}.flatten]
       end
@@ -44,18 +44,18 @@ module Number
         cellss_not_included = cells_not_included.dup
 
         sw = nil
-        cellss_not_included.each do |cno|
-          cell = cells[cno]
+        cellss_not_included.each do |cell_nr|
+          cell = cells[cell_nr]
           if cell.odd?
             odd -= 1
-            cells_not_included.delete(cno)
+            cells_not_included.delete(cell_nr)
           elsif cell.even?
             even -= 1
-            cells_not_included.delete(cno)
+            cells_not_included.delete(cell_nr)
           end
           if even.zero?
-            cells_not_included.each do |cno|
-              ret = cells[cno].set_odd
+            cells_not_included.each do |cell_nr|
+              ret = cells[cell_nr].set_odd
               sw ||= ret
             end
             return sw

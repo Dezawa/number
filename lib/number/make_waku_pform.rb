@@ -27,12 +27,12 @@ MEMO = <<~EOMEMO
 
   面全体の座標は ban[ Dan , Retsu ]
   箱一つづつ9x9のcellの座標を求め( box[*]+[l,r])
-     該当する ban[ ] に　cellNo, line,raw,box 番号を入れる。
+     該当する ban[ ] に　cell_no, line,raw,box 番号を入れる。
              line,raw は2つまで入る　groupとしては3〜5
-             すでにcellNoが入っていたら　++しない
+             すでにcell_noが入っていたら　++しない
 
   waku は
-     ban[x,y].eachにて、cellNoが入っているものを出力する
+     ban[x,y].eachにて、cell_noが入っているものを出力する
   隣は x+/- 1, y+/-1 のbanを書き出す
 
   pform　は
@@ -42,14 +42,15 @@ EOMEMO
 ######################################
 # struct = ARGV.shift #"9" #9-3+4-3"
 module Number
+  # gameのformを設定するextend
   module GamePform
     def make_waku_pform(struct)
-      n, mult, sign, m_nr, dan = get_baseSize(struct)
+      n, mult, sign, m_nr, dan = base_size(struct)
       @game_scale, group_width, group_hight = n
       @val = (1..game_scale).to_a
 
       @m = Math.sqrt(game_scale).to_i
-      boxes, xsize, ysize = setBasePos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
+      boxes, xsize, ysize = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
 
       xmax = xsize + 1
       ymax = ysize + 1
@@ -98,7 +99,7 @@ module Number
       [xmax, ymax]
     end
 
-    def ban_initialize(waku, _n, xmax, ymax)
+    def ban_initialize(waku, _game_scale, xmax, ymax)
       waku.each do |ww|
         next unless ww
 
@@ -184,7 +185,7 @@ module Number
       bnr = -1
       xmin = 0
       xmax = 0
-      (0..dan - 1).each do |dan|
+      (0..dans - 1).each do |dan|
         box.p = box + [offset[sign[dan]], 6]
         wbox.p = box.p
         xmin = wbox.x_pos if xmin > wbox.x_pos

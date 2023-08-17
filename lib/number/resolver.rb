@@ -44,7 +44,7 @@ module Number
         # (1) cell Ability
         @cells.each { |cell| sw |= cell.set_if_valurest_equal_1 }
 
-        # (2) group ability [ 可能性cell数 , [cellNo,cellNo,, ], 値 ]
+        # (2) group ability [ 可能性cell数 , [cell_no,cell_no,, ], 値 ]
         @groups.each { |grp| sw |= grp.set_cell_if_some_value_s_ability_is_rest_one }
         ret |= sw
       end
@@ -213,14 +213,14 @@ module Number
     end
 
     # cellsのabilityに値v0,v1があるか
-    def have_cells_ability_values(c_nrs, values)
+    def cells_ability_values?(c_nrs, values)
       (c_nrs.inject([]) { |ablty, c| ablty | cells[c].vlist } & values).size.positive?
     end
 
     # cell c と cell_nr の共通group のcell　でかつ c のblock上のもの
-    def cells_on_the_co_group_and_block(c0, c1)
-      (groups[cogroup([c0, c1]).first].cell_list &
-        groups[cells[c0].grp_list.max].cell_list) - [c0] + [c1]
+    def cells_on_the_co_group_and_block(cell0, cell1)
+      (groups[cogroup([cell0, cell1]).first].cell_list &
+        groups[cells[cell0].grp_list.max].cell_list) - [cell0] + [cell1]
     end
 
     ##########################
@@ -296,14 +296,14 @@ module Number
       ret # false
     end
 
-    def groups_remain_2_or_m_cells_of_value_is(h_v, v_h, v)
+    def groups_remain_2_or_m_cells_of_value_is(h_v, v_h, valu)
       @groups.map do |grp|
         next unless (grp.type == h_v) && # 　　 :holizontal なgroupについて、
-                    ((count = grp.ability[v].rest) <= @m) && #      値v　をとり得るcellの数が2,,@m である
+                    ((count = grp.ability[valu].rest) <= @m) && # 値valu　をとり得るcellの数が2,,@m である
                     (count > 1) #      grp を集め
 
         # (2) そのcellを共有する:verticalなgroupを集める。[co_groups]
-        cells = grp.ability[v].cell_list
+        cells = grp.ability[valu].cell_list
         co_groups = cells.map { |c| cogroup([c]).select { |g| @groups[g].type == v_h }.flatten }
         [count, grp, cells, co_groups]
       end.compact
