@@ -180,11 +180,11 @@ module Number
 
           # cell c と cell_nrs の共通group のcellから、v1,v2の可能性を削除する
           cell_pair.each do |cell|
-            msg = "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" <<
+            msg = "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" \
                   " 対角線[#{cell_pair[0].c},#{cell_pair[1].c}] values=#{values} "
-            
+
             ret |= groups[cogroup([c, cell.c]).first]
-                      .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
+                   .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
           end
         end
       end
@@ -265,8 +265,8 @@ module Number
           # g_nums
           (2..@m).each do |g_nums|
             # combination
-            grps1.select{ |grp| grp[0] <= g_nums}
-              .combination(g_nums).each do |cmb_grp|
+            grps1.select { |grp| grp[0] <= g_nums }
+                 .combination(g_nums).each do |cmb_grp|
               # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
               next unless (rm_grps = cmb_grp.map do |grp|
                              grp[3]

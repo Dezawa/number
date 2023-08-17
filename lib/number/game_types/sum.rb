@@ -44,6 +44,7 @@ module Number
                .each { |arrow| @cells[arrow[1]].set(arrow[0], 'sum') }
         @work_arrow = @arrows.select { |arrow| arrow.size > 2 }
       end
+
       def check
         return true unless @check
 
