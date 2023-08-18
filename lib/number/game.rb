@@ -2,6 +2,7 @@
 
 require_relative './make_waku_pform'
 require_relative './resolver'
+require_relative './game_initiate'
 
 module Number
   # mail class
@@ -10,6 +11,7 @@ module Number
     IROMONO_REG = /#{IROMONO.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
+    include Number::GameInitiate
     attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :n, :game_scale, :option
     attr_reader :infile, :sep, :game_type, :count
 
@@ -36,6 +38,11 @@ module Number
       line = infile.gets while line =~ /^\s*#/ || line =~ /^\s*$/
       line
     end
+    def gets_skip_comment(infile)
+      line = infile.gets
+      line = infile.gets while line =~ /^\s*#/ || line =~ /^\s*$/
+      line
+    end
 
     def optional_test; end
 
@@ -52,14 +59,6 @@ module Number
 
     def game
       'NOMAL'
-    end
-
-    def set_game_type
-      required = IROMONO_REG =~ game_type ? "./game_types/#{::Regexp.last_match(0).downcase}" : nil
-      return unless required
-
-      require_relative required
-      extend Number::GameTypes::GameType
     end
 
     def high_class
@@ -98,86 +97,12 @@ module Number
       fill?
     end
 
-    # data file の残りを読んで、初期値を得る
-    #    dataファイルにある、arrow情報も読む
-    def get_initialdata
-      c = 0
-      # print "last $_='",$_,"', @gsize=#{@gsize} @size=#{@size}\n" unless $quiet
-
-      # 所定の cell数だけ、初期データを読む
-      while infile.gets && c < @size
-        # print $_
-        $LAST_READ_LINE =~ /^\s*#/ && while infile.gets =~ /^\s*#/; end
-        # STDERR.
-        # print $_ unless $quiet
-        $LAST_READ_LINE.chop.split(sep).each do |v|
-          # print "#{c}='#{v}' "
-          next if v =~ /\s/
-
-          if v == 'e'
-            @cells[c].set_even
-          elsif v == 'o'
-            @cells[c].set_odd
-          elsif (vv = v.to_i).positive?
-            # STDERR.        print "#{vv} "
-            vlst = v.split('|')
-            if vlst.size == 1
-              # print "[ C=#{c} vv=#{vv}] ";
-              @cells[c].set_cell(vv, 'initialize')
-            else
-              vv = @val - vlst.map!(&:to_i)
-              @cells[c].rm_ability(vv, 'initialize')
-            end
-          end
-          c += 1
-        end
-      end
-      # dataファイルの後半にある arrow情報を得る
-      # 標準では何もしないmethod
-      optional_struct(sep, game_scale, infile)
-      # @arrows = @arrows.compact if @arrows
-    end
-
     def optional_struct(sep, game_scale, infile); end
-
-    def get_arrow(infile)
-      puts 'GET ARROW' if option[:verb]
-      # $_ =~ /^[#\s]*$/ && while infile.gets =~ /^[#\s]*$/;end
-      while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
-      @arrows = []
-      a = []
-      puts $LAST_READ_LINE if option[:verb]
-      raise 'ENOUGH ARROW DATA' unless $LAST_READ_LINE
-
-      $LAST_READ_LINE.split.each { |c| a << c.to_i - 1 }
-      @arrows << a.dup
-
-      puts "arrow #{$LAST_READ_LINE}" if option[:verb]
-      while infile.gets =~ /\d/
-        puts "arrow #{$LAST_READ_LINE}" if option[:verb]
-        raise 'ENOUGH ARROW DATA' unless $LAST_READ_LINE
-
-        a = []
-        $LAST_READ_LINE.split.each { |c| a << c.to_i - 1 }
-        @arrows << a.dup
-      end
-      @arrows = @arrows.compact if @arrows
-      # @arrows = @arrows.sort { |a, b| b.size <=> a.size }
-    end
 
     def struct_reg
       /^\s*\d+(x\d+|(x\d)?([-+]\d+)+)\s*$/
     end
-
-    def get_structure
-      xmax, ymax = make_waku_pform(form_type)
-      # if struct_reg =~ form_type # 3x3-4+5
-      ban_initialize(@w, game_scale, xmax, ymax)
-      # 印刷フォーム設定
-      # end
-      @form = Number::Form.new([@w, xmax, ymax], game_scale)
-    end
-
+    
     ### 出力系 ###
     # 版の出力。決まっていない所は . ピリオド
     def output_form
