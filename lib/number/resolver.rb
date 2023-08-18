@@ -39,7 +39,6 @@ module Number
       # (2) ある値の可能性あるcellが一つになったら、そのcellを確定する
 
       sw = true
-      msg = ''
       cells = []
       while sw
         sw = false
@@ -94,7 +93,7 @@ module Number
       # pp ret
       return '' if ret.empty?
 
-      cells_values = ret.uniq.map { |cc, values| "cels#{cc},vlues#{values}" }.join('   ')
+      ret.uniq.map { |cc, values| "cels#{cc},vlues#{values}" }.join('   ')
       "prison(#{v_num}): [cells, values] #{ret}"
     end
 

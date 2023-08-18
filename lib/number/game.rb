@@ -38,6 +38,7 @@ module Number
       line = infile.gets while line =~ /^\s*#/ || line =~ /^\s*$/
       line
     end
+
     def gets_skip_comment(infile)
       line = infile.gets
       line = infile.gets while line =~ /^\s*#/ || line =~ /^\s*$/
@@ -75,7 +76,7 @@ module Number
        [:reserv, 4],
        [:prison, 4],
        [:cross_teiin],
-       [:curb]]
+       [:curb]].freeze
 
     def resolve
       count = 40
@@ -102,7 +103,7 @@ module Number
     def struct_reg
       /^\s*\d+(x\d+|(x\d)?([-+]\d+)+)\s*$/
     end
-    
+
     ### 出力系 ###
     # 版の出力。決まっていない所は . ピリオド
     def output_form

@@ -45,24 +45,14 @@ module Number
       end
 
       def check
-        return true unless $strct
+        return true unless option[:strct]
 
-        pp @arrows
-        p @arrows.size
         @err = nil
-        para = []
-        q = []
-        (1..@size).each { |i| q << i }
-        @arrows.each do |a|
-          b = a.dup
-          para << b
-        end
-        para.flatten!
+        q = (1..@size).to_a
+        para = @arrows.map { |a| a.dup }.flatten
+
         p = para.sort.uniq
-        if p.size != para.size
-          $stderr.print "Optional Para is duped\n"
-          exit(1)
-        end
+        $stderr.print "Optional Para is duped\n" && exit(1) if p.size != para.size
         return unless p[0] < 1 || p[@size - 1] > @size
 
         $stderr.print "Optional Para value is wrong\n" && exit(1)

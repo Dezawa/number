@@ -76,7 +76,7 @@ RSpec.describe Number::Game, type: :model do
     end
 
     let(:ary_groupability) do
-      combos = abilities_for_reserv.map.with_index(1) do |ability, value|
+      abilities_for_reserv.map.with_index(1) do |ability, value|
         group_aiblilities.ability[value] =
           Number::GroupAbility.new(ability.size, ability, value)
       end
