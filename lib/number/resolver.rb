@@ -53,9 +53,10 @@ module Number
     end
 
     ########
-    # 定員
-    # N個のcellには v1,v2,,,vn なるN種の値しか入らないとき、
+    # 座敷牢
+    # N個のcellには v1,v2,,,vn なるN種の数字しか入らないとき、
     # これらのcellが属するgroupの他のcell には　v1,v2,,,は入らない
+    # この数字が N個以外のcellに可能性が有ってもよい。それは削除対象
     ########
     ###########################################################
     def prison(v_num)
@@ -63,13 +64,14 @@ module Number
       # 同じ「残り可能性」なcellの組み合わせを探し、v_numあればhit
       @groups.each do |grp|
         prisonable_cells(grp, v_num)
-          .each do |cc, _values|
-          # if valus.size == v_num #  このgrpでこれらのcellは vals が定員
+          .reject { |cc, _values| prison_done[v_num].include?(cc) }
+          .each do |cc, values|
           @count["prison#{v_num}"] += 1
+
           # このcellを含むgrpの 他のcellにあるｖの可能性を消す
           cogroup(cc).each do |grp0|
-            msg = "prison#{v_num} grp #{grp.g} val #{@valus} cell #{cc}"
-            @groups[grp0].rm_ability(@valus, cc, msg)
+            msg = "prison#{v_num} grp #{grp0} val #{values} cells exept #{cc}"
+            @groups[grp0].rm_ability(values, cc, msg)
           end
           prison_done[v_num] << cc
           return true
@@ -83,14 +85,31 @@ module Number
       @prison_done ||= Hash.new { |h, k| h[k] = [] }
     end
 
+    # prison対象のcellの組み合わせを返す。
+    # grp にて、
+    # 可能性残り数が v_num個以下のcellの
+    # v_num個の組み合わせの中で
+    # 可能性数字種類が v_num個の組み合わせを返す。
+    # それらの 数字が他のcellに有っても良い。それは可能性削除対象
+    # 戻り値 :: [ [cell_list, 数字list], [ ],,, ]
     def prisonable_cells(grp, v_num)
-      cells = grp.cell_list.select { |c| @cells[c].valurest > 1 && @cells[c].valurest <= v_num }
-      cells.combination(v_num).reject do |cc|
-        prison_done[v_num].include? cc
-      end.map do |cc|
-        values = cc.map { |c| @cells[c].ability }.inject([]) { |val, abl| val | abl }
+      # 数字残り可能性数 が v_num以下のcell
+      able_cells = grp.cell_list_avility_le_than(v_num)
+      # pp [:prisonable_cells,able_cells]
+
+      # それらの v_num個のcombinationのうち、数字種類がv_num個のもの
+      # [ [cell_ids, valus], [ ],,]
+      able_cells.combination(v_num).map do |cc|
+        values = cc.map { |c| cells[c].ability }.flatten.uniq
         [cc, values] if values.size == v_num
       end.compact
+      # # pp [:prisonable_cells_cell_comb,cell_comb]
+      # cell_comb.reject do |cc|
+      #   prison_done[v_num].include? cc
+      # end.map do |cc|
+      #   values = cc.map { |c| @cells[c].ability }.inject([]) { |val, abl| val | abl }
+      #   [cc, values] if values.size == v_num
+      # end.compact
     end
 
     ###########################################################
@@ -100,18 +119,21 @@ module Number
     #
     def reserv(v_num)
       # group において、可能性ある cell が v_num個以下の数字を探す
+      # それらのcellに他の数字の可能性が有ってもよい。
       # それらの v_num個のcombinationのうち、
       # cell数が v_num 個であるものを得る
       # それらの cell ではそれらの値以外ははいらない
       @groups.each do |group|
         group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num) # [[[2,[28,29],7], [2,[28,29],9]]]
-             .each do |abl_cmb|
+             .map do |abl_cmb|
           values, rm_cells = sum_of_cells_and_values(abl_cmb)
-          next if prison_done[v_num].include? rm_cells # value_cell[1]
-
+          [values, rm_cells, abl_cmb]
+        end
+             .select do |values, rm_cells, _abl_cmb|
+          !prison_done[v_num].include? rm_cells && (rm_cells.map { |c| @cells[c].ability }.flatten - values).size.positive?
+        end
+             .each do |values, rm_cells, _abl_cmb|
           rm_value = @val - values
-          next unless (rm_cells.map { |c| @cells[c].ability }.flatten - values).size.positive?
-
           rm_cells.each do |c|
             msg = "reserve#{v_num} group #{group.g} cells#{rm_cells} v=#{values}"
             @cells[c].rm_ability(rm_value, msg)
@@ -124,6 +146,8 @@ module Number
       nil
     end
 
+    # abilitys :: [ [grp_ability, grp_abirity], [], , ,]
+    #  => [[val1, val2], [[1,2], [3, 4, 5] ]
     def sum_of_cells_and_values(abilitys)
       abilitys.each_with_object([[], []]) do |ac, vc| # ac = [ count,[cells],value]
         vc[0] << ac.v # [2]  # value
@@ -143,21 +167,23 @@ module Number
 
     ########################### 上級モード Level-1
     ##########################
-    # こういう関係では @ には 1,2 が入る。
-    # 上中央のblockに注目すると、$$&%% のいずれかに 1,2が入る。
-    #   @ には 1,2 のいずれかが入るから、&%%に1,2の両方が入ることはできない
+    # こういう関係では A,B は 1,2 が入る。
+    # 上中央のblockに注目すると、$$C%% のいずれかに 1,2が入る。
+    #   A には 1,2 のいずれかが入るから、C%%に1,2の両方が入ることはできない
     #   よって $$のどちらかに2,1が入ることになる。
-    #   $$@で1,2がはいるから、| には1,2は入らない。
+    #   $$Aで1,2がはいるから、* には1,2は入らない。
     # 同じように、+ には1,2は入れない。
-    # ...$68...
-    # ++.&%%++@
-    # .6.$79..4
-    # .8.@....5
-    # .4.837..6
-    # .3.695..7
-    # .7.4....9
-    # .5.|....8
-    # ...|....3
+    # ...|$68|...
+    # ++.|C%%|++B
+    # .6.|$79|..4
+    # -----------
+    # .8.|A..|..5
+    # .4.|837|..6
+    # .3.|695|..7
+    # -----------
+    # .7.|4..|..9
+    # .5.|*...|.8
+    # ...|*...|.3
     #
     # == 「こういう関係」
     # 残り可能性が２でかつ同じ値 V1,V2をもつcell A,B が対角線の位置にある

@@ -5,8 +5,8 @@ module Number
   class GroupAbilities
     attr_accessor :game_scale, :ability
 
-    def initialize(arg_n)
-      @game_scale = arg_n
+    def initialize(game_scale)
+      @game_scale = game_scale
       @ability = [] # Hash.new #{|h,k| h[k] = [game_scale,[],k] }
     end
 
@@ -24,11 +24,13 @@ module Number
       @ability[1..].select { |abl| abl.rest == 1 }
     end
 
+    # v_num個の同じ「可能性数字」を持つv_num個のcellの組み合わせを返す
+    # [[[2,[28,29],7], [2,[28,29],9]]] <= cell 28,29 には数字7,9のみが入る
+    #   [可能性残り数、[cell_id,,,], 値]
     def combination_of_ability_of_rest_is_less_or_equal(v_num)
       @ability[1..].select { |abl| abl.rest > 1 and abl.rest <= v_num }
                    .combination(v_num)
                    .select { |abl_cmb| abl_cmb.inject([]) { |cells, abl| cells | abl.cell_list }.size == v_num }
-      # [[[2,[28,29],7], [2,[28,29],9]]]
     end
 
     def [](idx)
@@ -53,12 +55,15 @@ end
 
 module Number
   # Groupに残された可能性
+  # Group毎に game_scale個作成される。数字ｖ毎に一つ。
   class GroupAbility
+    # rest :: 数字v が入る可能性が残っている cell の数。初めはgame_scale。
+    # cell_list :: このgroupに属する cell の nrの一覧
     attr_accessor :rest, :cell_list, :v
 
-    def initialize(arg_n, arg_cell_list, arg_v)
+    def initialize(game_scale, arg_cell_list, arg_v)
       @cell_list = arg_cell_list
-      @rest = arg_n
+      @rest = game_scale
       @v = arg_v
     end
 

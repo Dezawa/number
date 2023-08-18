@@ -5,10 +5,10 @@ module Number
   class Group
     attr_accessor :game, :cells, :n, :game_scale, :g, :ability, :cell_list, :atrivute, :count
 
-    def initialize(arg_game, arg_g, count, atr = [])
+    def initialize(arg_game, arg_gnr, count, atr = [])
       @game = arg_game
       game_scale = @game.game_scale
-      @g = arg_g
+      @g = arg_gnr
       @cells = @game.cells
       @ability = Number::GroupAbilities.new(game_scale)
       @cell_list = []
@@ -21,6 +21,12 @@ module Number
         %i[g atrivute cell_list].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join <<
         "\n  @ability=[\n" <<
         @ability.ability.map { |abl| "         #{abl.inspect}" }.join("\n")
+    end
+
+    # 数字残り可能性数 が v_num以下のcell
+    def cell_list_avility_le_than(v_num)
+      # pp cells.map{|cell| cell&.c}
+      cell_list.select { |c_no| (1..v_num).include?(cells[c_no].valurest) }
     end
 
     def type
@@ -60,12 +66,12 @@ module Number
       # 可能性を削除する
       # ただし、array except_cells  にある cell はいじらない。
       # vが配列の場合は、その中をすべて
-      v = [rm_value] unless v.instance_of?(Array)
+      rm_value = [rm_value].flatten
       rm_cells = @cell_list - except_cells
       ret = nil
       rm_cells.each do |c0| # (0..game_scale-1).each{|c| c0=@cell_list[c]
-        if (@cells[c0].ability & v).size.positive?
-          @cells[c0].rm_ability(v, msg)
+        if (@cells[c0].ability & rm_value).size.positive?
+          @cells[c0].rm_ability(rm_value, msg)
           ret = true
         end
       end
