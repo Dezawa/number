@@ -18,19 +18,24 @@ module Number
 
     def out(cells)
       sp, fm1, fm2 = define_fmt
-      out = String.new
-      each  do |l|
-        l.each do |c|
-          if c
-            w = cells[c].v
-            out << (w ? fm1 % w : fm2)
-          else
-            out << ' ' * sp
-          end
+      outstr = String.new
+      each do |l|
+        l.each do |cell_no|
+          cell = cell_no ? cells[cell_no] : nil
+          outstr << out_cell(cell, sp, fm1, fm2)
         end
-        out << "\n"
+        outstr << "\n"
       end
-      out
+      outstr
+    end
+
+    def out_cell(cell, sp, fm1, fm2)
+      if cell
+        w = cell.v
+        w ? fm1 % w : fm2
+      else
+        ' ' * sp
+      end
     end
 
     def define_fmt

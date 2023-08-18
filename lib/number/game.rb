@@ -62,34 +62,36 @@ module Number
       extend Number::GameTypes::GameType
     end
 
+    def high_class
+      [[:cross_teiin], [:curb]]
+    end
+
+    RESOLVE_PATH =
+      [[:rest_one],
+       [:reserv, 2],
+       [:prison, 2],
+       [:optional_test],
+       [:reserv, 3],
+       [:prison, 3],
+       [:reserv, 4],
+       [:prison, 4],
+       [:cross_teiin],
+       [:curb]]
+
     def resolve
-      count = 4
+      count = 40
       # self.rest_one
       sw = true
       while !fill? && (sw || count.positive?)
         sw = nil
-        # @cells.each{|cell| sw |= cell.set_if_valurest_equal_1  }
-        sw |= rest_one
-        sw |= reserv(2)
-        sw |= prison(2)
-        print "\n prison(2) #{sw}" if option[:verb]
-
-        next if optional_test
-
-        print "optional  #{sw}" if option[:verb]
-
-        sw |= reserv(3)
-        print " reserv(3) #{sw}" if option[:verb]
-        sw |= prison(3)
-        print " prison(3) #{sw}" if option[:verb]
-        sw |= reserv(4)
-        print " reserv(4) #{sw}" if option[:verb]
-        sw |= prison(4)
-        print " prison(4) #{sw}" if option[:verb]
-        high_class.each do |method|
-          sw |= method.call
-          print " method #{sw}" if option[:verb]
+        RESOLVE_PATH.each do |method, arg|
+          msg = arg ? send(method, arg) : send(method)
+          unless msg.to_s.empty?
+            print " #{method}(#{arg}):#{msg}\n" if option[:verb]
+            break
+          end
         end
+
         # puts count
         count -= 1
       end

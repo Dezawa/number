@@ -14,9 +14,9 @@ RSpec.describe Number::GroupAbilities, type: :model do
     # cell 10,11,12には1,2,3が有る。cell 13,14 には4,5が有る。
     # これらの数字は他のcellにはない
     # 他の数字はこれらのcellにもある
-    [[10, 11, 12], [11, 12], [10, 12]] +
-      [[13, 14], [13, 14]] +
-      [[10, 13, 15, 16, 17, 18]] * 4
+    [[10, 11, 12], [11, 12], [10, 12]] + # 1,2,3 は cell 10,11,12 にしかない
+      [[13, 14], [13, 14]] +             # 4,5 は cell 13,14 にしかない
+      [[10, 13, 15, 16, 17, 18]] * 4     # 6,7,8,9 は cell 10,13 にもある
   end
   context :combination_of_ability_of_rest_is_less_or_equal do
     before do

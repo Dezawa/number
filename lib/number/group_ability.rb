@@ -75,7 +75,7 @@ module Number
     end
 
     def inspect
-      "[#{rest},[#{cell_list.join(',')}],#{v}]"
+      "GroupAbility:[rest:#{rest},cells:[#{cell_list.join(',')}],v:#{v}]"
     end
 
     def dump

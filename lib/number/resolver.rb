@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-# < Array
+require_relative './resolv_reserv'
 module Number
   # 解法
   module Resolver
+    include ResolvReserv
     def cogroup(cells)
       return [] if cells.empty?
 
@@ -38,18 +39,29 @@ module Number
       # (2) ある値の可能性あるcellが一つになったら、そのcellを確定する
 
       sw = true
-      ret = false
+      msg = ''
+      cells = []
       while sw
         sw = false
 
         # (1) cell Ability
-        @cells.each { |cell| sw |= cell.set_if_valurest_equal_1 }
-
+        @cells.each do |cell|
+          result = cell.set_if_valurest_equal_1
+          cells << cell.c if result
+          sw |= result
+        end
         # (2) group ability [ 可能性cell数 , [cell_no,cell_no,, ], 値 ]
-        @groups.each { |grp| sw |= grp.set_cell_if_some_value_s_ability_is_rest_one }
+        @groups.each do |grp|
+          fixed_cells = grp.set_cell_if_some_value_s_ability_is_rest_one
+          unless fixed_cells.empty?
+            sw |= true
+            cells += fixed_cells
+          end
+        end
         ret |= sw
       end
-      ret
+
+      cells.empty? ? '' : " rest_one cells=#{cells}"
     end
 
     ########
@@ -62,10 +74,11 @@ module Number
     def prison(v_num)
       # 残り可能性の数　2,,v_num なcellを拾い上げる
       # 同じ「残り可能性」なcellの組み合わせを探し、v_numあればhit
+      ret = []
       @groups.each do |grp|
-        prisonable_cells(grp, v_num)
-          .reject { |cc, _values| prison_done[v_num].include?(cc) }
-          .each do |cc, values|
+        ret << prisonable_cells(grp, v_num)
+               .reject { |cc, _values| prison_done[v_num].include?(cc) }
+               .map do |cc, values|
           @count["prison#{v_num}"] += 1
 
           # このcellを含むgrpの 他のcellにあるｖの可能性を消す
@@ -74,15 +87,23 @@ module Number
             @groups[grp0].rm_ability(values, cc, msg)
           end
           prison_done[v_num] << cc
-          return true
-          # end
+          [cc, values]
         end
       end
-      nil
+      ret = ret.delete_if(&:empty?).flatten(1)
+      # pp ret
+      return '' if ret.empty?
+
+      cells_values = ret.uniq.map { |cc, values| "cels#{cc},vlues#{values}" }.join('   ')
+      "prison(#{v_num}): [cells, values] #{ret}"
     end
 
     def prison_done
       @prison_done ||= Hash.new { |h, k| h[k] = [] }
+    end
+
+    def prison_done?(v_num, cells)
+      prison_done[v_num].include? cells
     end
 
     # prison対象のcellの組み合わせを返す。
@@ -110,49 +131,6 @@ module Number
       #   values = cc.map { |c| @cells[c].ability }.inject([]) { |val, abl| val | abl }
       #   [cc, values] if values.size == v_num
       # end.compact
-    end
-
-    ###########################################################
-    # 予約席
-    # あるgroupで 値  v1,v2,,,vn がr入り得るcellがN個だけだったら、
-    # それらの cell にはn他の値は入れない
-    #
-    def reserv(v_num)
-      # group において、可能性ある cell が v_num個以下の数字を探す
-      # それらのcellに他の数字の可能性が有ってもよい。
-      # それらの v_num個のcombinationのうち、
-      # cell数が v_num 個であるものを得る
-      # それらの cell ではそれらの値以外ははいらない
-      @groups.each do |group|
-        group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num) # [[[2,[28,29],7], [2,[28,29],9]]]
-             .map do |abl_cmb|
-          values, rm_cells = sum_of_cells_and_values(abl_cmb)
-          [values, rm_cells, abl_cmb]
-        end
-             .select do |values, rm_cells, _abl_cmb|
-          !prison_done[v_num].include? rm_cells && (rm_cells.map { |c| @cells[c].ability }.flatten - values).size.positive?
-        end
-             .each do |values, rm_cells, _abl_cmb|
-          rm_value = @val - values
-          rm_cells.each do |c|
-            msg = "reserve#{v_num} group #{group.g} cells#{rm_cells} v=#{values}"
-            @cells[c].rm_ability(rm_value, msg)
-          end
-          @count["reserv#{v_num}"] += 1
-          prison_done[v_num] << rm_cells
-          return true
-        end
-      end
-      nil
-    end
-
-    # abilitys :: [ [grp_ability, grp_abirity], [], , ,]
-    #  => [[val1, val2], [[1,2], [3, 4, 5] ]
-    def sum_of_cells_and_values(abilitys)
-      abilitys.each_with_object([[], []]) do |ac, vc| # ac = [ count,[cells],value]
-        vc[0] << ac.v # [2]  # value
-        vc[1] |= ac.cell_list # [1]  # cell
-      end
     end
 
     def not_fill
@@ -362,9 +340,6 @@ module Number
     #  . 5 3 . 8 . . 9 7
 
     # そのための関数
-
-    def high_class
-      [method(:cross_teiin), method(:curb)]
-    end
+    # :cross_teiin, :curb
   end
 end
