@@ -17,38 +17,38 @@ module Number
     end
 
     def out(cells)
-      sp, fm1, fm2 = define_fmt
+      space, fm1, fm2 = define_fmt
       outstr = String.new
       each do |l|
         l.each do |cell_no|
           cell = cell_no ? cells[cell_no] : nil
-          outstr << out_cell(cell, sp, fm1, fm2)
+          outstr << out_cell(cell, space, fm1, fm2)
         end
         outstr << "\n"
       end
       outstr
     end
 
-    def out_cell(cell, sp, fm1, fm2)
+    def out_cell(cell, space, fm1, fm2)
       if cell
         w = cell.v
         w ? fm1 % w : fm2
       else
-        ' ' * sp
+        space
       end
     end
 
     def define_fmt
       if game_scale > 9
-        sp =  3
+        space = '   '
         fm1 = '%2d '
         fm2 = ' . '
       else
-        sp =  1
+        space = ' '
         fm1 = '%1d'
         fm2 = '.'
       end
-      [sp, fm1, fm2]
+      [space, fm1, fm2]
     end
     # def outAbility(cells, v)
     #   print "\n-----\n"
