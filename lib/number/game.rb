@@ -112,7 +112,7 @@ module Number
 
     # 使った技の統計
     def output_statistics
-      @count.map { |l, v| format(" Stat: %-10s %3d\n", l, v) }.join
+      @count.map { |l, v| format(" Stat: %<l>-10s <v>%3d\n", l: l, v: v) }.join
     end
 
     # 未解決の cellがある場合、その残っている可能性をまとめる
@@ -130,7 +130,7 @@ module Number
 
     def output(statistics, _count, cellout)
       cellout && cell_out
-      statistics && @count.each { |l, v| printf " Stat: %-10s %3d\n", l, v }
+      statistics && @count.each { |l, v| printf " Stat: %<l>-10s %<v>3d\n", l: l, v: v }
       form.out cells
     end
   end

@@ -20,16 +20,15 @@ module Number
       # 所定の cell数だけ、初期データを読む
       while c < @size
         gets_skip_comment(infile).chop.split(sep).each do |v|
-          # print "#{c}='#{v}' "
-          next if v =~ /\s/
-
-          if v == 'e'
+          case v
+          when 'e'
             @cells[c].set_even
-          elsif v == 'o'
+          when 'o'
             @cells[c].set_odd
-          elsif (vv = v.to_i).positive?
-            # print "[ C=#{c} vv=#{vv}] ";
-            @cells[c].set_cell(vv, 'initialize')
+          when /^\d/
+            @cells[c].set_cell(v.to_i, 'initialize')
+          when /\s/
+            next
           end
           c += 1
         end
@@ -46,7 +45,6 @@ module Number
 
       while (line = gets_skip_comment(infile))
         puts line if option[:verb]
-        raise 'ENOUGH ARROW DATA' unless line
 
         @arrows << line.split.map { |c| c.to_i - 1 }
         puts "arrow #{$LAST_READ_LINE}" if option[:verb]
@@ -57,10 +55,10 @@ module Number
     def structure
       xmax, ymax = make_waku_pform(form_type)
       # if struct_reg =~ form_type # 3x3-4+5
-      ban_initialize(@w, game_scale, xmax, ymax)
+      ban_initialize(@waku, game_scale, xmax, ymax)
       # 印刷フォーム設定
       # end
-      @form = Number::Form.new([@w, xmax, ymax], game_scale)
+      @form = Number::Form.new([@waku, xmax, ymax], game_scale)
     end
   end
 end

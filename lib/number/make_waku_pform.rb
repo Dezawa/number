@@ -54,14 +54,14 @@ module Number
 
       xmax = xsize + 1
       ymax = ysize + 1
-      @w = Array.new(xmax * ymax, nil)
+      @waku = Array.new(xmax * ymax, nil)
       # 最終的には、有効なcellでは以下の構造の情報となる
       #   [ cell_Nr, [grp_Nr0,grp_Nr1,,,] ]
 
       # 有効なcellに１を入れる
       #  STDの場合
       #    boxは一つ
-      #    @w  111111111n
+      #    @waku  111111111n
       #        111111111n
       #           ....
       #        111111111n
@@ -69,20 +69,20 @@ module Number
       #        nnnnnnnnnn
       boxes[0..m_nr].each do |box|
         (box.y_pos..box.y_pos + game_scale - 1).each do |y|
-          (box.x_pos..box.x_pos + game_scale - 1).each { |x| @w[xmax * y + x] = 1 }
+          (box.x_pos..box.x_pos + game_scale - 1).each { |x| @waku[xmax * y + x] = 1 }
         end
       end
       # 　有効なcellに頭からの通し番号を振る
       #  STDの場合
       #    boxは一つ
-      #    @w  0 1 2 3 4 5 6 7 8  nil
+      #    @waku  0 1 2 3 4 5 6 7 8  nil
       #            :
       #        72 .....        80 nil
       #        nnnnnnnnnn
       c = 0
-      (0..@w.size - 1).each do |x|
-        if @w[x]
-          @w[x] = [c, []]
+      (0..@waku.size - 1).each do |x|
+        if @waku[x]
+          @waku[x] = [c, []]
           c += 1
         end
       end
@@ -92,7 +92,7 @@ module Number
       @cells  = []
 
       # $grps を作る。 空サイズで作った後埋める
-      @gsize = set_grp(boxes, group_width, group_hight, xmax, @w, sep)
+      @gsize = set_grp(boxes, group_width, group_hight, xmax, @waku, sep)
 
       # pp $cells
       # pp $grps
