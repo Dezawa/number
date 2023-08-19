@@ -19,9 +19,9 @@ module Number
       form_type, game_type = form_and_game_type(infile)
       instance = new(infile, form_type, game_type: game_type, option: option)
       instance.set_game_type
-      instance.get_structure
+      instance.structure
       instance.gout if option[:gout]
-      instance.get_initialdata
+      instance.data_initialize
       instance
     end
 

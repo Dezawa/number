@@ -23,33 +23,18 @@ module Number
         #     . . * * . . . . .      21,22 group 12
         #     . . . . . . . . .
         # 同じgroupに属するcell を集める
-        @arw_group = []
-        @arrows.each_with_index do |arrow, i|
-          # @arw_group[i]=arrow[1..-1].map{|cell_no|
-          groups = arrow[1..].map do |cell_no| # cell の group の集合を求める
-            @cells[cell_no].grp_list
-          end.flatten.uniq
-          cells_same_group = groups.map do |grp_no|
-            cells = @groups[grp_no].cell_list & arrow[1..]
-            cells if cells.size > 1
-          end.compact
-          @arw_group[i] = cells_same_group.map do |cells|
-            # そのcellはallowの何番目の要素か
-            cells.map { |c| arrow.index(c) }.sort
-          end.uniq
-        end
-        pp [@arrows, @arw_group] if option[:verb]
+        pp [:arrows_arw_group, @arrows, arw_group] if option[:verb]
 
         check || exit(1)
-        # pp @arw_group if option[:verb]
+        # pp arw_group if option[:verb]
       end
 
       def check
         return true unless option[:strct]
 
         @err = nil
-        q = (1..@size).to_a
-        para = @arrows.map { |a| a.dup }.flatten
+        (1..@size).to_a
+        para = @arrows.map(&:dup).flatten
 
         p = para.sort.uniq
         $stderr.print "Optional Para is duped\n" && exit(1) if p.size != para.size
@@ -63,7 +48,7 @@ module Number
       #
       # arrowのc1,c2,c3,,, が同じgroupに属している場合は同じ数字は入らない。
       # それを枝刈りするための情報。arrow毎に同じgroupに属するcellの集合
-      # @arw_group = [[[1,2],[1,3]] ,[  ] ]
+      # arw_group = [[[1,2],[1,3]] ,[  ] ]
       #                 cell Noではなく、そのcellがarrayの何番目なのか、の位置情報
       #
       # 実行時
@@ -76,7 +61,7 @@ module Number
       def optional_test
         if option[:verb]
           print "sum arrow @summax=#{@summax}\n"
-          p @arrows
+          p [:arrows, @arrows]
         end
         optsw = nil
         delete_arys = []
@@ -86,10 +71,9 @@ module Number
         # 失敗で終わってしまうので、ある程度までは成功したことにする
         @summax += 5 # ;  @gsw =  true  if @summax<50
         # @arrows.each_with_index
-        @arrows.each_with_index do |arrow, i| # 指定されたcellに残っている値の配列  の配列
+        @arrows.each_with_index do |arrow, arrow_id| # 指定されたcellに残っている値の配列  の配列
           # (0..arrow.size-1).each{|c| valus << @cells[arrow[c]].vlist }
           valus = arrow.map { |c| @cells[c].valu ? [@cells[c].valu] : @cells[c].vlist }
-          pp ['arrow', arrow, @arw_group[i], valus] if option[:verb]
 
           # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
           next if valus.flatten.size > @summax
@@ -97,19 +81,10 @@ module Number
           # この残っている値の組み合わせを作り(product)
           # 計算が合っている　かつ            (inject)
           # このうち、同じgroupに属するcellで同じ数字があるものはだめ
-          products = valus[0].product(*valus[1..]).map do |vary|
-            vary if (vary[0] == vary[1..].inject(0) { |s, v| s + v }) &&
-                    @arw_group[i].map do |cellIDs| # このarrowの同じgroupに属するcellID
-                      true if # 重複があったら(true)
-    cellIDs.map do |id|
-      vary[id] # を値に変換し、
-    end.uniq.size != cellIDs.size
-                    end.compact.empty?
-            # だめ
-          end.compact
-          pp @arw_group if option[:test]
-          pp @arrows if option[:test]
-          pp products if option[:test]
+          products = candidate_value_combinations(valus, arrow_id)
+          pp [:arw_group, arw_group] if option[:test]
+          pp [:arrows, @arrows] if option[:test]
+          pp [:products, products] if option[:test]
           # 　products = [ [sum,v1,v2,v3],[sum,V1,V2,V3] ]
           #     合計を満たす値の組み合わせ
           #  これから、各cellの値の集合を求める
@@ -128,7 +103,7 @@ module Number
             end
           end
           # 可能性集合が一つしかない場合は、このarrowはもう考慮不要
-          delete_arys << i if products.size == 1
+          delete_arys << arrow_id if products.size == 1
 
           break if optsw
 
@@ -138,9 +113,51 @@ module Number
 
         while (i = delete_arys.pop)
           @arrows.delete_at(i)
-          @arw_group.delete_at(i)
+          arw_group.delete_at(i)
         end
         optsw # @gsw
+      end
+
+      # arrow を構成するcell達の残り数字の配列のproductのなかで
+      # 加算結果を満足する組み合わせを返す
+      def candidate_value_combinations(valus, arrow_id)
+        valus[0].product(*valus[1..]).map do |vary|
+          vary if (vary[0] == vary[1..].inject(0) { |s, v| s + v }) &&
+                  arw_group[arrow_id].map do |cell_ids| # このarrowの同じgroupに属するcellID
+                    true if # 重複があったら(true)
+                      cell_ids.map do |id|
+                        vary[id] # を値に変換し、
+                      end.uniq.size != cell_ids.size
+                  end.compact.empty?
+          # だめ
+        end.compact
+      end
+
+      # arrow を構成する cell達が同じgroupに属する場合、
+      # それらに同じ数字を入れることはできない。
+      # cell達に共通なgroupを抜き出し、その中にcell達の2つ以上が有ったら
+      # 同じ数字にならない、というテストを行う。
+      # その判断のためのtable。同じgroupに属するcellがarrowの何番目か。
+      def arw_group
+        return @arw_group if @arw_group
+
+        @arw_group = []
+        @arrows.each_with_index do |arrow, i|
+          # @arw_group[i]=arrow[1..-1].map{|cell_no|
+          groups = arrow[1..].map do |cell_no| # cell の group の集合を求める
+            @cells[cell_no].grp_list
+          end.flatten.uniq
+
+          cells_same_group = groups.map do |grp_no|
+            cells = @groups[grp_no].cell_list & arrow[1..]
+            cells if cells.size > 1
+          end.compact.uniq
+          @arw_group[i] = cells_same_group.map do |cells|
+            # そのcellはallowの何番目の要素か
+            cells.map { |c| arrow.index(c) }.sort
+          end.uniq
+        end
+        @arw_group
       end
     end
   end
