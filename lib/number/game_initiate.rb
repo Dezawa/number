@@ -18,12 +18,8 @@ module Number
       # print "last $_='",$_,"', @gsize=#{@gsize} @size=#{@size}\n" unless $quiet
 
       # 所定の cell数だけ、初期データを読む
-      while infile.gets && c < @size
-        # print $_
-        $LAST_READ_LINE =~ /^\s*#/ && while infile.gets =~ /^\s*#/; end
-        # STDERR.
-        # print $_ unless $quiet
-        $LAST_READ_LINE.chop.split(sep).each do |v|
+      while c < @size
+        gets_skip_comment(infile).chop.split(sep).each do |v|
           # print "#{c}='#{v}' "
           next if v =~ /\s/
 
@@ -32,15 +28,8 @@ module Number
           elsif v == 'o'
             @cells[c].set_odd
           elsif (vv = v.to_i).positive?
-            # STDERR.        print "#{vv} "
-            vlst = v.split('|')
-            if vlst.size == 1
-              # print "[ C=#{c} vv=#{vv}] ";
-              @cells[c].set_cell(vv, 'initialize')
-            else
-              vv = @val - vlst.map!(&:to_i)
-              @cells[c].rm_ability(vv, 'initialize')
-            end
+            # print "[ C=#{c} vv=#{vv}] ";
+            @cells[c].set_cell(vv, 'initialize')
           end
           c += 1
         end
