@@ -72,39 +72,29 @@ module Number
         @summax += 5 # ;  @gsw =  true  if @summax<50
         # @arrows.each_with_index
         @arrows.each_with_index do |arrow, arrow_id| # 指定されたcellに残っている値の配列  の配列
-          # (0..arrow.size-1).each{|c| valus << @cells[arrow[c]].vlist }
-          valus = arrow.map { |c| @cells[c].valu ? [@cells[c].valu] : @cells[c].vlist }
+          next unless arrow
 
-          # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
-          next if valus.flatten.size > @summax
-
-          # この残っている値の組み合わせを作り(product)
-          # 計算が合っている　かつ            (inject)
-          # このうち、同じgroupに属するcellで同じ数字があるものはだめ
-          products = candidate_value_combinations(valus, arrow_id)
-          pp [:arw_group, arw_group] if option[:test]
-          pp [:arrows, @arrows] if option[:test]
-          pp [:products, products] if option[:test]
-          # 　products = [ [sum,v1,v2,v3],[sum,V1,V2,V3] ]
-          #     合計を満たす値の組み合わせ
-          #  これから、各cellの値の集合を求める
-          newvalus = products[0].zip(*products[1..])
+          valus, newvalus, = aviable_values(arrow, arrow_id)
 
           # 元の可能性 values と　newvalues に差があれば、それは可能性から削除
-          valus.each_with_index do |vals, i|
-            vv = vals - newvalus[i]
-            next unless vv.size.positive?
+          # valus.each_with_index do |vals, i|
+          #   vv = vals - newvalus[i]
+          #   next unless vv.size.positive?
 
-            @cells[arrow[i]].rm_ability(vv, 'arrow')
-            @gsw = true
-            if newvalus[i].size == 1 # 結果一つになれば決定
-              optsw = true
-              @cells[arrow[i]].set(newvalus[i][0])
-            end
-          end
+          #   @cells[arrow[i]].rm_ability(vv, 'arrow')
+          #   @gsw = true
+          #   if newvalus[i].size == 1 # 結果一つになれば決定
+          #     optsw = true
+          #     @cells[arrow[i]].set(newvalus[i][0])
+          #   end
+          # end
+
+          optsw = rm_unaviable_value(arrow, valus, newvalus)
+
           # 可能性集合が一つしかない場合は、このarrowはもう考慮不要
-          delete_arys << arrow_id if products.size == 1
-
+          # delete_arys << arrow_id if products.size == 1
+          # delete_arys << arrow_is_fixed?(arrow)
+          @arrows[arrow_id] = nil
           break if optsw
 
           @summax -= 5 if optsw
@@ -118,9 +108,69 @@ module Number
         optsw # @gsw
       end
 
+      # 元の可能性 values と　newvalues に差があれば、それは可能性から削除
+      def rm_unaviable_value(arrow, _valus, newvalus, _products)
+        arrow.each_with_index do |cell_no, i|
+          vals = @cells[cell_no].ability
+          vv = vals - newvalus[i]
+          next unless vv.size.positive?
+
+          @cells[cell_no].rm_ability(vv, 'arrow')
+          @gsw = true
+          if newvalus[i].size == 1 # 結果一つになれば決定
+            @optsw = true
+            @cells[cell_no].set(newvalus[i][0])
+          end
+        end
+        @optsw
+      end
+
+      def rm_unaviable_value(arrow, valus, newvalus)
+        valus.each_with_index do |vals, i|
+          vv = vals - newvalus[i]
+          next unless vv.size.positive?
+
+          @cells[arrow[i]].rm_ability(vv, 'arrow')
+          @gsw = true
+          if newvalus[i].size == 1 # 結果一つになれば決定
+            @optsw = true
+            @cells[arrow[i]].set(newvalus[i][0])
+          end
+        end
+        @optsw
+      end
+
+      # 可能性集合が一つしかない場合は、このarrowはもう考慮不要
+      def arrow_is_fixed?(arrow)
+        arrow.all? { |cell_no| @cells[cell_no].fill? }
+      end
+
+      #  合計を満たす数字の組み合わせを得、
+      #  それから、各cellの可能性あり数字の集合を求める
+      def aviable_values(arrow, arrow_id)
+        # (0..arrow.size-1).each{|c| valus << @cells[arrow[c]].vlist }
+        valus = arrow.map { |c| @cells[c].valu ? [@cells[c].valu] : @cells[c].vlist }
+
+        # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
+        return if valus.flatten.size > @summax
+
+        # この残っている値の組み合わせを作り(product)
+        # 計算が合っている　かつ            (inject)
+        # このうち、同じgroupに属するcellで同じ数字があるものはだめ
+        products = candidate_value_combinations(arrow_id)
+        pp [:arw_group, arw_group] if option[:test]
+        pp [:arrows, @arrows] if option[:test]
+        pp [:products, products] if option[:test]
+        # 　products = [ [sum,v1,v2,v3],[sum,V1,V2,V3] ]
+
+        [valus, products[0].zip(*products[1..]), products]
+      end
+
       # arrow を構成するcell達の残り数字の配列のproductのなかで
       # 加算結果を満足する組み合わせを返す
-      def candidate_value_combinations(valus, arrow_id)
+      def candidate_value_combinations(arrow_id)
+        valus = arrows[arrow_id].map { |c| @cells[c].valu ? [@cells[c].valu] : @cells[c].vlist }
+
         valus[0].product(*valus[1..]).map do |vary|
           vary if (vary[0] == vary[1..].inject(0) { |s, v| s + v }) &&
                   arw_group[arrow_id].map do |cell_ids| # このarrowの同じgroupに属するcellID

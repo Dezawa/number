@@ -60,7 +60,6 @@ RSpec.describe Number::Game, type: :model do
     Number::Game::IROMONO.each do |game_type|
       it "#{game_type}がextendされる" do
         game = Number::Game.new(infile, '9', game_type: game_type)
-        pp [game.game_type, game.game, game.object_id]
         game.set_game_type
         expect(game.game).to eq game_type
       end
@@ -75,8 +74,8 @@ RSpec.describe Number::Game, type: :model do
 638241759
 719635842
 594762318
-267813594
-183594276".gsub(/\s/, '').split('').map(&:to_i)
+183594276
+267813594".gsub(/\s/, '').split('').map(&:to_i)
   end
   describe '解' do
     let(:game) { Number::Game.create(infile) }

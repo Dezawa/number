@@ -48,6 +48,10 @@ module Number
       @valu
     end
 
+    def fill?
+      !!valu
+    end
+
     def valurest
       @ability.size
     end

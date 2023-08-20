@@ -161,16 +161,16 @@ if /numple.rb$/ =~ $PROGRAM_NAME
       numple = Numple.new(infile, option: option)
       numple.resolve
       puts numple.output_form # 解出力
-      puts numple.cell_out if @cout # Cellの残された可能性出力
+      puts numple.cell_out if option[:cout] # Cellの残された可能性出力
       # numple.cell_ability  #Cellの残された可能性のデータ
-      puts numple.output_statistics if @stat # 統計出力
+      puts numple.output_statistics if option[:stat] # 統計出力
       puts
     end
   else
     numple = Numple.new($stdin, option: option)
     numple.resolve
     puts numple.output_form # 解出力
-    puts numple.cell_out if @cout # Cellの残された可能性出力
+    puts numple.cell_out if option[:cout] # Cellの残された可能性出力
     # numple.cell_ability  #Cellの残された可能性のデータ
     puts numple.output_statistics if @stat # 統計出力
     puts

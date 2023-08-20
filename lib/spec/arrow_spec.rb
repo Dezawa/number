@@ -62,7 +62,7 @@ RSpec.describe Number::Game, type: :model do
 
   describe :candidate_value_combinations do
     it '' do
-      expect(game.candidate_value_combinations(values, 0))
+      expect(game.candidate_value_combinations(0))
         .to eq [[7, 3, 4], [7, 4, 3], [7, 5, 2], [8, 5, 3], [9, 5, 4]]
     end
   end

@@ -103,7 +103,7 @@ module Number
             print '## neighber arrow'
             p arrow
           end
-          if $dbg && $cout && (1..@cells.size - 1).each do |c|
+          if option[:dbg] && option[:cout] && (1..@cells.size - 1).each do |c|
                printf '%2d %d', c, @cells[c].valurest
                p @cells[c].ability
              end

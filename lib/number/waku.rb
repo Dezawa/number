@@ -32,7 +32,7 @@ module Number
     def set_grp(group_width, group_hight)
       gnr = 0
       gnr = vertical_holizontal_group(gnr)
-      gnr = block_group(gnr, group_width, group_hight)
+      block_group(gnr, group_width, group_hight)
       # set_optional_group(gnr, group_width, group_hight)
     end
 
