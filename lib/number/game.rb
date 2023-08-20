@@ -80,7 +80,7 @@ module Number
        [:curb]].freeze
 
     def resolve
-      count = 40
+      count = 400
       # self.rest_one
       sw = true
       while !fill? && (sw || count.positive?)

@@ -11,7 +11,7 @@ module Number
       @boxes = boxes
       @count = count
       @xmax = xmax
-      @waku = waku_init(boxes)
+      waku_init(boxes)
     end
 
     def waku_init(boxes)
@@ -27,14 +27,13 @@ module Number
         end
         @waku += [WakuSub.new(nil)] * xmax
       end
-      @waku
     end
 
     def set_grp(group_width, group_hight)
       gnr = 0
       gnr = vertical_holizontal_group(gnr)
       gnr = block_group(gnr, group_width, group_hight)
-      set_optional_group(gnr, group_width, group_hight)
+      # set_optional_group(gnr, group_width, group_hight)
     end
 
     def set_optional_group(gnr, group_width, group_hight); end
@@ -93,8 +92,8 @@ module Number
       waku.select
     end
 
-    def [](idx, len = 1)
-      waku[idx, len]
+    def [](idx, len = nil)
+      len ? waku[idx, len] : waku[idx]
     end
 
     def size
@@ -135,7 +134,7 @@ module Number
     def inspect
       return 'NullWaku' unless cell_no
 
-      "[#{cell_no}, #{group_list}]"
+      "WakuSub:[#{cell_no}, #{group_list}]"
     end
   end
 end

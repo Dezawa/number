@@ -95,6 +95,7 @@ module Number
 
       # $grps を作る。 空サイズで作った後埋める
       @gsize = @waku.set_grp(group_width, group_hight)
+      @gsize = optional_group(@gsize, boxes, xmax, @waku)
 
       [xmax, ymax]
     end
@@ -113,22 +114,24 @@ module Number
 
     def neighber(waku, xmax, ymax)
       @neigh = []
-      (0..ymax - 1).each do |y|
+      (0...ymax).each do |y|
         base = xmax * y
-        (0..xmax - 1).each do |x|
-          next unless waku[base + x]
+        (base...base + xmax).each do |x|
+          # pp [base, base + x, waku[base + x],waku[base + x].cell_no]
+          next if waku[x].nil?
 
-          @neigh << [waku[base + x][0], waku[base + x + 1][0]]    if waku[base + x + 1]
-          @neigh << [waku[base + x][0], waku[base + x + xmax][0]] if waku[base + x + xmax]
+          @neigh << [waku[x].cell_no, waku[x + 1].cell_no]    unless waku[x + 1].nil?
+          @neigh << [waku[x].cell_no, waku[x + xmax].cell_no] unless waku[x + xmax].nil?
         end
       end
+      @neigh
     end
 
     def initialize_group_ability
       @groups.each { |grp| grp.ability.setup_initial(grp.cell_list) }
     end
 
-    def set_optional_group(gnr, boxes, group_width, group_hight, xmax, waku); end
+    def optional_group(gnr, boxes, xmax, waku); end
 
     def base_pos(mult, sign, mnr, dans)
       offset = { '-' => 6, '+' => -6 }

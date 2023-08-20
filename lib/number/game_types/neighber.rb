@@ -25,11 +25,7 @@ module Number
           @arrows << w
         end
         $nei = @neigh.dup
-        @arrows.each do |arw|
-          (0..arw.size - 2).each do |a|
-            @neigh.delete(arw[a, 2].sort)
-          end
-        end
+        @arrows.each { |arw| @neigh.delete(arw.sort) }
       end
       # end
 
