@@ -45,7 +45,7 @@ module Number
 
         # (1) cell Ability
         @cells.each do |cell|
-          result = cell.set_if_valurest_equal_1
+          result = cell.set_if_valurest_equal_one
           cells << cell.c if result
           sw |= result
         end

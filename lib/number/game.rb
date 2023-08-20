@@ -113,7 +113,7 @@ module Number
 
     # 使った技の統計
     def output_statistics
-      @count.map { |l, v| format(" Stat: %<l>-10s <v>%3d\n", l: l, v: v) }.join
+      @count.map { |l, v| format(" Stat: %<l>-10s %<v>3d\n", l: l, v: v) }.join
     end
 
     # 未解決の cellがある場合、その残っている可能性をまとめる

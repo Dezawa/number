@@ -53,7 +53,7 @@ module Number
       boxes, xsize, ysize = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
       xmax = xsize + 1
       ymax = ysize + 1
-      @waku = Number::Waku.new(self, boxes, game_scale, m_nr, @count, xmax, ymax) # Array.new(xmax * ymax, nil)
+      @waku = Number::Waku.new(self, boxes, game_scale, @count, xmax)
       # 最終的には、有効なcellでは以下の構造の情報となる
       #   [ cell_Nr, [grp_Nr0,grp_Nr1,,,] ]
 
@@ -106,6 +106,11 @@ module Number
         ww[1].each { |grp_no| @groups[grp_no].addcell_list ww[0] }
       end
 
+      @neigh = neighber(waku, xmax, ymax)
+      initialize_group_ability
+    end
+
+    def neighber(waku, xmax, ymax)
       @neigh = []
       (0..ymax - 1).each do |y|
         base = xmax * y
@@ -116,52 +121,13 @@ module Number
           @neigh << [waku[base + x][0], waku[base + x + xmax][0]] if waku[base + x + xmax]
         end
       end
-      initialize_group_ability
     end
 
     def initialize_group_ability
       @groups.each { |grp| grp.ability.setup_initial(grp.cell_list) }
     end
 
-    def set_grp(boxes, group_width, group_hight, xmax, waku)
-      boxes.size
-      gnr = 0
-      gnr = set_vertical_holizontal_group(gnr, boxes, xmax, waku)
-      gnr = set_block_group(gnr, boxes, group_width, group_hight, xmax, waku)
-      set_optional_group(gnr, boxes, group_width, group_hight, xmax, waku)
-    end
-
     def set_optional_group(gnr, boxes, group_width, group_hight, xmax, waku); end
-
-    def set_block_group(gnr, boxes, group_width, group_hight, xmax, waku); end
-
-    def set_vertical_holizontal_group(gnr, boxes, xmax, waku)
-      boxes.each do |box|
-        (box.y_pos..box.y_pos + game_scale - 1).each do |y|
-          holizontal_group(gnr, box, xmax, waku, y)
-          gnr += 1
-        end
-        (box.x_pos..box.x_pos + game_scale - 1).each do |x|
-          vertical_group(gnr, box, waku, xmax, x)
-          gnr += 1
-        end
-      end
-      gnr
-    end
-
-    def holizontal_group(gnr, box, xmax, waku, y_pos)
-      # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:holizontal)
-      @groups[gnr] = Number::Group.new(self, gnr, @count, :holizontal)
-      (box.x_pos..box.x_pos + game_scale - 1).each do |x|
-        waku[xmax * y_pos + x][1] << gnr
-      end
-    end
-
-    def vertical_group(gnr, box, waku, xmax, x_pos)
-      # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:vertical)
-      @groups[gnr] = Number::Group.new(self, gnr, count, :vertical)
-      (box.y_pos..box.y_pos + game_scale - 1).each { |y| waku[xmax * y + x_pos][1] << gnr }
-    end
 
     def base_pos(mult, sign, mnr, dans)
       offset = { '-' => 6, '+' => -6 }
@@ -172,11 +138,11 @@ module Number
       bnr = -1
       xmin = 0
       xmax = 0
-      (0..dans - 1).each do |dan|
+      (0...dans).each do |dan|
         box.p = box + [offset[sign[dan]], 6]
         wbox.p = box.p
         xmin = wbox.x_pos if xmin > wbox.x_pos
-        (0..mult[dan] - 1).each do |_b|
+        (0...mult[dan]).each do |_b|
           bnr += 1
           boxes[bnr] = Number::Box.new(game_scale, wbox.p)
           xmax = wbox.x_pos + game_scale if xmax < wbox.x_pos + game_scale

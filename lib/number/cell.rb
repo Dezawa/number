@@ -78,7 +78,7 @@ module Number
       (2..game_scale).step(2) { |v| rm_ability(v) }
     end
 
-    def set_if_valurest_equal_1
+    def set_if_valurest_equal_one
       return nil unless valurest == 1 && !v
 
       set(ability[0])
