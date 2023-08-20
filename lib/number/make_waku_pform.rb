@@ -87,7 +87,8 @@ module Number
       #     c += 1
       #   end
       # end
-      @size = @waku.select(&:cell_no).size
+
+      @size = @waku.waku.select(&:cell_no).size
 
       # $cells を作る。空で。 set_grpの準備
       @cells  = []
