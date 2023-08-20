@@ -3,6 +3,7 @@
 require_relative './make_waku_pform'
 require_relative './resolver'
 require_relative './game_initiate'
+require_relative './waku'
 
 module Number
   # mail class

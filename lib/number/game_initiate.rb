@@ -15,11 +15,10 @@ module Number
     #    dataファイルにある、arrow情報も読む
     def data_initialize
       c = 0
-      # print "last $_='",$_,"', @gsize=#{@gsize} @size=#{@size}\n" unless $quiet
 
       # 所定の cell数だけ、初期データを読む
-      while c < @size
-        gets_skip_comment(infile).chop.split(sep).each do |v|
+      while c < @size && (line = gets_skip_comment(infile))
+        line.chop.split(sep).each do |v|
           case v
           when 'e'
             @cells[c].set_even

@@ -36,13 +36,9 @@ module Number
       group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num) # [[[2,[28,29],7], [2,[28,29],9]]]
            .map do |abl_cmb|
         values, reserved_cells = sum_of_cells_and_values(abl_cmb)
-        # pp [:candidate_abl_cmb,abl_cmb, values]
-        # pp [:candidate,values, reserved_cells]
         [values, reserved_cells, abl_cmb]
       end
            .select do |values, reserved_cells, _abl_cmb|
-        # pp [ values, reserved_cells]
-        # pp [:values_to_rm,values, reserved_cells,values_to_rm(reserved_cells, values)]
         !prison_done?(v_num, reserved_cells) && values_to_rm(reserved_cells, values).size.positive?
       end
     end
@@ -57,8 +53,6 @@ module Number
     end
 
     def values_to_rm(reserved_cells, values)
-      # pp [:values_to_rm_cells ,@cells.map{|cell| cell&.c}]
-      # pp [:values_to_rm,reserved_cells, values,reserved_cells.map { |c| @cells[c].ability } ]
       (reserved_cells.map { |c| @cells[c].ability }.flatten.uniq - values)
     end
   end

@@ -90,7 +90,6 @@ module Number
         end
       end
       ret = ret.delete_if(&:empty?).flatten(1)
-      # pp ret
       return '' if ret.empty?
 
       ret.uniq.map { |cc, values| "cels#{cc},vlues#{values}" }.join('   ')
@@ -115,7 +114,6 @@ module Number
     def prisonable_cells(grp, v_num)
       # 数字残り可能性数 が v_num以下のcell
       able_cells = grp.cell_list_avility_le_than(v_num)
-      # pp [:prisonable_cells,able_cells]
 
       # それらの v_num個のcombinationのうち、数字種類がv_num個のもの
       # [ [cell_ids, valus], [ ],,]
@@ -123,13 +121,6 @@ module Number
         values = cc.map { |c| cells[c].ability }.flatten.uniq
         [cc, values] if values.size == v_num
       end.compact
-      # # pp [:prisonable_cells_cell_comb,cell_comb]
-      # cell_comb.reject do |cc|
-      #   prison_done[v_num].include? cc
-      # end.map do |cc|
-      #   values = cc.map { |c| @cells[c].ability }.inject([]) { |val, abl| val | abl }
-      #   [cc, values] if values.size == v_num
-      # end.compact
     end
 
     def not_fill

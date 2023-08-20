@@ -51,10 +51,9 @@ module Number
 
       @m = Math.sqrt(game_scale).to_i
       boxes, xsize, ysize = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
-
       xmax = xsize + 1
       ymax = ysize + 1
-      @waku = Array.new(xmax * ymax, nil)
+      @waku = Number::Waku.new(self, boxes, game_scale, m_nr, @count, xmax, ymax) # Array.new(xmax * ymax, nil)
       # 最終的には、有効なcellでは以下の構造の情報となる
       #   [ cell_Nr, [grp_Nr0,grp_Nr1,,,] ]
 
@@ -67,49 +66,46 @@ module Number
       #        111111111n
       #        111111111n
       #        nnnnnnnnnn
-      boxes[0..m_nr].each do |box|
-        (box.y_pos..box.y_pos + game_scale - 1).each do |y|
-          (box.x_pos..box.x_pos + game_scale - 1).each { |x| @waku[xmax * y + x] = 1 }
-        end
-      end
+
+      # boxes[0..m_nr].each do |box|
+      #   (box.y_pos..box.y_pos + game_scale - 1).each do |y|
+      #     (box.x_pos..box.x_pos + game_scale - 1).each { |x| @waku[xmax * y + x] = 1 }
+      #   end
+      # end
+
       # 　有効なcellに頭からの通し番号を振る
       #  STDの場合
       #    boxは一つ
       #    @waku  0 1 2 3 4 5 6 7 8  nil
       #            :
       #        72 .....        80 nil
-      #        nnnnnnnnnn
-      c = 0
-      (0..@waku.size - 1).each do |x|
-        if @waku[x]
-          @waku[x] = [c, []]
-          c += 1
-        end
-      end
-      @size = c
+      # #        nnnnnnnnnn
+      # c = 0
+      # (0..@waku.size - 1).each do |x|
+      #   if @waku[x]
+      #     @waku[x] = [c, []]
+      #     c += 1
+      #   end
+      # end
+      @size = @waku.select(&:cell_no).size
 
       # $cells を作る。空で。 set_grpの準備
       @cells  = []
 
       # $grps を作る。 空サイズで作った後埋める
-      @gsize = set_grp(boxes, group_width, group_hight, xmax, @waku, sep)
+      @gsize = @waku.set_grp(group_width, group_hight)
 
-      # pp $cells
-      # pp $grps
       [xmax, ymax]
     end
 
     def ban_initialize(waku, _game_scale, xmax, ymax)
-      waku.each do |ww|
-        next unless ww
+      waku.waku.each do |ww|
+        next if ww.nil?
 
-        ww[0]
-        # pp [ww[0],ww[1]]
-        # cell=@cells[ww[0]] = Cell.new(@groups,ww[0],game_scale,ww[1]) #(cell_nr,grp_list)
         @cells[ww[0]] = Number::Cell.create(self, ww[0], ww[1], @count, option: option) # (cell_nr,grp_list)
         ww[1].each { |grp_no| @groups[grp_no].addcell_list ww[0] }
       end
-      # get neighber
+
       @neigh = []
       (0..ymax - 1).each do |y|
         base = xmax * y
@@ -127,7 +123,7 @@ module Number
       @groups.each { |grp| grp.ability.setup_initial(grp.cell_list) }
     end
 
-    def set_grp(boxes, group_width, group_hight, xmax, waku, _sep)
+    def set_grp(boxes, group_width, group_hight, xmax, waku)
       boxes.size
       gnr = 0
       gnr = set_vertical_holizontal_group(gnr, boxes, xmax, waku)
@@ -137,24 +133,7 @@ module Number
 
     def set_optional_group(gnr, boxes, group_width, group_hight, xmax, waku); end
 
-    def set_block_group(gnr, boxes, group_width, group_hight, xmax, waku)
-      boxes.each do |box|
-        (box.y_pos..box.y_pos + game_scale - 1).step(group_hight).each do |y|
-          (box.x_pos..box.x_pos + game_scale - 1).step(group_width).reject do |x|
-            # next if waku[xmax*y+x].nil?     #or waku[xmax*y+x][1]
-            waku[xmax * y + x].nil?
-          end.each do |x|
-            # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:block)
-            @groups[gnr] = Number::Group.new(self, gnr, @count, :block)
-            (y..y + group_hight - 1).each do |yy|
-              (x..x + group_width - 1).each { |xx| waku[xmax * yy + xx][1] << gnr }
-            end
-            gnr += 1
-          end
-        end
-      end
-      gnr
-    end
+    def set_block_group(gnr, boxes, group_width, group_hight, xmax, waku); end
 
     def set_vertical_holizontal_group(gnr, boxes, xmax, waku)
       boxes.each do |box|
