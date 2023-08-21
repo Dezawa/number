@@ -56,7 +56,79 @@ textで定義します。sample directoryにあるデータを参照してくだ
 1. 3..5....6.7..  の様に 数値の指定のある所にはその数値を、そうでない所は数字以外を置く
 2. 数字以外は何でも良いが、「偶奇」の場合は "e","o" は意味をもつ。その枠を偶奇を指定する。
 3. 「9x9 のパズルだから9x9の形で書く」必要はない。81個のデータがあれば良い
-4. 各枠の値の間には NSP指定の時はべた打ち、無指定の時は半角空白文字を入れる。
-ただし、変わり種の構造指定の場合はベタ打ちではなく空白を入れる
+4. 各枠の値の間は べた打ちでも半角空白文字を入れてもよい。  
+    1. 12x12、16x16、25x25 の様に使う数字が二桁になる場合は 空白は必要。
+    1. 変わり種の構造指定の場合はベタ打ちではなく空白を入れる
 
 # 結果出力
+
+# code構成
+説明を簡潔にするため、基本形(9x9の盤、色物ではない)を暗黙の説明対象とする。
+
+## Class
+1. Game
+    1. 属性
+        + g :: Groupのid
+    1. 関連
+        + cells  → Game 全体のCellの配列。idx は cell.c
+        + groups → Game 全体のGroupの配列。idx は group.g
+        + arrows → Game 全体のArrowの配列。Arrowの実態は配列。
+       使うのは ARROW、不等号、カプセル などの色物
+        + Form → 盤面出力のためのhelper class
+
+1. Cell
+    1. 属性  
+        +  c :: Cellのid
+        + valu :: 確定した Cellの数字。初期値は nil
+        + ability :: Cellにまだ残る 可能性有り の数字の配列
+    2. 関連
+        + grp_list → Cellが属するGroupの id(@g) の配列
+
+1. Group  
+  「1〜9 がもれなく入る9個のCellの集合」すなわち 行、列、3x3の正方形 の総称。
+  色物「幾何」では正方形のgroupはなくそれに替えて問題で定義されたものになる
+    1. 属性
+        + g :: Groupのid
+        + cell_list :: Groupに属する Cellの配列
+    1. 関連
+        + ability :: GroupAbilitis(Groupに入れるべき1〜9の数字各々が入る可能性のあるcellのidの配列)
+
+1. GroupAbilities  
+GroupAbilityの配列
+    1. 関連
+        * ability → GroupAbilityの配列。
+	idx 0 はダミーで、idx = n が数字nのGroupAbility
+
+1. GroupAbility
+    1. 属性
+        + v :: 数字
+        + cell_list :: 数字が入る可能性が残っている Cellの配列
+        + rest :: 可能性の残っているcellの数
+
+1. Waku  
+ 9x9を複数重ねる構造の場合に、構造作成の補助として用意したもの。
+ 基本型では不要ではあるが、結果出力の Form を共通のものにするために、
+ 基本型でも使うことにした。  
+ が、、、  
+ 複雑になっちまったので「積み重ねの時の特別処理にする」か悩んでる。
+ 
+1. Box  
+Wakuでの構造定義のためのHelper class。
+
+## 初期化の流れ
+1. Game
+    1. new
+    1. self.structure
+        * make_waku_pform
+            + base_size → form_typeを元に、盤の形のためのパラメータ取得
+            + base_pos  → base_sizeに従って boxを作る
+            + @waku = Waku.new
+                  boxesに対応してCellと1:1なWakuSub作成
+            + @cellsの入れ物準備
+            + @waku.set_grp → Group作成
+            + optional_grp → 色物固有の追加group有る場合(今は XROSSだけ?)
+            
+        * ban_initialize → Cell作成。Groupのcell_list、ability設定。
+        * @form = Form.new
+    1. self.data_initialize → infileを読んでcellの初期値設定。Arrow読み込む
+    
