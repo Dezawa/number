@@ -44,8 +44,8 @@ EOMEMO
 module Number
   # gameのformを設定するextend
   module GamePform
-    def make_waku_pform(struct)
-      n, mult, sign, m_nr, dan = base_size(struct)
+    def make_waku_pform(form_type)
+      n, mult, sign, m_nr, dan = base_size(form_type)
       @game_scale, group_width, group_hight = n
       @val = (1..game_scale).to_a
 

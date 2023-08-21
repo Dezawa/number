@@ -20,7 +20,9 @@ module Number
       form_type, game_type = form_and_game_type(infile)
       instance = new(infile, form_type, game_type: game_type, option: option)
       instance.set_game_type
-      instance.structure
+      # @waku、formを作成。groupを作成し、optional_groupも作成
+      # ban_initializeにてcell作成
+      instance.structure 
       instance.gout if option[:gout]
       instance.data_initialize
       instance

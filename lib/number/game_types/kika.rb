@@ -13,7 +13,8 @@ module Number
         'KIKA'
       end
 
-      def set_block_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku)
+      def optional_group(gnr, boxes, xmax, waku)
+        #set_block_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku)
         c = -1
         while c < @size
           while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end

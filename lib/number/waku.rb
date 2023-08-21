@@ -32,8 +32,9 @@ module Number
     def set_grp(group_width, group_hight)
       gnr = 0
       gnr = vertical_holizontal_group(gnr)
-      block_group(gnr, group_width, group_hight)
+      block_group(gnr, group_width, group_hight) unless game.game_type == "KIKA"
       # set_optional_group(gnr, group_width, group_hight)
+      gnr
     end
 
     def set_optional_group(gnr, group_width, group_hight); end
