@@ -3,36 +3,36 @@
 module Number
   # ゲーム全体の構成
   class Waku
-    attr_accessor :waku, :boxes, :xmax, :game, :game_scale
+    attr_accessor :waku, :boxes, :xmax, :ymax, :game, :game_scale
 
-    def initialize(game, boxes, game_scale, count, xmax)
+    def initialize(game, boxes, game_scale, count, xy_max)
       @game = game
       @game_scale = game_scale
       @boxes = boxes
       @count = count
-      @xmax = xmax
+      @xmax, @ymax = xy_max
       waku_init(boxes)
     end
 
     def waku_init(boxes)
       cell_no = 0
-      @waku = []
+      null_cell = Number::NullCell.instance
+      @waku =  Array.new(xmax * ymax, null_cell)
+
       boxes.each do |box|
-        (box.y_pos..box.y_pos + game_scale - 1).map do |_y|
-          (box.x_pos..box.x_pos + game_scale - 1).map do |_x|
-            @waku << WakuSub.new(cell_no)
+        (box.y_pos..box.y_pos + game_scale - 1).map do |y|
+          (box.x_pos..box.x_pos + game_scale - 1).map do |x|
+            @waku[xmax * y + x] = WakuSub.new(cell_no)
             cell_no += 1
           end
-          @waku << WakuSub.new(nil)
         end
-        @waku += [WakuSub.new(nil)] * xmax
       end
     end
 
     def set_grp(group_width, group_hight)
       gnr = 0
       gnr = vertical_holizontal_group(gnr)
-      block_group(gnr, group_width, group_hight) unless game.game_type == "KIKA"
+      gnr = block_group(gnr, group_width, group_hight) unless game.game_type == "KIKA"
       # set_optional_group(gnr, group_width, group_hight)
       gnr
     end

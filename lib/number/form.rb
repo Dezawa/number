@@ -11,7 +11,8 @@ module Number
 
       # [ w,xmax,ymax ]
       w, xmax, ymax = p_form
-      (0..ymax - 2).each { |i| push(w[i * xmax, xmax].map { |ww| ww ? ww[0] : nil }) }
+      (0..ymax - 2).each { |i|
+        push(w[i * xmax, xmax].map { |ww| ww.nil? ? nil : ww[0] }) }
       @lines = ymax - 1
       # pp self
     end

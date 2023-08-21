@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
+require 'singleton'
+
 module Number
+  class NullCell
+    include Singleton
+    def nil? ; true ; end
+  end
   # 9x9の枠内の 枡
   class Cell
     attr_accessor :game, :groups, :valu, :c, :ability, :grp_list, :option, :game_scale
 
+    def nil? ; false ; end
+    
     def self.create(arg_game, cell_no, arg_grp_list, count, option: {})
       cell = new(arg_game, cell_no, arg_grp_list, count, option: option)
       cell.setup

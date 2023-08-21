@@ -53,7 +53,7 @@ module Number
       boxes, xsize, ysize = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
       xmax = xsize + 1
       ymax = ysize + 1
-      @waku = Number::Waku.new(self, boxes, game_scale, @count, xmax)
+      @waku = Number::Waku.new(self, boxes, game_scale, @count, [xmax, ymax])
       # 最終的には、有効なcellでは以下の構造の情報となる
       #   [ cell_Nr, [grp_Nr0,grp_Nr1,,,] ]
 
@@ -88,7 +88,7 @@ module Number
       #   end
       # end
 
-      @size = @waku.waku.select(&:cell_no).size
+      @size = @waku.waku.reject(&:nil?).size
 
       # $cells を作る。空で。 set_grpの準備
       @cells  = []
