@@ -19,8 +19,8 @@ module Number
         base1 = base0 + game_scale - 1
         [gnr, gnr + 1].each{ |g| @groups[g] = Number::Group.new(self, g, @count, :xross) }
         (0..game_scale - 1).each  do |i|
-          waku[base0 + (xmax + 1) * i][1] << gnr
-          waku[base1 + (xmax - 1) * i][1] << gnr + 1
+          waku[base0 + (xmax + 1) * i].grp_list << gnr
+          waku[base1 + (xmax - 1) * i].grp_list << gnr + 1
         end
         gnr + 2
       end

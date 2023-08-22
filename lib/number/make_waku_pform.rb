@@ -90,9 +90,6 @@ module Number
 
       @size = @waku.waku.reject(&:nil?).size
 
-      # $cells を作る。空で。 set_grpの準備
-      @cells  = []
-
       # $grps を作る。 空サイズで作った後埋める
       @gsize = @waku.set_grp(group_width, group_hight)
       @gsize = optional_group(@gsize, boxes, xmax, @waku)
@@ -104,8 +101,8 @@ module Number
       waku.waku.each do |ww|
         next if ww.nil?
 
-        @cells[ww[0]] = Number::Cell.create(self, ww[0], ww[1], @count, option: option) # (cell_nr,grp_list)
-        ww[1].each { |grp_no| @groups[grp_no].addcell_list ww[0] }
+        #@cells[ww.c] = Number::Cell.create(self, ww.c[0], ww[1], @count, option: option) # (cell_nr,grp_list)
+        ww.grp_list.each { |grp_no| @groups[grp_no].addcell_list ww.c }
       end
 
       @neigh = neighber(waku, xmax, ymax)
@@ -120,8 +117,8 @@ module Number
           # pp [base, base + x, waku[base + x],waku[base + x].cell_no]
           next if waku[x].nil?
 
-          @neigh << [waku[x].cell_no, waku[x + 1].cell_no]    unless waku[x + 1].nil?
-          @neigh << [waku[x].cell_no, waku[x + xmax].cell_no] unless waku[x + xmax].nil?
+          @neigh << [waku[x].c, waku[x + 1].c]    unless waku[x + 1].nil?
+          @neigh << [waku[x].c, waku[x + xmax].c] unless waku[x + xmax].nil?
         end
       end
       @neigh

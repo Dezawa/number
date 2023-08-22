@@ -124,7 +124,6 @@ module Number
       ret = nil
       vv = [rm_value].flatten(1)
       v_remove = vv & @ability
-
       if v_remove.size.positive?
         print " rm_ability cell #{@c} v=[#{v_remove.join(',')}]. by #{msg}\n" if option[:verb]
         ret = @gsw = true

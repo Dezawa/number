@@ -25,8 +25,8 @@ module Number
             c += 1
             c += 1 if waku[c].nil? ##
             puts "c=#{c} d=#{d}  @size=#{@size} " if $dbg
-            puts "$kika: waku[c] of c is #{c}, cell=#{w[c][0]},waku[c][1]=#{w[c][1]}" if $dbg
-            waku[c][1] << d.to_i + gnr - 1
+            puts "$kika: waku[c] of c is #{c}, cell=#{w[c][0]},waku[c].grp_list=#{w[c][1]}" if $dbg
+            waku[c].grp_list << d.to_i + gnr - 1
           end
         end
         (gnr..gnr + game_scale - 1).each { |g| @groups[g] = Number::Group.new(self, g, @count, :block) }

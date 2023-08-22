@@ -53,6 +53,7 @@ module Number
       sw = nil
       cells = []
       ability.fixed_by_rest_one.each do |group_ability|
+        # next unless group_ability.cell_list.first
         next unless @cells[group_ability.cell_list.first].set(group_ability.v,
                                                               "grp(#{g}).ability #{group_ability.cell_list}")
 

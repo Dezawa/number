@@ -22,7 +22,7 @@ module Number
       boxes.each do |box|
         (box.y_pos..box.y_pos + game_scale - 1).map do |y|
           (box.x_pos..box.x_pos + game_scale - 1).map do |x|
-            @waku[xmax * y + x] = WakuSub.new(cell_no)
+            game.cells << (@waku[xmax * y + x] = Number::Cell.create(game, cell_no, [], game.count))
             cell_no += 1
           end
         end
@@ -45,7 +45,7 @@ module Number
           aliable_waku_of_block(box, group_width, y).each do |x|
             game.groups[gnr] = Number::Group.new(game, gnr, @count, :block)
             (y..y + group_hight - 1).each do |yy|
-              (x..x + group_width - 1).each { |xx| waku[xmax * yy + xx][1] << gnr }
+              (x..x + group_width - 1).each { |xx| waku[xmax * yy + xx].grp_list << gnr }
             end
             gnr += 1
           end
@@ -78,14 +78,14 @@ module Number
       # @groups[gnr] =  Group.new(@cells,gnr,game_scale,:holizontal)
       game.groups[gnr] = Number::Group.new(game, gnr, @count, :holizontal)
       (box.x_pos..box.x_pos + game_scale - 1).each do |x|
-        waku[xmax * y_pos + x][1] << gnr
+        waku[xmax * y_pos + x].grp_list << gnr
       end
     end
 
     def vertical_group(gnr, box, x_pos)
       game.groups[gnr] = Number::Group.new(game, gnr, @count, :vertical)
       (box.y_pos..box.y_pos + game_scale - 1).each do |y|
-        waku[xmax * y + x_pos][1] << gnr
+        waku[xmax * y + x_pos].grp_list << gnr
       end
     end
 
@@ -107,35 +107,6 @@ module Number
 
     def each
       waku.each
-    end
-  end
-
-  # Cellの構成 :: Cell と被ってる？
-  class WakuSub
-    attr_accessor :cell_no, :group_list
-
-    def initialize(cell_n)
-      @cell_no = cell_n if cell_n
-      @group_list = []
-    end
-
-    def [](idx)
-      case idx
-      when 0
-        cell_no
-      when 1
-        group_list
-      end
-    end
-
-    def nil?
-      !cell_no
-    end
-
-    def inspect
-      return 'NullWaku' unless cell_no
-
-      "WakuSub:[#{cell_no}, #{group_list}]"
     end
   end
 end
