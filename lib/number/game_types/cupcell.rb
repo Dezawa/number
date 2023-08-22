@@ -2,6 +2,7 @@
 
 ####
 module Number
+  # CupcellのためのCellの拡張
   class Cell
     def even_only?
       @valu&.even? ||
@@ -31,14 +32,6 @@ module Number
         get_arrow(infile)
       end
       # end
-
-      def ddrest_one
-        puts 'rest_one'
-        return nil unless super
-
-        puts 'rest_one end'
-        optional_test
-      end
 
       # (arrow)
       def optional_test
@@ -118,9 +111,6 @@ module Number
         v = (odd[0] & odd[1])[0]
         groups.each { |grp| @groups[grp].rm_ability(v, pair, "cupcell [#{pair.join(',')}]") }
       end
-      # class Groups
-      #  extend GroupsCupcell
-      # end
     end
   end
 end

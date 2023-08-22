@@ -17,15 +17,12 @@ module Number
         # set_block_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku)
         c = -1
         while c < @size
-          while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
-          puts $LAST_READ_LINE if $dbg
-          $LAST_READ_LINE.chop.split(sep).each do |d|
+          line = gets_skip_comment(infile)
+          line.chop.split(sep).each do |d|
             next if /\d+/ !~ d
 
             c += 1
             c += 1 if waku.cells[c].nil? ##
-            puts "c=#{c} d=#{d}  @size=#{@size} " if $dbg
-            puts "$kika: waku.cells[c] of c is #{c}, cell=#{w[c][0]},waku.cells[c].group_ids=#{w[c][1]}" if $dbg
             waku.cells[c].group_ids << d.to_i + gnr - 1
           end
         end

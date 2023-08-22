@@ -10,7 +10,7 @@ module Number
       end
 
       # module Optional
-      def optional_struct(_sep, _n, infile)
+      def optional_struct(_sep, _game_scale, infile)
         while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
         @arrows = []
         while $LAST_READ_LINE =~ /\d/
@@ -26,13 +26,9 @@ module Number
       # end
 
       def optional_test
-        @arrows.each do |arw|
-          l = arw[0]
-          h = arw[1]
-          llist = @cells[l].vlist
-          hlist = @cells[h].vlist
-          lrm = @cells[l].vlist.select { |v| v >= hlist.last }
-          hrm = @cells[h].vlist.select { |v| v <= llist[0] }
+        @arrows.each do |l, h|
+          lrm = @cells[l].vlist.select { |v| v >= @cells[h].vlist.last }
+          hrm = @cells[h].vlist.select { |v| v <= @cells[l].vlist[0] }
           lrm.size.positive? && @cells[l].rm_ability(lrm, "HUTOUGOU cell[#{l}]<cell[#{h}]")
           hrm.size.positive? && @cells[h].rm_ability(hrm, "HUTOUGOU cell[#{l}]<cell[#{h}]")
         end

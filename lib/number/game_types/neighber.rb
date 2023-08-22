@@ -10,35 +10,28 @@ module Number
         'NEIGHBER'
       end
 
-      def optional_struct(_sep, _n, infile)
+      def optional_struct(_sep, _game_scale, infile)
         # @arrows は、隣同士で一つ違いのcellの組み合わせ
         # $neigh は、初期値は隣同士のcell、このmethodの結果、二つ以上違うcellの組み合わせとなる
         @summax = 20
         @arrows = []
-        while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
-        w = []
-        $LAST_READ_LINE.split.each { |c| w << c.to_i }
-        @arrows << w
-        while infile.gets && $LAST_READ_LINE =~ /^\s*\d+\s+\d+/
-          w = []
-          $LAST_READ_LINE.split.each { |c| w << c.to_i }
-          @arrows << w
+        while (line = gets_skip_comment(infile))
+          @arrows << line.split.map(&:to_i)
         end
-        $nei = @neigh.dup
+        @nei = @neigh.dup
         @arrows.each { |arw| @neigh.delete(arw.sort) }
       end
-      # end
 
       def optional_test
         #################
-        $optsw = nil
+        @optsw = nil
         neigh_test1 && rest_one # 2以上離れているべきは、離れているか
         # arrow.each{|arw| neigh_test2(arw)} && rest_one  # 隣り合っているべきは隣り合っているか
         neigh_test2 && rest_one
         neigh_test3(@cells) && rest_one
         neigh_test4 && rest_one
         # puts "$optsw = #{$optsw}"
-        $optsw
+        @optsw
       end
 
       def neigh_test1
@@ -57,22 +50,22 @@ module Number
                                   neighber = neigh[1]
           else; next
           end
-          if false
-            if c0.v
-              next if c1.v; # $neigh.delete(neigh) ;
+          # if false
+          #   if c0.v
+          #     next if c1.v; # $neigh.delete(neigh) ;
 
-              # 両方決まり
+          #     # 両方決まり
 
-              v0 = c0.v
-              c = c1
-            else
-              next unless c1.v
+          #     v0 = c0.v
+          #     c = c1
+          #   else
+          #     next unless c1.v
 
-              v0 = c1.v
-              c = c0
+          #     v0 = c1.v
+          #     c = c0
 
-            end
-          end
+          #   end
+          # end
           # cc0,cc1 について
           c.vlist.each do |v|
             next unless (v0 - v).abs < 2
@@ -82,7 +75,7 @@ module Number
               p neigh
             end
             c.rm_ability(v, "rm_ability by neiber test1:cell #{neighber}=#{v0}")
-            ret = @gsw = $optsw = true
+            ret = @gsw = @optsw = true
           end
         end
         ret
@@ -143,7 +136,7 @@ module Number
               print ' cell.set by neigh @size==1 ' if $dbg
 
               @cells[arrow[c]].set(w[c][0], "neiber test2 arrow [#{arrow.join ','}]")
-              $optsw = true
+              @optsw = true
             elsif w[c].size.positive? # 二つ以上だったら、
               # 次の処理の準備
               wk << w[c]
@@ -153,7 +146,7 @@ module Number
               vv = @cells[arrow[c]].vlist - w[c]
               if vv.size.positive?
                 @cells[arrow[c]].rm_ability(vv, "rm_ability by neiber test2[#{arrow.join(',')}]")
-                ret = @gsw = $optsw = true
+                ret = @gsw = @optsw = true
               end
             end
           end
@@ -184,10 +177,10 @@ module Number
         www.each do |cell1, cell2|
           c1 = cell1.c
           c2 = cell2.c
-          nei1 = $nei.select { |nei|
+          nei1 = @nei.select { |nei|
             nei[0] == c1 || nei[1] == c1
           }.flatten.uniq - [c1] # cell1の隣。通常４つ
-          nei2 = $nei.select { |nei|
+          nei2 = @nei.select { |nei|
             nei[0] == c2 || nei[1] == c2
           }.flatten.uniq - [c2] # cell2の隣。通常４つ
           next unless (nei1 & nei2).size == 2
@@ -199,7 +192,7 @@ module Number
           v += [v[0] + 1, v[0] - 1, v[1] + 1, v[1] - 1].uniq.select(&:positive?)
           nei.each do |c|
             cells[c].rm_ability(v, "neighber test3 cells #{c1},#{c2}") &&
-              ret = $optsw = true
+              ret = @optsw = true
           end
         end
 
@@ -243,11 +236,11 @@ module Number
                 # 2連続と片割れ だったら、片割れをまん中にセット。
                 @cells[c1].set(vs[2])
               end
-              ret = $optsw = true
+              ret = @optsw = true
             elsif vs[2] - vs[1] == 1
               # 2連続と片割れ だったら、片割れをまん中にセット。
               @cells[c1].set(vs[0])
-              ret = $optsw = true
+              ret = @optsw = true
             end
           end
         end

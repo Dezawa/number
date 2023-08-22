@@ -3,6 +3,7 @@
 require 'singleton'
 
 module Number
+  # Wakuにて cell割当のない部分を埋めるもの
   class NullCell
     include Singleton
     def nil?

@@ -9,7 +9,7 @@ module Number
       end
 
       # module Optional
-      def optional_struct(_sep, _n, infile)
+      def optional_struct(_sep, _game_scale, infile)
         get_arrow(infile)
       end
       # end
