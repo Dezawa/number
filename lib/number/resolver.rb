@@ -8,13 +8,13 @@ module Number
     def cogroup(cells)
       return [] if cells.empty?
 
-      cells[1..].inject(@cells[cells[0]].grp_list) { |groups, c| groups & @cells[c].grp_list }
+      cells[1..].inject(@cells[cells[0]].group_ids) { |groups, c| groups & @cells[c].group_ids }
     end
 
     def cocell(grps)
       return [] if grps.size < 2
 
-      grps[1..].inject(groups[grps[0]].cell_list) { |cells, group| cells & groups[group].cell_list }
+      grps[1..].inject(groups[grps[0]].cell_ids) { |cells, group| cells & groups[group].cell_ids }
     end
 
     def fill?
@@ -24,7 +24,7 @@ module Number
     def gout
       pp( # .ability.map { |abl| [grp.g, abl] if (abl[0]).positive? }.compact })
         groups.map do |grp|
-          ["Group #{grp.g}:", grp.cell_list]
+          ["Group #{grp.g}:", grp.cell_ids]
         end
       )
     end
@@ -110,10 +110,10 @@ module Number
     # v_num個の組み合わせの中で
     # 可能性数字種類が v_num個の組み合わせを返す。
     # それらの 数字が他のcellに有っても良い。それは可能性削除対象
-    # 戻り値 :: [ [cell_list, 数字list], [ ],,, ]
+    # 戻り値 :: [ [cell_ids, 数字list], [ ],,, ]
     def prisonable_cells(grp, v_num)
       # 数字残り可能性数 が v_num以下のcell
-      able_cells = grp.cell_list_avility_le_than(v_num)
+      able_cells = grp.cell_ids_avility_le_than(v_num)
 
       # それらの v_num個のcombinationのうち、数字種類がv_num個のもの
       # [ [cell_ids, valus], [ ],,]
@@ -192,20 +192,20 @@ module Number
         # 4. そのうち 共通するgroupが無いものを残す
         #
         cell1.ability == cell2.ability &&
-          (cell1.grp_list & cell2.grp_list).empty?
+          (cell1.group_ids & cell2.group_ids).empty?
       end
     end
 
     # 二つのcellを対角線とする長方形の残りのcell
     def theother_cells_of_rectangle_which_made_by_diagonal_of(cells)
-      xross_cells = cells[0].grp_list.product(cells[1].grp_list)
+      xross_cells = cells[0].group_ids.product(cells[1].group_ids)
                             .map { |grps| cocell(grps) }.flatten
       xross_cells.size == 2 ? xross_cells : []
     end
 
     def cells_not_on_the_v_or_h_group_of_the_group_of(cell)
-      h, v, b = cells[cell].grp_list.sort
-      groups[b].cell_list - groups[h].cell_list - groups[v].cell_list
+      h, v, b = cells[cell].group_ids.sort
+      groups[b].cell_ids - groups[h].cell_ids - groups[v].cell_ids
     end
 
     # cellsのabilityに値v0,v1があるか
@@ -215,8 +215,8 @@ module Number
 
     # cell c と cell_nr の共通group のcell　でかつ c のblock上のもの
     def cells_on_the_co_group_and_block(cell0, cell1)
-      (groups[cogroup([cell0, cell1]).first].cell_list &
-        groups[cells[cell0].grp_list.max].cell_list) - [cell0] + [cell1]
+      (groups[cogroup([cell0, cell1]).first].cell_ids &
+        groups[cells[cell0].group_ids.max].cell_ids) - [cell0] + [cell1]
     end
 
     def rm_values_from_cells_and_group(values, _cell, cell_pair, _cogroup)
@@ -310,7 +310,7 @@ module Number
                     (count > 1) #      grp を集め
 
         # (2) そのcellを共有する:verticalなgroupを集める。[co_groups]
-        cells = grp.ability[valu].cell_list
+        cells = grp.ability[valu].cell_ids
         co_groups = cells.map { |c| cogroup([c]).select { |g| @groups[g].type == v_h }.flatten }
         [count, grp, cells, co_groups]
       end.compact

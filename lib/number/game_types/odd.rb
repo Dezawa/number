@@ -72,7 +72,7 @@ module Number
       end
 
       def cells_not_included_in(arrows, group)
-        group.cell_list - arrows.inject([]) { |cells, arrow| cells | arrow }
+        group.cell_ids - arrows.inject([]) { |cells, arrow| cells | arrow }
       end
 
       def cell_odd?(_cell, _group, arrows)
@@ -81,7 +81,7 @@ module Number
       end
 
       def arrows_on_the(group)
-        @arrows.select { |arrow| (arrow & group.cell_list).size == 2 }
+        @arrows.select { |arrow| (arrow & group.cell_ids).size == 2 }
       end
 
       ###

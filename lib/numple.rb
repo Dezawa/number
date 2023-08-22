@@ -159,7 +159,7 @@ if /numple.rb$/ =~ $PROGRAM_NAME
     ARGV.each do |infile|
       puts "############ #{infile} #######"
       numple = Numple.new(infile, option: option)
-      $stderr.puts "FAIL #{infile} " unless numple.resolve
+      warn "FAIL #{infile} " unless numple.resolve
       puts numple.output_form # 解出力
       puts numple.cell_out if option[:cout] # Cellの残された可能性出力
       # numple.cell_ability  #Cellの残された可能性のデータ

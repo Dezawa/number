@@ -48,7 +48,7 @@ module Number
     def sum_of_cells_and_values(abilitys)
       abilitys.each_with_object([[], []]) do |ac, vc| # ac = [ count,[cells],value]
         vc[0] << ac.v # [2]  # value
-        vc[1] |= ac.cell_list # [1]  # cell
+        vc[1] |= ac.cell_ids # [1]  # cell
       end
     end
 

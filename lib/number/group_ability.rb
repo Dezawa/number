@@ -10,9 +10,9 @@ module Number
       @ability = [] # Hash.new #{|h,k| h[k] = [game_scale,[],k] }
     end
 
-    def setup_initial(cell_list)
-      (1..game_scale).each { |v| @ability[v] = Number::GroupAbility.new(game_scale, cell_list.dup, v) }
-      # @ability[0]= GroupAbility.new(0,cell_list.dup,0)
+    def setup_initial(cell_ids)
+      (1..game_scale).each { |v| @ability[v] = Number::GroupAbility.new(game_scale, cell_ids.dup, v) }
+      # @ability[0]= GroupAbility.new(0,cell_ids.dup,0)
     end
 
     def rm_cell_ability(values, cell_no, _msg = nil)
@@ -30,7 +30,7 @@ module Number
     def combination_of_ability_of_rest_is_less_or_equal(v_num)
       @ability[1..].select { |abl| abl.rest > 1 and abl.rest <= v_num }
                    .combination(v_num)
-                   .select { |abl_cmb| abl_cmb.inject([]) { |cells, abl| cells | abl.cell_list }.size == v_num }
+                   .select { |abl_cmb| abl_cmb.inject([]) { |cells, abl| cells | abl.cell_ids }.size == v_num }
     end
 
     def [](idx)
@@ -47,7 +47,7 @@ module Number
 
     def dup
       ablty = clone
-      ablty.ability[1..].each { |abl| abl.cell_list = abl.cell_list.dup }
+      ablty.ability[1..].each { |abl| abl.cell_ids = abl.cell_ids.dup }
       ablty
     end
   end
@@ -58,28 +58,28 @@ module Number
   # Group毎に game_scale個作成される。数字ｖ毎に一つ。
   class GroupAbility
     # rest :: 数字v が入る可能性が残っている cell の数。初めはgame_scale。
-    # cell_list :: このgroupに属する cell の nrの一覧
-    attr_accessor :rest, :cell_list, :v
+    # cell_ids :: このgroupに属する cell の nrの一覧
+    attr_accessor :rest, :cell_ids, :v
 
-    def initialize(game_scale, arg_cell_list, arg_v)
-      @cell_list = arg_cell_list
+    def initialize(game_scale, arg_cell_ids, arg_v)
+      @cell_ids = arg_cell_ids
       @rest = game_scale
       @v = arg_v
     end
 
     def rm_cell_ability(cell_no, msg = nil)
-      return unless cell_list.delete(cell_no)
+      return unless cell_ids.delete(cell_no)
 
       @rest -= 1
       puts msg if msg
     end
 
     def inspect
-      "GroupAbility:[rest:#{rest},cells:[#{cell_list.join(',')}],v:#{v}]"
+      "GroupAbility:[rest:#{rest},cells:[#{cell_ids.join(',')}],v:#{v}]"
     end
 
     def dump
-      [rest, cell_list, v]
+      [rest, cell_ids, v]
     end
   end
 end

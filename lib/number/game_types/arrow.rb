@@ -195,11 +195,11 @@ module Number
         @arrows.each_with_index do |arrow, i|
           # @arw_group[i]=arrow[1..-1].map{|cell_no|
           groups = arrow[1..].map do |cell_no| # cell の group の集合を求める
-            @cells[cell_no].grp_list
+            @cells[cell_no].group_ids
           end.flatten.uniq
 
           cells_same_group = groups.map do |grp_no|
-            cells = @groups[grp_no].cell_list & arrow[1..]
+            cells = @groups[grp_no].cell_ids & arrow[1..]
             cells if cells.size > 1
           end.compact.uniq
           @arw_group[i] = cells_same_group.map do |cells|

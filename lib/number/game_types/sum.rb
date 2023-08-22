@@ -177,7 +177,7 @@ module Number
         duped_index = sells_value.map.with_index { |v, idx| v == duped_value ? idx : nil }.compact
 
         duped_cells = duped_index.map { |idx| @cells[arrow[idx + 1]] }
-        duped_cells.map(&:grp_list).flatten.tally.all? { |_v, c| c == 1 }
+        duped_cells.map(&:group_ids).flatten.tally.all? { |_v, c| c == 1 }
       end
 
       # cell毎の残された可能性に基づき、cellのabilityを調整する

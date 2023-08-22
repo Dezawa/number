@@ -22,7 +22,7 @@ module Number
       instance.set_game_type
       # @waku、formを作成。groupを作成し、optional_groupも作成
       # ban_initializeにてcell作成
-      instance.structure 
+      instance.structure
       instance.gout if option[:gout]
       instance.data_initialize
       instance

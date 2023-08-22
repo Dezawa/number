@@ -54,41 +54,8 @@ module Number
       xmax = xsize + 1
       ymax = ysize + 1
       @waku = Number::Waku.new(self, boxes, game_scale, @count, [xmax, ymax])
-      # 最終的には、有効なcellでは以下の構造の情報となる
-      #   [ cell_Nr, [grp_Nr0,grp_Nr1,,,] ]
 
-      # 有効なcellに１を入れる
-      #  STDの場合
-      #    boxは一つ
-      #    @waku  111111111n
-      #        111111111n
-      #           ....
-      #        111111111n
-      #        111111111n
-      #        nnnnnnnnnn
-
-      # boxes[0..m_nr].each do |box|
-      #   (box.y_pos..box.y_pos + game_scale - 1).each do |y|
-      #     (box.x_pos..box.x_pos + game_scale - 1).each { |x| @waku[xmax * y + x] = 1 }
-      #   end
-      # end
-
-      # 　有効なcellに頭からの通し番号を振る
-      #  STDの場合
-      #    boxは一つ
-      #    @waku  0 1 2 3 4 5 6 7 8  nil
-      #            :
-      #        72 .....        80 nil
-      # #        nnnnnnnnnn
-      # c = 0
-      # (0..@waku.size - 1).each do |x|
-      #   if @waku[x]
-      #     @waku[x] = [c, []]
-      #     c += 1
-      #   end
-      # end
-
-      @size = @waku.waku.reject(&:nil?).size
+      @size = @waku.cells.reject(&:nil?).size
 
       # $grps を作る。 空サイズで作った後埋める
       @gsize = @waku.set_grp(group_width, group_hight)
@@ -98,11 +65,11 @@ module Number
     end
 
     def ban_initialize(waku, _game_scale, xmax, ymax)
-      waku.waku.each do |ww|
-        next if ww.nil?
+      waku.cells.each do |cell|
+        next if cell.nil?
 
-        #@cells[ww.c] = Number::Cell.create(self, ww.c[0], ww[1], @count, option: option) # (cell_nr,grp_list)
-        ww.grp_list.each { |grp_no| @groups[grp_no].addcell_list ww.c }
+        # @cells[cell.c] = Number::Cell.create(self, cell.c[0], cell[1], @count, option: option) # (cell_nr,group_ids)
+        cell.group_ids.each { |grp_no| @groups[grp_no].addcell_ids cell.c }
       end
 
       @neigh = neighber(waku, xmax, ymax)
@@ -114,18 +81,18 @@ module Number
       (0...ymax).each do |y|
         base = xmax * y
         (base...base + xmax).each do |x|
-          # pp [base, base + x, waku[base + x],waku[base + x].cell_no]
-          next if waku[x].nil?
+          # pp [base, base + x, waku.cells[base + x],waku.cells[base + x].cell_no]
+          next if waku.cells[x].nil?
 
-          @neigh << [waku[x].c, waku[x + 1].c]    unless waku[x + 1].nil?
-          @neigh << [waku[x].c, waku[x + xmax].c] unless waku[x + xmax].nil?
+          @neigh << [waku.cells[x].c, waku.cells[x + 1].c]    unless waku.cells[x + 1].nil?
+          @neigh << [waku.cells[x].c, waku.cells[x + xmax].c] unless waku.cells[x + xmax].nil?
         end
       end
       @neigh
     end
 
     def initialize_group_ability
-      @groups.each { |grp| grp.ability.setup_initial(grp.cell_list) }
+      @groups.each { |grp| grp.ability.setup_initial(grp.cell_ids) }
     end
 
     def optional_group(gnr, boxes, xmax, waku); end

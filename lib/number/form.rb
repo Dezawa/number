@@ -10,9 +10,10 @@ module Number
       @game_scale = game_scale
 
       # [ w,xmax,ymax ]
-      w, xmax, ymax = p_form
-      (0..ymax - 2).each { |i|
-        push(w[i * xmax, xmax].map { |ww| ww.nil? ? nil : ww.c }) }
+      waku, xmax, ymax = p_form
+      (0..ymax - 2).each do |i|
+        push(waku.cells[i * xmax, xmax].map { |cell| cell.nil? ? nil : cell.c })
+      end
       @lines = ymax - 1
       # pp self
     end

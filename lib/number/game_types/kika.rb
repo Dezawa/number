@@ -13,8 +13,8 @@ module Number
         'KIKA'
       end
 
-      def optional_group(gnr, boxes, xmax, waku)
-        #set_block_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku)
+      def optional_group(gnr, _boxes, _xmax, waku)
+        # set_block_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku)
         c = -1
         while c < @size
           while infile.gets && ($LAST_READ_LINE =~ /^\s*#/ || $LAST_READ_LINE =~ /^\s*$/); end
@@ -23,10 +23,10 @@ module Number
             next if /\d+/ !~ d
 
             c += 1
-            c += 1 if waku[c].nil? ##
+            c += 1 if waku.cells[c].nil? ##
             puts "c=#{c} d=#{d}  @size=#{@size} " if $dbg
-            puts "$kika: waku[c] of c is #{c}, cell=#{w[c][0]},waku[c].grp_list=#{w[c][1]}" if $dbg
-            waku[c].grp_list << d.to_i + gnr - 1
+            puts "$kika: waku.cells[c] of c is #{c}, cell=#{w[c][0]},waku.cells[c].group_ids=#{w[c][1]}" if $dbg
+            waku.cells[c].group_ids << d.to_i + gnr - 1
           end
         end
         (gnr..gnr + game_scale - 1).each { |g| @groups[g] = Number::Group.new(self, g, @count, :block) }

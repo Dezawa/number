@@ -3,46 +3,50 @@
 module Number
   # 行、列、ブロックを総称
   class Group
-    attr_accessor :game, :cells, :n, :game_scale, :g, :ability, :cell_list, :atrivute, :count
+    attr_accessor :game, :n, :game_scale, :g, :ability, :cell_ids, :atrivute, :count
 
     def initialize(arg_game, arg_gnr, count, atr = [])
       @game = arg_game
       game_scale = @game.game_scale
       @g = arg_gnr
-      @cells = @game.cells
+      # @cells = @game.cells
       @ability = Number::GroupAbilities.new(game_scale)
-      @cell_list = []
+      @cell_ids = []
       @atrivute = atr # :holizontal :vertical  :block
       @count = count
     end
 
     def inspect
       "#<Group:#{object_id} " <<
-        %i[g atrivute cell_list].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join <<
+        %i[g atrivute cell_ids].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join <<
         "\n  @ability=[\n" <<
         @ability.ability.map { |abl| "         #{abl.inspect}" }.join("\n")
     end
 
+    def cells
+      cell_ids.map { |c_no| game.cells[c_no] }
+    end
+
     # 数字残り可能性数 が v_num以下のcell
-    def cell_list_avility_le_than(v_num)
-      # pp cells.map{|cell| cell&.c}
-      cell_list.select { |c_no| (1..v_num).include?(cells[c_no].valurest) }
+    def cell_ids_avility_le_than(v_num)
+      # pp game.cells.map{|cell| cell&.c}
+      cell_ids.select { |c_no| (1..v_num).include?(game.cells[c_no].valurest) }
     end
 
     def type
       @atrivute
     end
 
-    def addcell_list(cell)
-      @cell_list << cell
+    def addcell_ids(cell)
+      @cell_ids << cell
     end
 
     def line_groups_join_with
-      cell_list.inject([]) { |g_nrs, c| g_nrs | @cells[c].grp_list } - [g]
+      cell_ids.inject([]) { |g_nrs, c| g_nrs | @game.cells[c].group_ids } - [g]
     end
 
     def block_groups_join_with
-      cell_list.inject([]) { |g_nrs, c| g_nrs << @cells[c].grp_list[2] }.uniq
+      cell_ids.inject([]) { |g_nrs, c| g_nrs << @game.cells[c].group_ids[2] }.uniq
     end
 
     def rm_cell_ability(values, cell_no, msg = nil)
@@ -53,12 +57,12 @@ module Number
       sw = nil
       cells = []
       ability.fixed_by_rest_one.each do |group_ability|
-        # next unless group_ability.cell_list.first
-        next unless @cells[group_ability.cell_list.first].set(group_ability.v,
-                                                              "grp(#{g}).ability #{group_ability.cell_list}")
+        # next unless group_ability.cell_ids.first
+        next unless @game.cells[group_ability.cell_ids.first].set(group_ability.v,
+                                                                  "grp(#{g}).ability #{group_ability.cell_ids}")
 
         @count[:Group_ability_is_rest_one] += 1
-        cells += group_ability.cell_list
+        cells += group_ability.cell_ids
         sw = true
       end
       cells
@@ -71,11 +75,11 @@ module Number
       # ただし、array except_cells  にある cell はいじらない。
       # vが配列の場合は、その中をすべて
       rm_value = [rm_value].flatten
-      rm_cells = @cell_list - except_cells
+      rm_cells = @cell_ids - except_cells
       ret = nil
-      rm_cells.each do |c0| # (0..game_scale-1).each{|c| c0=@cell_list[c]
-        if (@cells[c0].ability & rm_value).size.positive?
-          @cells[c0].rm_ability(rm_value, msg)
+      rm_cells.each do |c0| # (0..game_scale-1).each{|c| c0=@cell_ids[c]
+        if (@game.cells[c0].ability & rm_value).size.positive?
+          @game.cells[c0].rm_ability(rm_value, msg)
           ret = true
         end
       end

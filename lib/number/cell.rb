@@ -5,26 +5,30 @@ require 'singleton'
 module Number
   class NullCell
     include Singleton
-    def nil? ; true ; end
+    def nil?
+      true
+    end
   end
+
   # 9x9の枠内の 枡
   class Cell
-    attr_accessor :game, :groups, :valu, :c, :ability, :grp_list, :option, :game_scale
+    attr_accessor :game, :groups, :valu, :c, :ability, :group_ids, :option, :game_scale
 
-    def nil? ; false ; end
-    
-    def self.create(arg_game, cell_no, arg_grp_list, count, option: {})
-      cell = new(arg_game, cell_no, arg_grp_list, count, option: option)
+    def nil?
+      false
+    end
+
+    def self.create(arg_game, cell_no, arg_group_ids, count, option: {})
+      cell = new(arg_game, cell_no, arg_group_ids, count, option: option)
       cell.setup
     end
 
-    def initialize(arg_game, cell_no, arg_grp_list, count, option: {})
+    def initialize(arg_game, cell_no, arg_group_ids, count, option: {})
       @game = arg_game
       @c = cell_no
-      @grp_list = arg_grp_list
+      @group_ids = arg_group_ids
       @count = count
       @option = option
-      # pp [:option,option]
     end
 
     def setup
@@ -38,18 +42,7 @@ module Number
 
     def inspect
       super +
-        %i[c valu grp_list ability].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join
-    end
-
-    def related_groups
-      related_groups_no.map { |g| @groups[g] }
-    end
-
-    def related_groups_no
-      holizontal, vertical, block, = grp_list
-      (@groups[block].line_groups_join_with +
-        @groups[holizontal].block_groups_join_with +
-        @groups[vertical].block_groups_join_with) - grp_list
+        %i[c valu group_ids ability].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join
     end
 
     def v
@@ -115,7 +108,7 @@ module Number
       @ability = []
 
       # この value を grpの他のcellから可能性削除する
-      @grp_list.each do |grp|
+      @group_ids.each do |grp|
         @groups[grp].rm_ability(val, [@c], msg)
       end
     end
@@ -134,7 +127,7 @@ module Number
     end
 
     def rm_cell_ability_from_groups_of_group_list(v_remove, msg = nil)
-      @grp_list.each do |grp|
+      @group_ids.each do |grp|
         @groups[grp].rm_cell_ability(v_remove, c, msg)
       end
     end
