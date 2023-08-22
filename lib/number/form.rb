@@ -3,16 +3,16 @@
 require 'English'
 module Number
   # ややこしい出力のためのhelper
-  class Form < Array
-    attr_accessor :game_scale
+  class Form
+    attr_accessor :game_scale, :row_form
 
     def initialize(p_form, game_scale)
       @game_scale = game_scale
-
+      @row_form = []
       # [ w,xmax,ymax ]
       waku, xmax, ymax = p_form
       (0..ymax - 2).each do |i|
-        push(waku.cells[i * xmax, xmax].map { |cell| cell.nil? ? nil : cell.c })
+        row_form << waku.cells[i * xmax, xmax].map { |cell| cell.nil? ? nil : cell.c }
       end
       @lines = ymax - 1
       # pp self
@@ -21,7 +21,7 @@ module Number
     def out(cells)
       space, fm1, fm2 = define_fmt
       outstr = String.new
-      each do |l|
+      row_form.each do |l|
         l.each do |cell_no|
           cell = cell_no ? cells[cell_no] : nil
           outstr << out_cell(cell, space, fm1, fm2)
