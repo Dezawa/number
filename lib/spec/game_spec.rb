@@ -40,7 +40,7 @@ RSpec.describe Number::Game, type: :model do
 
     context 'cell[0]は' do
       it 'group 0,9,18 に属する' do
-        expect(game.cells[0].grp_list).to eq [0, 9, 18]
+        expect(game.cells[0].group_ids).to eq [0, 9, 18]
       end
       it 'abirityは[]' do
         expect(game.cells[0].ability).to eq []
@@ -48,7 +48,7 @@ RSpec.describe Number::Game, type: :model do
     end
     context 'cell[3]は' do
       it 'group 0,12,18 に属する' do
-        expect(game.cells[3].grp_list).to eq [0, 12, 19]
+        expect(game.cells[3].group_ids).to eq [0, 12, 19]
       end
       it 'abirityは123以外' do
         expect(game.cells[3].ability).to eq [4, 5, 6, 7, 8, 9]

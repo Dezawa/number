@@ -30,15 +30,15 @@ RSpec.describe Number::Group, type: :model do
     end
 
     before do
-      group.cell_list = (10..18).to_a
-      group.cells = cells
+      group.cell_ids = (10..18).to_a
+      game.cells = cells
     end
-    it 'cell_list_avility_le_than(2)' do
+    it 'cell_ids_avility_le_than(2)' do
       # pp [:cell_rests,cells.map{|g| g&.valurest}]
 
-      # pp [:group_cell_list,group.cell_list]
+      # pp [:group_cell_ids,group.cell_ids]
       # pp [:group_cells,group.cells]
-      expect(group.cell_list_avility_le_than(2)).to eq [11, 12, 13, 14]
+      expect(group.cell_ids_avility_le_than(2)).to eq [11, 12, 13, 14]
     end
   end
 end
@@ -78,7 +78,7 @@ end
 __END__
     it '3個以下のcombintion。数字4,5がcell13,14にある' do
        abilities = group_aiblilities.combination_of_ability_of_rest_is_less_or_equal(3)
-       expect(abilities.map{|ab| ab.map{|ablty| [ablty.cell_list,ablty.v]}}).to match_array [[[[10,11,12],1], [[11,12],2], [[10,12],3]]]
+       expect(abilities.map{|ab| ab.map{|ablty| [ablty.cell_ids,ablty.v]}}).to match_array [[[[10,11,12],1], [[11,12],2], [[10,12],3]]]
     end
   end
 end

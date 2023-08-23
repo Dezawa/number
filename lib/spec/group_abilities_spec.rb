@@ -29,7 +29,7 @@ RSpec.describe Number::GroupAbilities, type: :model do
       abilities = group_aiblilities.combination_of_ability_of_rest_is_less_or_equal(2)
       expect(abilities.map do |ab|
                ab.map do |ablty|
-                 [ablty.cell_list, ablty.v]
+                 [ablty.cell_ids, ablty.v]
                end
              end).to match_array([[[[13, 14], 4], [[13, 14], 5]]])
     end
@@ -37,7 +37,7 @@ RSpec.describe Number::GroupAbilities, type: :model do
       abilities = group_aiblilities.combination_of_ability_of_rest_is_less_or_equal(3)
       expect(abilities.map do |ab|
                ab.map do |ablty|
-                 [ablty.cell_list, ablty.v]
+                 [ablty.cell_ids, ablty.v]
                end
              end).to match_array [[[[10, 11, 12], 1], [[11, 12], 2], [[10, 12], 3]]]
     end

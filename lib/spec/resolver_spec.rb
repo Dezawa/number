@@ -12,7 +12,7 @@ RSpec.describe Number::Game, type: :model do
   let(:game) { Number::Game.new(nil, '9') }
   let(:group) do
     grp = Number::Group.new(game, 9, [])
-    grp.cell_list = (10..18).to_a
+    grp.cell_ids = (10..18).to_a
     grp
   end
   let(:group_aiblilities) { Number::GroupAbilities.new(9) }
@@ -36,8 +36,7 @@ RSpec.describe Number::Game, type: :model do
 
     before do
       game.cells = cells
-      group.cell_list = (10..18).to_a
-      group.cells = cells
+      group.cell_ids = (10..18).to_a
     end
 
     it '座敷牢2' do
@@ -118,7 +117,7 @@ end
 __END__
   it '3個以下のcombintion。数字4,5がcell13,14にある' do
     abilities = group_aiblilities.combination_of_ability_of_rest_is_less_or_equal(3)
-    expect(abilities.map{|ab| ab.map{|ablty| [ablty.cell_list,ablty.v]}}).to match_array [[[[10,11,12],1], [[11,12],2], [[10,12],3]]]
+    expect(abilities.map{|ab| ab.map{|ablty| [ablty.cell_ids,ablty.v]}}).to match_array [[[[10,11,12],1], [[11,12],2], [[10,12],3]]]
   end
 end
 end

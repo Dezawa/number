@@ -29,7 +29,6 @@ module Number
 
     # 数字残り可能性数 が v_num以下のcell
     def cell_ids_avility_le_than(v_num)
-      # pp game.cells.map{|cell| cell&.c}
       cell_ids.select { |c_no| (1..v_num).include?(game.cells[c_no].valurest) }
     end
 

@@ -20,10 +20,10 @@ RSpec.describe Number::Game, type: :model do
     groups[2] = Number::Group.new(game, 2, nil)
     groups[9] = Number::Group.new(game, 9, nil)
     groups[18] = Number::Group.new(game, 18, nil)
-    groups[1].cell_list = (9..17).to_a
-    groups[2].cell_list = (18..26).to_a
-    groups[9].cell_list = (0..73).step(9).to_a
-    groups[18].cell_list = [0, 1, 2, 9, 10, 11, 18, 19, 20]
+    groups[1].cell_ids = (9..17).to_a
+    groups[2].cell_ids = (18..26).to_a
+    groups[9].cell_ids = (0..73).step(9).to_a
+    groups[18].cell_ids = [0, 1, 2, 9, 10, 11, 18, 19, 20]
     game.groups = groups
     game
   end
