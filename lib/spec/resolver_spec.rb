@@ -44,47 +44,47 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 
+  let(:abilities_for_reserv) do
+    # cell 10,11,12には1,2,3が有る。cell 13,14 には4,5が有る。
+    # cell 15,16 には 6,7 がある
+    # これらの数字は他のcellにはない
+    # 他の数字はこれらのcellにもある
+    # 数字１のあるcell、数字2の、数字3の、
+    [[10, 11, 12], [11, 12], [10, 12]] +
+      [[13, 14], [13, 14]] + # 数字 4, 5のあるcell
+      [[15, 16], [15, 16]] + # 数字6, 7のあるcell
+      [[13, 17], [10, 13, 18]] # 数字 8, 9のあるcell
+  end
+  let(:cell_abilities) do
+    cell_ability = Hash.new { |h, k| h[k] = [] }
+    abilities_for_reserv.map.with_index(1) do |cells, val|
+      pp [cells, val]
+      cells.each { |cell| cell_ability[cell] << val }
+    end
+    cell_ability
+  end
+  let(:cells) do
+    # pp [:cell_abilities,cell_abilities]
+    [nil] * 10 +
+      cell_abilities.map.with_index(10) do |_ability, cell_no|
+        cell = Number::Cell.new(game, cell_no, group, [])
+        cell.ability = cell_abilities[cell_no]
+        cell
+      end
+  end
+
+  let(:ary_groupability) do
+    abilities_for_reserv.map.with_index(1) do |ability, value|
+      group_aiblilities.ability[value] =
+        Number::GroupAbility.new(ability.size, ability, value)
+    end
+  end
+
+  let(:combo3) { ary_groupability[0, 3] }
+  let(:combo2) { ary_groupability[3, 2] }
+  let(:combo22) { ary_groupability[5, 2] }
+
   describe :reserv do
-    let(:abilities_for_reserv) do
-      # cell 10,11,12には1,2,3が有る。cell 13,14 には4,5が有る。
-      # cell 15,16 には 6,7 がある
-      # これらの数字は他のcellにはない
-      # 他の数字はこれらのcellにもある
-      # 数字１のあるcell、数字2の、数字3の、
-      [[10, 11, 12], [11, 12], [10, 12]] +
-        [[13, 14], [13, 14]] + # 数字 4, 5のあるcell
-        [[15, 16], [15, 16]] + # 数字6, 7のあるcell
-        [[13, 17], [10, 13, 18]] # 数字 8, 9のあるcell
-    end
-    let(:cell_abilities) do
-      cell_ability = Hash.new { |h, k| h[k] = [] }
-      abilities_for_reserv.map.with_index(1) do |cells, val|
-        pp [cells, val]
-        cells.each { |cell| cell_ability[cell] << val }
-      end
-      cell_ability
-    end
-    let(:cells) do
-      # pp [:cell_abilities,cell_abilities]
-      [nil] * 10 +
-        cell_abilities.map.with_index(10) do |_ability, cell_no|
-          cell = Number::Cell.new(game, cell_no, group, [])
-          cell.ability = cell_abilities[cell_no]
-          cell
-        end
-    end
-
-    let(:ary_groupability) do
-      abilities_for_reserv.map.with_index(1) do |ability, value|
-        group_aiblilities.ability[value] =
-          Number::GroupAbility.new(ability.size, ability, value)
-      end
-    end
-
-    let(:combo3) { ary_groupability[0, 3] }
-    let(:combo2) { ary_groupability[3, 2] }
-    let(:combo2_2) { ary_groupability[5, 2] }
-
     context :candidate_reserved_set do
       before do
         game.cells = cells
@@ -92,7 +92,7 @@ RSpec.describe Number::Game, type: :model do
         group.ability.ability = ary_groupability
         allow(group.ability)
           .to receive(:combination_of_ability_of_rest_is_less_or_equal)
-          .and_return([combo2, combo2_2])
+          .and_return([combo2, combo22])
         allow(game).to receive(:prison_done?).and_return(false)
       end
 

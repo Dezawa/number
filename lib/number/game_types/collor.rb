@@ -10,7 +10,7 @@ module Number
         'COLLOR'
       end
 
-      def set_optional_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku, infile, _sep)
+      def optional_group(gnr, _boxes, _xmax, waku)
         #    puts gnr
         while infile.gets !~ /^([\d\s]+$)/; end
         while $LAST_READ_LINE =~ /^([\d\s]+$)/

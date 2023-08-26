@@ -9,7 +9,6 @@ require_relative '../number/group_ability'
 require_relative '../number/game_types'
 require_relative '../number/game_types/arrow'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe Number::Game, type: :model do
   let(:game) do
     game = Number::Game.new('', '9', game_type: 'ARROW')

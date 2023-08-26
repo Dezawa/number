@@ -70,7 +70,7 @@ module Number
           c.vlist.each do |v|
             next unless (v0 - v).abs < 2
 
-            if $dbg
+            if option[:dbg]
               print 'rm_ability by neiber '
               p neigh
             end
@@ -92,7 +92,7 @@ module Number
         @summax += 5
 
         @arrows.each do |arrow|
-          if $dbg
+          if option[:dbg]
             print '## neighber arrow'
             p arrow
           end
@@ -174,17 +174,8 @@ module Number
         www = ww.combination(2).select { |cell1, cell2| cell1.ability == cell2.ability }
         # それらのうち、2x2の組み合わせで対角線同士のものを探す。
         # それは、共通な隣が二つあるもの
-        www.each do |cell1, cell2|
-          c1 = cell1.c
-          c2 = cell2.c
-          nei1 = @nei.select { |nei|
-            nei[0] == c1 || nei[1] == c1
-          }.flatten.uniq - [c1] # cell1の隣。通常４つ
-          nei2 = @nei.select { |nei|
-            nei[0] == c2 || nei[1] == c2
-          }.flatten.uniq - [c2] # cell2の隣。通常４つ
-          next unless (nei1 & nei2).size == 2
-
+        diagonals(www)
+          .each do |nei1, nei2|
           # うち、「一つ違い」である隣は削除する
           nei = (nei1 & nei2).select { |c| [c, c1].sort & @neigh && [c, c2].sort & @neigh }
           #  その、隣 から可能性を削除する。
@@ -197,6 +188,20 @@ module Number
         end
 
         ret
+      end
+      
+      # それらのうち、2x2の組み合わせで対角線同士のものを探す。
+      # それは、共通な隣が二つあるもの
+      def diagonals(www)
+        neigher = []
+        www.map do |cell1, cell2|
+          
+          c1 = cell1.c
+          c2 = cell2.c
+          nei1 = @nei.select { |nei| nei.include?(c1)}.flatten.uniq - [c1] # cell1の隣。通常４つ
+          nei2 = @nei.select { |nei| nei.include?(c2)}.flatten.uniq - [c2] # cell2の隣。通常４つ
+          (nei1 & nei2).size == 2 ? [nei1, nei2] : nil
+        end.compact
       end
 
       def neigh_test4
@@ -216,30 +221,25 @@ module Number
         (0..@groups.size / 3 * 2 - 1).each do |g|
           cells = @groups[g].cell_ids
           (0..game_scale - 3).each do |i|
-            c0 = cells[i]
-            c1 = cells[i + 1]
-            c2 = cells[i + 2]
+            c0, c1, c2 = cells[i, 3]
             # 三つ組の中の二つの隣組のいずれかが一つ違いだったらパス
             next if @neigh.index([c0, c1]).nil? || @neigh.index([c1, c2]).nil?
 
             # 三つ組の可能性の数が3でなかったらパス
-            vs = (@cells[c0].vlist + @cells[c1].vlist + @cells[c2].vlist).uniq
-            next unless vs.size == 3
+            val_set = (@cells[c0].vlist + @cells[c1].vlist + @cells[c2].vlist).uniq
+            next unless val_set.size == 3
 
+            # つまり、３つのcellが２つ以上違いでかつ可能性ある数字は３つしかない
             # 三つの数を各々見て、
             # p vs
-            if vs[1] - vs[0] == 1
-              if vs[2] - vs[1] == 1
-                # 3連続ならまん中の数をまん中のcellから外す
-                @cells[c1].rm_ability(vs[1], 'neighber test4')
-              else
-                # 2連続と片割れ だったら、片割れをまん中にセット。
-                @cells[c1].set(vs[2])
-              end
+
+            if val_set[2] - val_set[0] == 2
+              # 3連続ならまん中の数をまん中のcellから外す
+              @cells[c1].rm_ability(val_set[1], 'neighber test4')
               ret = @optsw = true
-            elsif vs[2] - vs[1] == 1
+            elsif val_set[2] - val_set[1] == 1 || val_set[1] - val_set[0] == 1
               # 2連続と片割れ だったら、片割れをまん中にセット。
-              @cells[c1].set(vs[0])
+              @cells[c1].set(val_set[2])
               ret = @optsw = true
             end
           end
