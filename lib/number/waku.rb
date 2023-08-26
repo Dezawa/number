@@ -20,11 +20,9 @@ module Number
       @cells =  Array.new(xmax * ymax, null_cell)
 
       boxes.each do |box|
-        (box.y_pos..box.y_pos + game_scale - 1).map do |y|
-          (box.x_pos..box.x_pos + game_scale - 1).map do |x|
-            game.cells << (@cells[xmax * y + x] = Number::Cell.create(game, cell_no, [], game.count))
-            cell_no += 1
-          end
+        box.y_x_range do |y, x|
+          game.cells << (@cells[xmax * y + x] = Number::Cell.create(game, cell_no, [], game.count))
+          cell_no += 1
         end
       end
     end
@@ -38,7 +36,7 @@ module Number
 
     def block_group(gnr, group_width, group_hight)
       boxes.each do |box|
-        (box.y_pos..box.y_pos + game_scale - 1).step(group_hight).each do |y|
+        box.y_range.step(group_hight).each do |y|
           aliable_cells_of_block(box, group_width, y).each do |x|
             game.groups[gnr] = Number::Group.new(game, gnr, @count, :block)
             (y..y + group_hight - 1).each do |yy|

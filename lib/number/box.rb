@@ -3,7 +3,10 @@
 module Number
   # 9x9を複数重ねる構造の場合に、構造作成の補助として 9x9の枠を用意する
   class Box
-    def initialize(_game_scale, x_pos = nil, y_pos = nil)
+    attr_accessor :game_scale
+
+    def initialize(game_scale, x_pos = nil, y_pos = nil)
+      @game_scale = game_scale
       @position = []
       @position = x_pos if x_pos.instance_of?(Array)
       @position = [x_pos, y_pos] unless y_pos.nil?
@@ -36,6 +39,18 @@ module Number
 
     def y_pos
       @position[1]
+    end
+
+    def x_range
+      x_pos..x_pos + game_scale - 1
+    end
+
+    def y_range
+      y_pos..y_pos + game_scale - 1
+    end
+
+    def y_x_range
+      y_range.map { |y| x_range.map { |x| yield(y, x) } }
     end
   end
 end
