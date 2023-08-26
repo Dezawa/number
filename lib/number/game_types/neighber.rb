@@ -175,32 +175,30 @@ module Number
         # それらのうち、2x2の組み合わせで対角線同士のものを探す。
         # それは、共通な隣が二つあるもの
         diagonals(www)
-          .each do |nei1, nei2|
+          .each do |nei1, nei2, cell1, cell2|
           # うち、「一つ違い」である隣は削除する
-          nei = (nei1 & nei2).select { |c| [c, c1].sort & @neigh && [c, c2].sort & @neigh }
+          nei = (nei1 & nei2).select { |c| [c, cell1.c].sort & @neigh && [c, cell2.c].sort & @neigh }
           #  その、隣 から可能性を削除する。
           v = cell1.vlist
           v += [v[0] + 1, v[0] - 1, v[1] + 1, v[1] - 1].uniq.select(&:positive?)
           nei.each do |c|
-            cells[c].rm_ability(v, "neighber test3 cells #{c1},#{c2}") &&
+            cells[c].rm_ability(v, "neighber test3 cells #{cell1.c},#{cell2.c}") &&
               ret = @optsw = true
           end
         end
 
         ret
       end
-      
+
       # それらのうち、2x2の組み合わせで対角線同士のものを探す。
       # それは、共通な隣が二つあるもの
       def diagonals(www)
-        neigher = []
         www.map do |cell1, cell2|
-          
           c1 = cell1.c
           c2 = cell2.c
-          nei1 = @nei.select { |nei| nei.include?(c1)}.flatten.uniq - [c1] # cell1の隣。通常４つ
-          nei2 = @nei.select { |nei| nei.include?(c2)}.flatten.uniq - [c2] # cell2の隣。通常４つ
-          (nei1 & nei2).size == 2 ? [nei1, nei2] : nil
+          nei1 = @nei.select { |nei| nei.include?(c1) }.flatten.uniq - [c1] # cell1の隣。通常４つ
+          nei2 = @nei.select { |nei| nei.include?(c2) }.flatten.uniq - [c2] # cell2の隣。通常４つ
+          (nei1 & nei2).size == 2 ? [nei1, nei2, cell1, cell2] : nil
         end.compact
       end
 
