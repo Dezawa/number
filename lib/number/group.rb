@@ -23,6 +23,18 @@ module Number
         @ability.ability.map { |abl| "         #{abl.inspect}" }.join("\n")
     end
 
+    def holizontal?
+      atrivute == :holizontal
+    end
+
+    def vertical?
+      atrivute == :vertical
+    end
+
+    def block?
+      atrivute == :block
+    end
+
     def cells
       cell_ids.map { |c_no| game.cells[c_no] }
     end
