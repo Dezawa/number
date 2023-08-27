@@ -50,9 +50,7 @@ module Number
       @val = (1..game_scale).to_a
 
       @m = Math.sqrt(game_scale).to_i
-      boxes, xsize, ysize = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
-      xmax = xsize + 1
-      ymax = ysize + 1
+      boxes, xmax, ymax = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
       @waku = Number::Waku.new(self, boxes, game_scale, @count, [xmax, ymax])
 
       @size = @waku.cells.reject(&:nil?).size
@@ -78,15 +76,11 @@ module Number
 
     def neighber(waku, xmax, ymax)
       @neigh = []
-      (0...ymax).each do |y|
-        base = xmax * y
-        (base...base + xmax).each do |x|
-          # pp [base, base + x, waku.cells[base + x],waku.cells[base + x].cell_no]
-          next if waku.cells[x].nil?
+      (0...xmax * ymax).each do |x|
+        next if waku.cells[x].nil?
 
-          @neigh << [waku.cells[x].c, waku.cells[x + 1].c]    unless waku.cells[x + 1].nil?
-          @neigh << [waku.cells[x].c, waku.cells[x + xmax].c] unless waku.cells[x + xmax].nil?
-        end
+        @neigh << [waku.cells[x].c, waku.cells[x + 1].c]    unless waku.cells[x + 1].nil?
+        @neigh << [waku.cells[x].c, waku.cells[x + xmax].c] unless waku.cells[x + xmax].nil?
       end
       @neigh
     end
@@ -98,31 +92,47 @@ module Number
     def optional_group(gnr, boxes, xmax, waku); end
 
     def base_pos(mult, sign, mnr, dans)
-      offset = { '-' => 6, '+' => -6 }
-      boxes = Array.new(mnr)
-
-      box = Number::Box.new(game_scale, -6, -6)
-      wbox = Number::Box.new(game_scale)
       bnr = -1
+      boxes, xmin, y_pos = create_boxes_for_all(bnr, mnr, mult, sign, dans)
+
+      reset_xmax(xmin, boxes)
+      [boxes, @xmax + 1, y_pos + game_scale + 1]
+    end
+
+    def create_boxes_for_all(bnr, mnr, mult, sign, dans)
       xmin = 0
-      xmax = 0
+      box = Number::Box.new(game_scale, -6, -6)
+      boxes = Array.new(mnr)
+      wbox = Number::Box.new(game_scale)
+      offset = { '-' => 6, '+' => -6 }
       (0...dans).each do |dan|
         box.p = box + [offset[sign[dan]], 6]
         wbox.p = box.p
         xmin = wbox.x_pos if xmin > wbox.x_pos
-        (0...mult[dan]).each do |_b|
-          bnr += 1
-          boxes[bnr] = Number::Box.new(game_scale, wbox.p)
-          xmax = wbox.x_pos + game_scale if xmax < wbox.x_pos + game_scale
-          wbox.p = wbox + [12, 0]
-        end
+        @xmax = create_boxes_for_dan(mult[dan], xmin, bnr, boxes, wbox)
       end
-      if xmin != 0
-        boxes.each { |b| b.x = (b.x - xmin) }
-        xmax -= xmin
-      end
+      [boxes, xmin, box.y_pos]
+    end
 
-      [boxes, xmax, box.y_pos + game_scale]
+    def create_boxes_for_dan(dan, _xmin, bnr, boxes, wbox)
+      @xmax = 0
+      (0...dan).each do |_b|
+        bnr += 1
+        boxes[bnr] = Number::Box.new(game_scale, wbox.p)
+        @xmax = wbox.x_pos + game_scale if @xmax < wbox.x_pos + game_scale
+        wbox.p = wbox + [12, 0]
+      end
+      @xmax
+    end
+
+    def reset_xmax(xmin, boxes)
+      return unless xmin != 0
+
+      boxes.each do |b|
+        pp [:pos, b]
+        b.x_pos = (b.x_pos - xmin)
+      end
+      @xmax -= xmin
     end
 
     def base_size(struct)
