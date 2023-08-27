@@ -48,8 +48,8 @@ module Number
       def check
         return true unless @check
 
-        p @arrows
-        p @arrows.size
+        # p @arrows
+        # p @arrows.size
         @err = true
         para = []
         q = []
@@ -60,35 +60,50 @@ module Number
           para << b
         end
         para.flatten!
-        p = para.sort.uniq
+        p_uniq = para.sort.uniq
 
-        qq = (q - para).sort
-        if qq.size.positive?
-          $stderr.print "Optional Para is missing   #{qq.join(',')}\n"
-          # @err=true
-        end
-        qq = (para - q).sort
-        if qq.size.positive?
-          $stderr.print "Optional Para is tomuch   #{qq.join(',')}\n"
-          @err = nil
-        end
-
-        if p.size != para.size
-          $stderr.print 'Optional Para is duped '
-          qq = para.sort
-          (0..qq.size - 2).each do |i|
-            $stderr.print " #{qq[i]}" if qq[i] == qq[i + 1]
-          end
-          $stderr.print "\n"
-          @err = nil
-        end
-        qq = (para - q).sort
-        if qq.size.positive?
-          $stderr.print "Optional Para value is wrong   #{qq.join(',')}\n"
-          @err = nil
-        end
+        optional_para_is_missing?(para, p_uniq)
+        optional_para_is_tomuch?(para, p_uniq)
+        optional_para_is_duped?(para, p_uniq)
+        optional_para_value_is_wrong?(para, p_uniq)
 
         @err
+      end
+
+      def optional_para_is_missing?(para, _p_uniq)
+        qq = (q_uniq - para).sort
+        return unless qq.size.positive?
+
+        $stderr.print "Optional Para is missing   #{qq.join(',')}\n"
+        # @err=true
+      end
+
+      def optional_para_is_tomuch?(para, _p_uniq)
+        qq = (para - q_uniq).sort
+        return unless qq.size.positive?
+
+        $stderr.print "Optional Para is tomuch   #{qq.join(',')}\n"
+        @err = nil
+      end
+
+      def optional_para_is_duped?(para, p_uniq)
+        return unless p_uniq.size != para.size
+
+        $stderr.print 'Optional Para is duped '
+        qq = para.sort
+        (0..qq.size - 2).each do |i|
+          $stderr.print " #{qq[i]}" if qq[i] == qq[i + 1]
+        end
+        $stderr.print "\n"
+        @err = nil
+      end
+
+      def optional_para_value_is_wrong?(para, _p_uniq)
+        qq = (para - q_uniq).sort
+        return unless qq.size.positive?
+
+        $stderr.print "Optional Para value is wrong   #{qq.join(',')}\n"
+        @err = nil
       end
 
       # end
@@ -101,11 +116,7 @@ module Number
       # val      = [ [v1,v2],[v4,v6]       残った可能性
 
       def optional_test
-        if option[:verb]
-          print 'sum arrow'
-          p @workarrow
-        end
-        optsw = nil
+        @optsw = nil
 
         # 効率化のため組み合わせの数が大きくならないように制限する数を
         # 少しずつ大きくする。  このとき小さすぎると一つも解決できず、
@@ -115,45 +126,39 @@ module Number
         @work_arrow.each_with_index do |arrow, arrow_idx|
           next unless arrow
 
-          if arrow.size == 2
-            @cells[arrow[1]].set(arrow[0], 'sum') && @gsw = optsw = true
-            arrow = nil
-            next
-          end
-          # pp ["arrow",arrow,@summax] if option[:verb]
-          valus = [] # 指定されたcellに残っている値の配列  の配列
+          # valus = [] # 指定されたcellに残っている値の配列  の配列
           sum = arrow[0]
-          arrow[1..].each { |cell_id| valus << @cells[cell_id].vlist }
+          valus = arrow[1..].map { |cell_id| @cells[cell_id].vlist }
 
           # 大サイズの場合は組み合わせが膨大になってしまうのでパスしておくことにしよう
           next if valus.flatten.size > @summax
 
-          products_all = valus.size == 1 ? valus : valus[0].product(*valus[1..])
-
-          valu_set_ary = list_of_aviable_valu_set(arrow, products_all, sum)
+          valu_set_ary = list_of_aviable_valu_set(arrow, valus, sum)
 
           if valu_set_ary.size == 1
-            # fix!
-            valu_set_ary.first.each_with_index do |val, idx|
-              @cells[arrow[idx + 1]].set(val, 'sum') && @gsw = optsw = true
-            end
-            @work_arrow[arrow_idx] = nil
+            fix_array(valu_set_ary, arrow, arrow_idx)
+            next
           else
-            # 可能性を削っていく
+            # pp [:可能性を削っていく,arrow_idx, valu_set_ary]
             rm_ability(arrow_idx, valu_set_ary)
           end
-          # while (i = delete_arys.pop); @arrows.delete_at(i); end
-          if optsw
-            @summax -= 5
-            return true # 一つできたら全体見直しする
-          end
         end
+        false
+      end
+
+      def fix_array(valu_set_ary, arrow, arrow_idx)
+        # pp :fix_arry
+        valu_set_ary.first.each_with_index do |val, idx|
+          @cells[arrow[idx + 1]].set(val, 'sum')
+        end
+        @work_arrow[arrow_idx] = nil
       end
 
       # arrayを構成する各cellの [残された可能性ある値]の組み合わせの中で
       # 合計が sum になるものの組み合わせを返す。ただし、同じ値が有る場合は除く
       # products_all :: [残された可能性ある値] のproduct
-      def list_of_aviable_valu_set(arrow, products_all, sum)
+      def list_of_aviable_valu_set(arrow, valus, sum)
+        products_all = valus.size == 1 ? valus : valus[0].product(*valus[1..])
         products_all
           .select { |cells_value| cells_value.flatten.sum == sum }
           .select do |cells_value|
@@ -183,8 +188,9 @@ module Number
       # cell毎の残された可能性に基づき、cellのabilityを調整する
       # valu_set_ary :: sum になる組み合わせのary
       def rm_ability(arrow_idx, valu_set_ary)
-        values_of_each_cell = valu_set_ary.transpose
-        values_of_each_cell.each_with_index do |values, idx_on_arry|
+        # values_of_each_cell = valu_set_ary.transpose
+        # values_of_each_cell
+        valu_set_ary.transpose.each_with_index do |values, idx_on_arry|
           cell_idx = @work_arrow[arrow_idx][idx_on_arry + 1]
           if values.size == 1 # このcellはfix
             @cells[cell_idx].set(values.first, 'sum') && @gsw = true
@@ -192,7 +198,7 @@ module Number
             # @cells[cell_idx]の可能性を調整する
             # 新たな可能性は values。既に消えている可能性もある
             if (vv = values - @cells[cell_idx].ability).size.positive?
-              @cells[cell_idx].rm_ability(vv, 'sum') && @gsw = true
+              @cells[cell_idx].rm_ability(vv, 'sum') && @gsw = false
             end
           end
         end
