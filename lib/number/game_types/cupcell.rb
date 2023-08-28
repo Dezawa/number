@@ -79,9 +79,6 @@ module Number
       # piar の両方に入る　e/o　が一つしかなくかつ同じものだったら
       # その二つのcellが指定席。　同じグループの他のcellには入らない。
       def reserve(pair)
-        # 二つのcellが共に属するgroupを得る。少なくとも一つある
-        groups = cogroup(pair)
-
         # pairの二つのcellにe/oが一種しか入らず、かつ同じであったら
         # このgroupの他のcellにはこの数字は入らない
         # どちらかが確定していたら、対象外
@@ -94,18 +91,26 @@ module Number
 
         # pp [groups,abilitys]
         # evenについて調べる
-        even = abilitys.map { |ab| ab.select { |i| i.positive? && i.even? } }
-        # pp [even,(even[0] & even[1])]
-        if even[0].size == 1 && even[1].size == 1 && (even[0][0] == even[1][0])
-          # このevenの値が予約される
-          v = even[0][0]
-          # pp "# このevenの値が予約される #{v}"
-          groups.each { |grp| @groups[grp].rm_ability(v, pair, "cupcell [#{pair.join(',')}]") }
-        end
+        even_reserve(abilitys)
 
         # oddについて調べる
+        odd_reserve(abilitys)
+      end
+
+      def even_reserve(abilitys)
+        even = abilitys.map { |ab| ab.select { |i| i.positive? && i.even? } }
+        # pp [even,(even[0] & even[1])]
+        return unless even[0].size == 1 && even[1] == even[0]
+
+        # このevenの値が予約される
+        v = even[0][0]
+        # pp "# このevenの値が予約される #{v}"
+        groups.each { |grp| @groups[grp].rm_ability(v, pair, "cupcell [#{pair.join(',')}]") }
+      end
+
+      def odd_reserve(abilitys)
         odd = abilitys.map { |ab| ab.select(&:odd?) }
-        return unless odd[0].size == 1 && odd[1].size == 1 && (odd[0] & odd[1]).size == 1
+        return unless odd[0].size == 1 && odd[1] == odd[0]
 
         # このevenの値が予約される
         v = (odd[0] & odd[1])[0]
