@@ -120,23 +120,15 @@ class Numple
 end
 
 ################# end of Numple ###
-# rubocop: disable Metrics/MethodLength
+OPTIONS = { '-S' => :stat, '-s' => :strct,
+            '-v' => :verb, '-V' => :Verb,
+            '-T' => :table, '-t' => :test,
+            '-c' => :cout, '-g' => :gout,
+            '-d' => :dbg, '-m' => :mail }.freeze
 def options
   opt = OptionParser.new
   option = {}
-  # opt.on('-q') {|v| @quiet = v }
-  opt.on('-S') { |v| option[:stat] = v }
-  opt.on('-s') { |v| option[:strct] = v }
-  opt.on('-v') { |v| option[:verb] = v }
-  opt.on('-V') { |v| option[:Verb] = v }
-  opt.on('-T') { |v| option[:table] = v }
-  opt.on('-t') { |v| option[:test] = v }
-  opt.on('-c') { |v| option[:cout] = v }
-  opt.on('-g') { |v| option[:gout] = v }
-  opt.on('-d') { |v| option[:dbg] = v }
-  opt.on('-m') { |v| option[:mail] = v }
-  # opt.on('- ""') {|v| $= v }
-  # opt.on('- ""') {|v| $= v }
+  OPTIONS.each { |str, sym| opt.on(str) { |v| option[sym] = v } }
   @level = 0
   opt.on('-1') { |_v| option[:level] = 1 }
   opt.on('-h') do |_v|
@@ -148,8 +140,6 @@ def options
 
   option
 end
-# rubocop: enable Metrics/MethodLength
-
 # ###############################################3
 # DO Main
 ################################################

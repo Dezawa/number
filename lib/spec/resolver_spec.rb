@@ -8,6 +8,7 @@ require_relative '../number/group'
 require_relative '../number/group_ability'
 # require_relative '../number/game_types'
 
+# rubocop: disable Metrics/BlockLength
 RSpec.describe Number::Game, type: :model do
   let(:game) { Number::Game.new(nil, '9') }
   let(:group) do
@@ -114,6 +115,7 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 end
+# rubocop: enable Metrics/BlockLength
 __END__
   it '3個以下のcombintion。数字4,5がcell13,14にある' do
     abilities = group_aiblilities.combination_of_ability_of_rest_is_less_or_equal(3)

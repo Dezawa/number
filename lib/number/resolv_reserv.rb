@@ -16,8 +16,7 @@ module Number
       # cell数が v_num 個であるものを得る
       # それらの cell ではそれらの値以外ははいらない
       @groups.each do |group|
-        candidate_reserved_set(v_num, group)
-          .each do |values, reserved_cells, _abl_cmb|
+        candidate_reserved_set(v_num, group).each do |values, reserved_cells, _abl_cmb|
           rm_value = values_to_rm(reserved_cells, values)
           reserved_cells.each do |c|
             msg = "reserve#{v_num} group #{group.g} cells#{reserved_cells} v=#{values}"
@@ -33,12 +32,11 @@ module Number
 
     # reserve の対象となる cell set の候補
     def candidate_reserved_set(v_num, group)
-      group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num) # [[[2,[28,29],7], [2,[28,29],9]]]
-           .map do |abl_cmb|
+      all_set = group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num).map do |abl_cmb|
         values, reserved_cells = sum_of_cells_and_values(abl_cmb)
         [values, reserved_cells, abl_cmb]
       end
-           .select do |values, reserved_cells, _abl_cmb|
+      all_set.select do |values, reserved_cells, _abl_cmb|
         !prison_done?(v_num, reserved_cells) && values_to_rm(reserved_cells, values).size.positive?
       end
     end

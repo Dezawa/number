@@ -54,8 +54,8 @@ module Number
             cells_not_included.delete(cell_nr)
           end
           if even.zero?
-            cells_not_included.each do |cell_nr|
-              ret = cells[cell_nr].set_odd
+            cells_not_included.each do |cell_c|
+              ret = cells[cell_c].set_odd
               sw ||= ret
             end
             return sw
