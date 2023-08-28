@@ -8,7 +8,7 @@ require_relative './waku'
 module Number
   # mail class
   class Game
-    IROMONO = %w[ARROW KIKA SUM XROSS COLLOR HUTOUGOU DIFF NEIGHBER ODD CUPCELL].freeze
+    IROMONO = %w[ARROW KIKA SUM XROSS COLLOR HUTOUGOU DIFF NEIGHBER CUPCELL].freeze
     IROMONO_REG = /#{IROMONO.join('|')}/.freeze
     include Number::GamePform
     include Number::Resolver
