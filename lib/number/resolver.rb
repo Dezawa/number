@@ -224,8 +224,8 @@ module Number
         msg = "curb: cogroup([#{c},#{cell.c}])=> #{groups[cogroup([c, cell.c]).first].g}" \
               " 対角線[#{cell_pair[0].c},#{cell_pair[1].c}] values=#{values} "
 
-        ret | groups[cogroup([c, cell.c]).first]
-              .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
+        groups[cogroup([c, cell.c]).first]
+          .rm_ability(values, cells_on_the_co_group_and_block(c, cell.c), msg)
       end
     end
     ##########################
@@ -254,39 +254,40 @@ module Number
 
     def cross_teiin
       ret = false
-      h_v_table = %i[holizontal vertical]
-      # h_v
-      h_v_table.each_with_index  do |h_v, idx|
-        v_h = h_v_table[1 - idx] # 　holizontal と :vertical について
-        # value
-        (1..game_scale).each do |v| # (1) 値v　をとり得る
-          vsw = false
-          grps1 = groups_remain_2_or_m_cells_of_value_is(h_v, v_h, v)
-          #  [count , grp,  cells, co_groups]
+      (1..game_scale).each do |v| # (1) 値v　をとり得る
+        vsw = false
+        grps1 = groups_remain_2_or_m_cells_of_value_is(:holizontal, :vertical, v)
+        #  [count , grp,  cells, co_groups]
 
-          # (3) それぞれの cell grps1[2,g_nums]から g_numsつづつの組み合わせをつくり cmb_grp
-          # g_nums
-          (2..@m).each do |g_nums|
-            # combination
-            grps1.select { |grp| grp[0] <= g_nums }
-                 .combination(g_nums).each do |cmb_grp|
-              # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
-              rm_grps = cmb_grp.map { |grp| grp[3] }.flatten.uniq
-              next unless rm_grps.size == g_nums
-
-              # (5) このco_groupsから値vの可能性を削除する。except cells
-              # pp [v,cmb_grp[3]]
-              rm_v_from_co_groups(v, cmb_grp, rm_grps)
-            end
+        # (3) それぞれの cell grps1[2,g_nums]から g_numsつづつの組み合わせをつくり cmb_grp
+        # g_nums
+        (2..@m).each do |g_nums|
+          # combination
+          grps1.select { |grp| grp[0] <= g_nums }
+               .combination(g_nums).each do |cmb_grp|
+            # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
+            # (5) このco_groupsから値vの可能性を削除する。except cells
+            select_cmb_grp_and_rm(cmb_grp, g_nums, v)
           end
-          @count['X wing'] += 1 if vsw
-          # return true
         end
+        @count['X wing'] += 1 if vsw
+        # return true
       end
+      # end
       # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
       #
       option[:cross] = nil
       ret # false
+    end
+
+    def select_cmb_grp_and_rm(cmb_grp, g_nums, rm_v)
+      # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
+      rm_grps = cmb_grp.map { |grp| grp[3] }.flatten.uniq
+      return unless rm_grps.size == g_nums
+
+      # (5) このco_groupsから値vの可能性を削除する。except cells
+      # pp [v,cmb_grp[3]]
+      rm_v_from_co_groups(rm_v, cmb_grp, rm_grps)
     end
 
     def rm_v_from_co_groups(value, cmb_grp, rm_grps)

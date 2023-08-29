@@ -35,18 +35,26 @@ module Number
     end
 
     def block_group(gnr, group_width, group_hight)
+      pp [gnr, group_width, group_hight, xmax, ymax]
+      pp [boxes.first, boxes.first.y_range]
+
       boxes.each do |box|
         box.y_range.step(group_hight).each do |y|
           aliable_cells_of_block(box, group_width, y).each do |x|
-            game.groups[gnr] = Number::Group.new(game, gnr, @count, :block)
-            (y..y + group_hight - 1).each do |yy|
-              (x..x + group_width - 1).each { |xx| cells[xmax * yy + xx].group_ids << gnr }
-            end
+            new_group(gnr, [x, y], group_hight, group_width)
             gnr += 1
           end
         end
       end
       gnr
+    end
+
+    def new_group(gnr, x_y, group_hight, group_width)
+      x, y = x_y
+      game.groups[gnr] = Number::Group.new(game, gnr, @count, :block)
+      (y..y + group_hight - 1).each do |yy|
+        (x..x + group_width - 1).each { |xx| cells[xmax * yy + xx].group_ids << gnr }
+      end
     end
 
     def aliable_cells_of_block(box, group_width, y_pos)
