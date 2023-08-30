@@ -9,6 +9,10 @@ module Number
     def nil?
       true
     end
+
+    def c
+      nil
+    end
   end
 
   # 9x9の枠内の 枡

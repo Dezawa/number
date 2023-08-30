@@ -13,7 +13,7 @@ module Number
         'KIKA'
       end
 
-      def optional_group(gnr, _boxes, _xmax, waku)
+      def optional_group(gnr, _boxes, _xmax, cells)
         # set_block_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku)
         c = -1
         while c < @size
@@ -22,8 +22,8 @@ module Number
             next if /\d+/ !~ d
 
             c += 1
-            c += 1 if waku.cells[c].nil? ##
-            waku.cells[c].group_ids << d.to_i + gnr - 1
+            c += 1 if cells[c].nil? ##
+            cells[c].group_ids << d.to_i + gnr - 1
           end
         end
         (gnr..gnr + game_scale - 1).each { |g| @groups[g] = Number::Group.new(self, g, @count, :block) }

@@ -45,10 +45,7 @@ module Number
   # gameのformを設定するextend
   module GamePform
     def make_waku_pform(form_type)
-      n, mult, sign, m_nr, dan = base_size(form_type)
-      @game_scale, group_width, group_hight = n
-      @val = (1..game_scale).to_a
-
+      @game_scale, group_width, group_hight, mult, sign, m_nr, dan = base_size(form_type)
       @m = Math.sqrt(game_scale).to_i
       boxes, xmax, ymax = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
       @waku = Number::Waku.new(self, boxes, game_scale, @count, [xmax, ymax])
@@ -57,7 +54,7 @@ module Number
 
       # $grps を作る。 空サイズで作った後埋める
       @gsize = @waku.set_grp(group_width, group_hight)
-      @gsize = optional_group(@gsize, boxes, xmax, @waku)
+      @gsize = optional_group(@gsize, boxes, xmax, @waku.cells)
 
       [xmax, ymax]
     end
@@ -70,26 +67,20 @@ module Number
         cell.group_ids.each { |grp_no| @groups[grp_no].addcell_ids cell.c }
       end
 
-      @neigh = neighber(waku, xmax, ymax)
+      @neigh = neighber(waku.cells, xmax, ymax)
       initialize_group_ability
     end
 
-    def neighber(waku, xmax, ymax)
-      @neigh = []
-      (0...xmax * ymax).each do |x|
-        next if waku.cells[x].nil?
-
-        @neigh << [waku.cells[x].c, waku.cells[x + 1].c]    unless waku.cells[x + 1].nil?
-        @neigh << [waku.cells[x].c, waku.cells[x + xmax].c] unless waku.cells[x + xmax].nil?
-      end
-      @neigh
+    def neighber(cells, xmax, ymax)
+      (0...(xmax * ymax - xmax)).map { |x| [[cells[x].c, cells[x + 1].c], [cells[x].c, cells[x + xmax].c]] }
+                                .flatten(1).select { |c0, c1| c0 && c1 }
     end
 
     def initialize_group_ability
       @groups.each { |grp| grp.ability.setup_initial(grp.cell_ids) }
     end
 
-    def optional_group(gnr, boxes, xmax, waku); end
+    def optional_group(gnr, boxes, xmax, cells); end
 
     def base_pos(mult, sign, mnr, dans)
       bnr = -1
@@ -139,7 +130,7 @@ module Number
       mult = struct.split(/[-+]/)
       n, group_width, group_hight = mult_params(mult)
       mult, mnr, dan, sign = mult_struct(mult)
-      [[n, group_width, group_hight], mult, sign, mnr, dan]
+      [n, group_width, group_hight, mult, sign, mnr, dan]
     end
 
     def mult_params(mult)

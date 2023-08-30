@@ -10,7 +10,7 @@ module Number
         'COLLOR'
       end
 
-      def optional_group(gnr, _boxes, _xmax, waku)
+      def optional_group(gnr, _boxes, _xmax, cells)
         #    puts gnr
         while infile.gets !~ /^([\d\s]+$)/; end
         while $LAST_READ_LINE =~ /^([\d\s]+$)/
@@ -18,7 +18,7 @@ module Number
             #        puts $_
             @groups[gnr] = Number::Group.new(self, gnr, @count, :option)
             $LAST_READ_LINE.split.each do |cell| # これらのcellがそのgrp
-              ww = waku.assoc(cell.to_i - 1)
+              ww = cells.assoc(cell.to_i - 1)
               ww[1] << gnr
             end
             gnr += 1

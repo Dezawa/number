@@ -50,7 +50,7 @@ module Number
 
     def optional_test; end
 
-    def initialize(infile, arg_form_type, game_type: nil, option: {})
+    def initialize(infile = nil, arg_form_type = '9', game_type: nil, option: {})
       @infile = infile
       @form_type = arg_form_type
       @sep = arg_form_type.to_i < 10 ? '' : /\s+/
