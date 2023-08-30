@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative './resolv_reserv'
 module Number
   # 解法
   module ResolvReserv
