@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'stringio'
 require_relative '../numple'
 RSpec.describe Numple, type: :model do
   let(:std) { "#\n" }

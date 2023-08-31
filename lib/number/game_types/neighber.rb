@@ -50,14 +50,14 @@ module Number
 
           # 侯補絞りこみ
           candidates = candidate_list(vlist_list)
-          (0...candidates.size).each do |c|
-            if candidates[c].size == 1 # 一つに絞られたら、そのcellは決定
+          candidates.each_with_index do |candidate, c|
+            if candidate.size == 1
               print ' cell.set by neigh @size==1 ' if option[:dbg]
 
-              @cells[arrow[c]].set(candidates[c][0], "neiber test2 arrow [#{arrow.join ','}]")
+              @cells[arrow[c]].set(candidate[0], "neiber test2 arrow [#{arrow.join ','}]")
               @optsw = true
-            elsif candidates[c].size.positive? # 二つ以上だったら、
-              ret |= rm_ability_exept_candidates(@cells[arrow[c]], candidates[c], arrow)
+            elsif candidate.size > 1
+              ret |= rm_ability_exept_candidates(@cells[arrow[c]], candidate, arrow)
             end
           end
         end

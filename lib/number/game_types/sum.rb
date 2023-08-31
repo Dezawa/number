@@ -174,8 +174,6 @@ module Number
       # sumを満たす値の組み合わせで同じ数字を使うものが有った場合、
       # それらが同じ groupに属しているか否かで判定する
       def allowable_dup?(arrow, sells_value)
-        return false if arrow.size == 3
-
         duped_value = sells_value.tally.select { |_v, c| c > 1 }.first&.first
         return true unless duped_value
 
