@@ -51,15 +51,21 @@ module Number
           # 侯補絞りこみ
           candidates = candidate_list(vlist_list)
           candidates.each_with_index do |candidate, c|
-            if candidate.size == 1
-              print ' cell.set by neigh @size==1 ' if option[:dbg]
-
-              @cells[arrow[c]].set(candidate[0], "neiber test2 arrow [#{arrow.join ','}]")
-              @optsw = true
-            elsif candidate.size > 1
-              ret |= rm_ability_exept_candidates(@cells[arrow[c]], candidate, arrow)
-            end
+            fix_cell_or_rm_ability(candidate, arrow, @cells[arrow[c]])
           end
+        end
+        ret
+      end
+
+      def fix_cell_or_rm_ability(candidate, arrow, cell)
+        ret = false
+        if candidate.size == 1
+          print ' cell.set by neigh @size==1 ' if option[:dbg]
+
+          cell.set(candidate[0], "neiber test2 arrow [#{arrow.join ','}]")
+          @optsw = true
+        elsif candidate.size > 1
+          ret |= rm_ability_exept_candidates(cell, candidate, arrow)
         end
         ret
       end
