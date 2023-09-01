@@ -15,20 +15,25 @@ module Number
 
       def optional_group(gnr, _boxes, _xmax, cells)
         # set_block_group(gnr, _boxes, _group_width, _group_hight, _xmax, waku)
-        c = -1
-        while c < @size
+        cell_id = -1
+        while cell_id < @size
           line = gets_skip_comment(infile)
-          line.chop.split(sep).each do |d|
-            next if /\d+/ !~ d
+          line.chop.split(sep).each do |block|
+            next if /\d+/ !~ block
 
-            c += 1
-            c += 1 if cells[c].nil? ##
-            cells[c].group_ids << d.to_i + gnr - 1
+            cell_id = cell_c_is_on_block(gnr, cells, cell_id, block)
           end
         end
         (gnr..gnr + game_scale - 1).each { |g| @groups[g] = Number::Group.new(self, g, @count, :block) }
         gnr += game_scale
         gnr
+      end
+
+      def cell_c_is_on_block(gnr, cells, cell_id, block)
+        cell_id += 1
+        cell_id += 1 if cells[cell_id].nil? ##
+        cells[cell_id].group_ids << block.to_i + gnr - 1
+        cell_id
       end
     end
   end
