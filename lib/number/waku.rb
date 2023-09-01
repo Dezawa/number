@@ -35,9 +35,6 @@ module Number
     end
 
     def block_group(gnr, group_width, group_hight)
-      pp [gnr, group_width, group_hight, xmax, ymax]
-      pp [boxes.first, boxes.first.y_range]
-
       boxes.each do |box|
         box.y_range.step(group_hight).each do |y|
           aliable_cells_of_block(box, group_width, y).each do |x|
