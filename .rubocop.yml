@@ -1,0 +1,16 @@
+Metrics/BlockLength:
+  # Exclude:
+  #  - 'path/to/excluded/file.rb'
+  Max: 30
+
+Metrics/MethodLength:
+  Max: 20
+  
+#Metrics/AbcSize:
+ # Max: 20
+
+Metrics/CyclomaticComplexity:
+  Max: 20
+
+Metrics/PerceivedComplexity:
+  Max: 10

@@ -22,7 +22,7 @@ module Number
 
     # Group達に共通なCell
     # group_ids :: Group#g
-    # 戻り値 :: [cell_id, cell_id, , ] 
+    # 戻り値 :: [cell_id, cell_id, , ]
     def cocell(group_ids)
       return [] if group_ids.size < 2
 
@@ -54,7 +54,6 @@ module Number
     # (2) ある値の可能性あるcellが一つになったら、そのcellを確定する
     #   ⇒ 1 はここにしか入らない
     def rest_one
-
       sw = true
       cells = []
       while sw
