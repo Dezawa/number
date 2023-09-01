@@ -11,22 +11,30 @@ module Number
     include ResolvCurb
     include ResolvPrison
     include ResolvCross
-    def cogroup(cells)
-      return [] if cells.empty?
+    # Cell達に共通なGroup
+    # cell_ids :: Cell#c
+    # 戻り値 :: [group_id, group_id, , ,] まあ有っても最大4つ。
+    def cogroup(cell_ids)
+      return [] if cell_ids.empty?
 
-      cells[1..].inject(@cells[cells[0]].group_ids) { |groups, c| groups & @cells[c].group_ids }
+      cell_ids[1..].inject(@cells[cell_ids[0]].group_ids) { |groups, c| groups & @cells[c].group_ids }
     end
 
-    def cocell(grps)
-      return [] if grps.size < 2
+    # Group達に共通なCell
+    # group_ids :: Group#g
+    # 戻り値 :: [cell_id, cell_id, , ] 
+    def cocell(group_ids)
+      return [] if group_ids.size < 2
 
-      grps[1..].inject(groups[grps[0]].cell_ids) { |cells, group| cells & groups[group].cell_ids }
+      group_ids[1..].inject(groups[group_ids[0]].cell_ids) { |cells, group_id| cells & groups[group_id].cell_ids }
     end
 
+    # 全て埋まったら true
     def fill?
       @cells.select { |cell| cell.v.nil? }.empty?
     end
 
+    # option -g のときに Groupの状態を印刷
     def gout
       pp( # .ability.map { |abl| [grp.g, abl] if (abl[0]).positive? }.compact })
         groups.map do |grp|
@@ -35,14 +43,17 @@ module Number
       )
     end
 
+    # option -c のときに 埋まっていないCellの残ってる可能性を印刷
     def cout
       @cells.each { |cell| puts "#{cell.c} : #{cell.ability}" unless cell.v }
     end
 
-    ##############
+    ##### 解への技 #########
+    # (1) 可能な値が一つだけになった　cell　を確定する
+    #   ⇒ ここには 1しか入らない
+    # (2) ある値の可能性あるcellが一つになったら、そのcellを確定する
+    #   ⇒ 1 はここにしか入らない
     def rest_one
-      # (1) 可能な値が一つだけになった　cell　を確定する
-      # (2) ある値の可能性あるcellが一つになったら、そのcellを確定する
 
       sw = true
       cells = []
@@ -88,6 +99,9 @@ module Number
     end
 
     ########################### 上級モード Level-1
+    # cross_teiin(X-wing)、 座敷牢、予約席、curb はくくりだしてある
+    # curb はひねり出したが使われていない感
+    # xy-wing は実装していないが、これもなくても行けてる
     ##########################
     ##########################
   end

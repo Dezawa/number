@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Number
-  # 解法
   module ResolvCross
     # こういう関係で１があるとき、＊の位置に１があったらそれは削除
     # *.1..1..1
@@ -25,6 +24,7 @@ module Number
     #
     # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
     #
+    # X-wingと言われているらしい
     def cross_teiin
       ret = false
       (1..game_scale).each do |v| # (1) 値v　をとり得る

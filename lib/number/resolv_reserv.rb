@@ -8,6 +8,7 @@ module Number
     # あるgroupで 値  v1,v2,,,vn がr入り得るcellがN個だけだったら、
     # それらの cell にはn他の値は入れない ⇒ 削除対象
     # その数字は他のcellには入らない
+    # 似た概念 座敷牢 の方に違いを詳説
     # rubocop: disable Lint/UnreachableLoop
     def reserv(v_num)
       # group において、可能性ある cell が v_num個以下の数字を探す
