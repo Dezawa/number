@@ -27,11 +27,19 @@ module Number
 
       def optional_test
         @arrows.each do |l, h|
-          lrm = @cells[l].vlist.select { |v| v >= @cells[h].vlist.last }
-          hrm = @cells[h].vlist.select { |v| v <= @cells[l].vlist[0] }
-          lrm.size.positive? && @cells[l].rm_ability(lrm, "HUTOUGOU cell[#{l}]<cell[#{h}]")
-          hrm.size.positive? && @cells[h].rm_ability(hrm, "HUTOUGOU cell[#{l}]<cell[#{h}]")
+          rm_bility_from_lower_cell(l, h)
+          rm_bility_from_higher_cell(l, h)
         end
+      end
+
+      def rm_bility_from_lower_cell(low, high)
+        lrm = @cells[low].vlist.select { |v| v >= @cells[high].vlist.last }
+        lrm.size.positive? && @cells[low].rm_ability(lrm, "HUTOUGOU cell[#{low}]<cell[#{high}]")
+      end
+
+      def rm_bility_from_higher_cell(low, high)
+        hrm = @cells[high].vlist.select { |v| v <= @cells[low].vlist[0] }
+        hrm.size.positive? && @cells[high].rm_ability(hrm, "HUTOUGOU cell[#{low}]<cell[#{high}]")
       end
     end
   end
