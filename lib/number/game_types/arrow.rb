@@ -129,16 +129,20 @@ module Number
       def candidate_value_combinations(arrow_id)
         valus = arrows[arrow_id].map { |c| @cells[c].valu ? [@cells[c].valu] : @cells[c].vlist }
 
-        valus[0].product(*valus[1..]).map do |vary|
-          vary if (vary[0] == vary[1..].sum) &&
-                  arw_group[arrow_id].map do |cell_ids| # このarrowの同じgroupに属するcellID
-                    true if # 重複があったら(true)
-                      cell_ids.map do |id|
-                        vary[id] # を値に変換し、
-                      end.uniq.size != cell_ids.size
-                  end.compact.empty?
+        valus[0].product(*valus[1..]).select do |vary|
+          (vary[0] == vary[1..].sum) && no_dup_or_allowable(vary, arw_group[arrow_id])
+
           # だめ
-        end.compact
+        end
+      end
+
+      def no_dup_or_allowable(vary, arw_group)
+        arw_group.map do |cell_ids| # このarrowの同じgroupに属するcellID
+          true if # 重複があったら(true)
+            cell_ids.map do |id|
+              vary[id] # を値に変換し、
+            end.uniq.size != cell_ids.size
+        end.compact.empty?
       end
 
       # arrow を構成する cell達が同じgroupに属する場合、
@@ -151,21 +155,27 @@ module Number
 
         @arw_group = []
         @arrows.each_with_index do |arrow, i|
-          # @arw_group[i]=arrow[1..-1].map{|cell_no|
-          groups = arrow[1..].map do |cell_no| # cell の group の集合を求める
-            @cells[cell_no].group_ids
-          end.flatten.uniq
-
-          cells_same_group = groups.map do |grp_no|
-            cells = @groups[grp_no].cell_ids & arrow[1..]
-            cells if cells.size > 1
-          end.compact.uniq
-          @arw_group[i] = cells_same_group.map do |cells|
+          groups = groups_of_this_arrow(arrow)
+          cells_same = cells_same_group(arrow, groups)
+          @arw_group[i] = cells_same.map do |cells|
             # そのcellはallowの何番目の要素か
             cells.map { |c| arrow.index(c) }.sort
           end.uniq
         end
         @arw_group
+      end
+
+      def groups_of_this_arrow(arrow)
+        arrow[1..].map do |cell_no| # cell の group の集合を求める
+          @cells[cell_no].group_ids
+        end.flatten.uniq
+      end
+
+      def cells_same_group(arrow, groups)
+        groups.map do |grp_no|
+          cells = @groups[grp_no].cell_ids & arrow[1..]
+          cells if cells.size > 1
+        end.compact.uniq
       end
     end
   end
