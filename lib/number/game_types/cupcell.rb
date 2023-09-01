@@ -63,13 +63,13 @@ module Number
           c1 = pair[1 - i]
           # pp @cells[c].ability
           if @cells[c].even_only?
-            @cells[c1].set_odd("#{c1} odd by pair[#{pair.join(',')}]")
+            @cells[c1].set_odd_even('o', "#{c1} odd by pair[#{pair.join(',')}]")
             @gsw = true
             return true
           end
           next unless @cells[c].odd_only?
 
-          @cells[c1].set_even("#{c1} even by pair[#{pair.join(',')}]")
+          @cells[c1].set_odd_even('e', "#{c1} even by pair[#{pair.join(',')}]")
           @gsw = true
           return true
         end

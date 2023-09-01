@@ -19,16 +19,7 @@ module Number
       # 所定の cell数だけ、初期データを読む
       while c < @size && (line = gets_skip_comment(infile))
         line.chop.split(sep).each do |v|
-          case v
-          when 'e'
-            @cells[c].set_even
-          when 'o'
-            @cells[c].set_odd
-          when /^\d/
-            @cells[c].set_cell(v.to_i, 'initialize')
-          when /\s/
-            next
-          end
+          @cells[c].assign_valu(v)
           c += 1
         end
       end
@@ -43,10 +34,8 @@ module Number
       @arrows = []
 
       while (line = gets_skip_comment(infile))
-        puts line if option[:verb]
-
         @arrows << line.split.map { |c| c.to_i - 1 }
-        puts "arrow #{$LAST_READ_LINE}" if option[:verb]
+        puts "arrow #{line}" if option[:verb]
       end
       @arrows = @arrows.compact if @arrows
     end

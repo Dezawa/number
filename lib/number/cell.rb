@@ -45,6 +45,15 @@ module Number
       self
     end
 
+    def assign_valu(val)
+      case val
+      when 'e', 'o'
+        set_odd_even(val)
+      when /^\d/
+        set_cell(val.to_i, 'initialize')
+      end
+    end
+
     def inspect
       super +
         %i[c valu group_ids ability].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join
@@ -74,18 +83,12 @@ module Number
       vlist.select(&:even?).empty?
     end
 
-    def set_even(msg = nil)
+    def set_odd_even(val, msg = nil)
       return nil if valu
 
-      puts(msg || "set even cell #{c}") if option[:verb]
-      (1..game_scale).step(2) { |v| rm_ability(v) }
-    end
-
-    def set_odd(msg = nil)
-      return nil if valu
-
-      puts(msg || "set odd cell #{c}") if option[:verb]
-      (2..game_scale).step(2) { |v| rm_ability(v) }
+      start = val == 'e' ? 1 : 2
+      puts(msg || "set #{['', 'even', 'odd'][start]} cell #{c}") if option[:verb]
+      (start..game_scale).step(2) { |v| rm_ability(v) }
     end
 
     def set_if_valurest_equal_one
