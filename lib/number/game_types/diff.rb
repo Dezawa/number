@@ -18,38 +18,31 @@ module Number
         #################
         puts 'optional'
         # def diff(arrow)
+        cell_id = []
         sw = nil
-        c = []
         @arrows.each do |arw|
-          (dif, c[0], c[1]) = arw
-          k = []
-          k[0] = []
-          k[1] = []
-          w = []
-          @cells[c[0]].vlist.each do |v1|
-            @cells[c[1]].vlist.each  do |v2|
-              if (v1 - v2).abs == dif
-                k[0] << v1
-                k[1] << v2
-              end
-            end
-          end
-          w[0] = k[0].uniq.sort
-          w[1] = k[1].uniq.sort
+          (dif, cell_id[0], cell_id[1]) = arw
+          abiable_combination_of_valu(dif, cell_id)
 
-          2.times do |i|
-            if w[i].size == 1
-              ret = @cells[c[i]].set(w[i][0])
-              sw ||= ret
-            elsif w[i].size.positive? # 二つ以上だったら、
-              # それ以外の数字をそのcellの可能性から消す
-              vv = @cells[c[i]].vlist - w[i]
-              ret = @cells[c[i]].rm_ability(vv)
-              sw ||= ret
-            end
-          end
+          [0, 1].each { |idx| sw ||= fix_or_rm_ability(abiable, cell_id, idx) }
         end
         sw
+      end
+
+      def abiable_combination_of_valu(dif, cell_id)
+        values = @cells[cell_id[0]].vlist.product(@cells[cell_id[1]].vlist)
+                                   .select { |v1, v2| (v1 - v2).abs == dif }
+        [values.map(&:first).uniq.sort, values.map(&:last).uniq.sort]
+      end
+
+      def fix_or_rm_ability(abiable, cell_id, idx)
+        if abiable[idx].size == 1
+          @cells[cell_id[idx]].set(abiable[idx][0])
+        elsif abiable[idx].size.positive? # 二つ以上だったら、
+          # それ以外の数字をそのcellの可能性から消す
+          vv = @cells[cell_id[idx]].vlist - abiable[i]
+          @cells[cell_id[idx]].rm_ability(vv)
+        end
       end
     end
   end
