@@ -8,6 +8,7 @@ module Number
     # あるgroupで 値  v1,v2,,,vn がr入り得るcellがN個だけだったら、
     # それらの cell にはn他の値は入れない ⇒ 削除対象
     # その数字は他のcellには入らない
+    # rubocop: disable Lint/UnreachableLoop
     def reserv(v_num)
       # group において、可能性ある cell が v_num個以下の数字を探す
       # それらのcellに他の数字の可能性が有ってもよい。
@@ -15,7 +16,8 @@ module Number
       # cell数が v_num 個であるものを得る
       # それらの cell ではそれらの値以外ははいらない
       @groups.each do |group|
-        candidate_reserved_set(v_num, group).each do |values, reserved_cells, _abl_cmb|
+        candidate_reserved_set(v_num, group)
+          .each do |values, reserved_cells, _abl_cmb|
           rm_value = values_to_rm(reserved_cells, values)
           reserved_cells.each do |c|
             msg = "reserve#{v_num} group #{group.g} cells#{reserved_cells} v=#{values}"
@@ -28,6 +30,7 @@ module Number
       end
       ''
     end
+    # rubocop: enable Lint/UnreachableLoop
 
     # reserve の対象となる cell set の候補
     def candidate_reserved_set(v_num, group)
