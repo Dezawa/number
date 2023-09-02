@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Number
+  # X-wingと言われているらしい
   module ResolvCross
     # こういう関係で１があるとき、＊の位置に１があったらそれは削除
     # *.1..1..1

@@ -17,10 +17,9 @@ module Number
     end
 
     def inspect
-      "#<Group:#{object_id} " +
-        %i[g atrivute cell_ids].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join +
-        "\n  @ability=[\n" +
-        @ability.ability.map { |abl| "         #{abl.inspect}" }.join("\n")
+      g_atrivute_cell_ids = %i[g atrivute cell_ids].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join
+      ability = @ability.ability.map { |abl| "         #{abl.inspect}" }.join("\n")
+      "#<Group:#{object_id} #{g_atrivute_cell_ids}\n  @ability=[\n#{ability}"
     end
 
     def holizontal?
