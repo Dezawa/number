@@ -44,12 +44,12 @@ module Number
     end
 
     def structure
-      xmax, ymax = make_waku_pform(form_type)
+      make_waku_pform(form_type)
       # if struct_reg =~ form_type # 3x3-4+5
-      ban_initialize(@waku, game_scale, xmax, ymax)
+      ban_initialize(@waku, game_scale, @waku.xmax, @waku.ymax)
       # 印刷フォーム設定
       # end
-      @form = Number::Form.new([@waku, xmax, ymax], game_scale)
+      @form = Number::Form.new([@waku, @waku.xmax, @waku.ymax], game_scale)
     end
   end
 end

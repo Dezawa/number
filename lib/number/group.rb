@@ -17,9 +17,9 @@ module Number
     end
 
     def inspect
-      "#<Group:#{object_id} " <<
-        %i[g atrivute cell_ids].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join <<
-        "\n  @ability=[\n" <<
+      "#<Group:#{object_id} " +
+        %i[g atrivute cell_ids].map { |sym| "  @#{sym}=#{send(sym).inspect}" }.join +
+        "\n  @ability=[\n" +
         @ability.ability.map { |abl| "         #{abl.inspect}" }.join("\n")
     end
 
@@ -48,8 +48,9 @@ module Number
       @atrivute
     end
 
-    def addcell_ids(cell)
-      @cell_ids << cell
+    def addcell_ids(cell_id)
+      # puts "group:#{g}, add cell #{cell_id}   "
+      @cell_ids << cell_id
     end
 
     def line_groups_join_with

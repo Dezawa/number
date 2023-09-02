@@ -45,18 +45,18 @@ module Number
   # gameのformを設定するextend
   module GamePform
     def make_waku_pform(form_type)
-      @game_scale, group_width, group_hight, mult, sign, m_nr, dan = base_size(form_type)
-      @m = Math.sqrt(game_scale).to_i
-      boxes, xmax, ymax = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
-      @waku = Number::Waku.new(self, boxes, game_scale, @count, [xmax, ymax])
+      @waku = Number::Waku.create(self, form_type)
+      @game_scale = @waku.game_scale
+      @m = @waku.m
+      @waku.cells_init
 
       @size = @waku.cells.reject(&:nil?).size
 
       # $grps を作る。 空サイズで作った後埋める
-      @gsize = @waku.set_grp(group_width, group_hight)
-      @gsize = optional_group(@gsize, boxes, xmax, @waku.cells)
+      @gsize = @waku.set_grp
+      @gsize = optional_group(@gsize, @waku.boxes, @waku.xmax, @waku.cells)
 
-      [xmax, ymax]
+      # [xmax, ymax]
     end
 
     def ban_initialize(waku, _game_scale, xmax, ymax)
@@ -66,7 +66,6 @@ module Number
         # @cells[cell.c] = Number::Cell.create(self, cell.c[0], cell[1], @count, option: option) # (cell_nr,group_ids)
         cell.group_ids.each { |grp_no| @groups[grp_no].addcell_ids cell.c }
       end
-
       @neigh = neighber(waku.cells, xmax, ymax)
       initialize_group_ability
     end
@@ -81,88 +80,6 @@ module Number
     end
 
     def optional_group(gnr, boxes, xmax, cells); end
-
-    def base_pos(mult, sign, mnr, dans)
-      bnr = -1
-      boxes, xmin, y_pos = create_boxes_for_all(bnr, mnr, mult, sign, dans)
-
-      reset_xmax(xmin, boxes)
-      [boxes, @xmax + 1, y_pos + game_scale + 1]
-    end
-
-    def create_boxes_for_all(bnr, mnr, mult, sign, dans)
-      xmin = 0
-      box = Number::Box.new(game_scale, -6, -6)
-      boxes = Array.new(mnr)
-      wbox = Number::Box.new(game_scale)
-      offset = { '-' => 6, '+' => -6 }
-      (0...dans).each do |dan|
-        box.p = box + [offset[sign[dan]], 6]
-        wbox.p = box.p
-        xmin = wbox.x_pos if xmin > wbox.x_pos
-        @xmax = create_boxes_for_dan(mult[dan], xmin, bnr, boxes, wbox)
-      end
-      [boxes, xmin, box.y_pos]
-    end
-
-    def create_boxes_for_dan(dan, _xmin, bnr, boxes, wbox)
-      @xmax = 0
-      (0...dan).each do |_b|
-        bnr += 1
-        boxes[bnr] = Number::Box.new(game_scale, wbox.p)
-        @xmax = wbox.x_pos + game_scale if @xmax < wbox.x_pos + game_scale
-        wbox.p = wbox + [12, 0]
-      end
-      @xmax
-    end
-
-    def reset_xmax(xmin, boxes)
-      return unless xmin != 0
-
-      boxes.each do |b|
-        pp [:pos, b]
-        b.x_pos = (b.x_pos - xmin)
-      end
-      @xmax -= xmin
-    end
-
-    def base_size(struct)
-      mult = struct.split(/[-+]/)
-      n, group_width, group_hight = mult_params(mult)
-      mult, mnr, dan, sign = mult_struct(mult)
-      [n, group_width, group_hight, mult, sign, mnr, dan]
-    end
-
-    def mult_params(mult)
-      n = mult.shift # Gameの基本サイズ
-      if /\d+x\d+/ =~ n
-        group_width, group_hight = n.split('x')
-        group_width = group_width.to_i
-        group_hight = group_hight.to_i
-        n = group_width * group_hight
-      else
-        n = n.to_i
-        group_width = group_hight = (Math.sqrt(n) + 0.2).to_i
-      end
-      [n, group_width, group_hight]
-    end
-
-    def mult_struct(mult)
-      if mult.empty?
-        mult = [1]
-        mnr = 1
-        dan = 1
-        sign = ['-']
-      else
-        mult = mult.map(&:to_i) # 各段のBOX数
-        mnr =  mult.inject(0) { |s, i| s + i } # BOX数合計　箱の数　Mnr
-        dan = mult.size # 箱の重なり段数  Dan   3 = struct.split(/[-+]/).size
-        sign = struct.split(/\d+/)[1..]
-      end
-      # pp ["struct,n,mult,sign",struct,n,mult,sign]
-      # pp ["Mnr,Dan",mnr,dan]
-      [mult, mnr, dan, sign]
-    end
   end
 end
 
