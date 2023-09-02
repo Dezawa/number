@@ -19,10 +19,13 @@ module Number
       # 所定の cell数だけ、初期データを読む
       while c < @size && (line = gets_skip_comment(infile))
         line.chop.split(sep).each do |v|
+          next if /\s/ =~ v
+
           @cells[c].assign_valu(v)
           c += 1
         end
       end
+
       # dataファイルの後半にある arrow情報を得る
       # 標準では何もしないmethod
       optional_struct(sep, game_scale, infile)
