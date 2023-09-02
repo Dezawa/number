@@ -13,7 +13,7 @@ module Number
     include Number::GamePform
     include Number::Resolver
     include Number::GameInitiate
-    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :n, :game_scale, :option
+    attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :n, :game_scale, :option, :waku
     attr_reader :infile, :sep, :game_type, :count
 
     def self.create(infile, option: {})

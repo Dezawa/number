@@ -13,14 +13,14 @@ module Number
 
     def initialize(game)
       @game = game
+      game.waku = self
     end
 
     def setup(form_type)
-      mult, sign, m_nr, dan = base_size(form_type)
+      mult, m_nr, dan, sign = base_size(form_type)
       @m = Math.sqrt(game_scale).to_i
       @xmax, @ymax = base_pos(mult, sign, m_nr, dan) # Boxを作り、各Boxの左上の座標を得る
       @count = game.count
-      # cells_init # (@boxes)
     end
 
     def base_pos(mult, sign, mnr, dans)
@@ -34,35 +34,30 @@ module Number
     def base_size(form_type)
       mult = form_type.split(/[-+]/)
       mult_params(mult) # @game_scale, @group_width, @group_hight 設定
-
-      mult, mnr, dan, sign = mult_struct(mult)
-      [mult, sign, mnr, dan]
+      mult_struct(mult)
     end
 
     def create_boxes_for_all(bnr, mnr, mult, sign, dans)
       xmin = 0
-      box = Number::Box.new(game_scale, -6, -6)
+      box = Number::Box.new(game, game_scale, -6, -6)
       boxes = Array.new(mnr)
-      wbox = Number::Box.new(game_scale)
+      wbox = Number::Box.new(game, game_scale)
       offset = { '-' => 6, '+' => -6 }
       (0...dans).each do |dan|
-        box.p = box + [offset[sign[dan]], 6]
-        wbox.p = box.p
-        xmin = wbox.x_pos if xmin > wbox.x_pos
-        @xmax = create_boxes_for_dan(mult[dan], xmin, bnr, boxes, wbox)
+        wbox.p = box.p = box + [offset[sign[dan]], 6]
+        create_boxes_for_dan(mult[dan], bnr, boxes, wbox)
       end
       [boxes, xmin, box.y_pos]
     end
 
-    def create_boxes_for_dan(dan, _xmin, bnr, boxes, wbox)
+    def create_boxes_for_dan(dan, bnr, boxes, wbox)
       @xmax = 0
       (0...dan).each do |_b|
         bnr += 1
-        boxes[bnr] = Number::Box.new(game_scale, wbox.p)
+        boxes[bnr] = Number::Box.new(game, game_scale, wbox.p)
         @xmax = wbox.x_pos + game_scale if @xmax < wbox.x_pos + game_scale
         wbox.p = wbox + [12, 0]
       end
-      @xmax
     end
 
     def mult_params(mult)
@@ -116,63 +111,10 @@ module Number
 
     def set_grp
       gnr = 0
-      gnr = vertical_holizontal_group(gnr)
-      gnr = block_group(gnr, group_width, group_hight) unless game.game_type == 'KIKA'
-      gnr
-    end
-
-    def block_group(gnr, group_width, group_hight)
       boxes.each do |box|
-        box.y_range.step(group_hight).each do |y|
-          aliable_cells_of_block(box, group_width, y).each do |x|
-            new_group(gnr, [x, y], group_hight, group_width)
-            gnr += 1
-          end
-        end
+        gnr = box.set_group(game.game_type, game_scale, gnr, group_width, group_hight)
       end
       gnr
-    end
-
-    def new_group(gnr, x_y, group_hight, group_width)
-      x, y = x_y
-      game.groups[gnr] = Number::Group.new(game, gnr, @count, :block)
-      (y..y + group_hight - 1).each do |yy|
-        (x..x + group_width - 1).each { |xx| cells[xmax * yy + xx].group_ids << gnr }
-      end
-    end
-
-    def aliable_cells_of_block(box, group_width, y_pos)
-      (box.x_pos..box.x_pos + game_scale - 1).step(group_width).reject do |x|
-        cells[xmax * y_pos + x].nil?
-      end
-    end
-
-    def vertical_holizontal_group(gnr)
-      boxes.each do |box|
-        (box.y_pos..box.y_pos + game_scale - 1).each do |y|
-          holizontal_group(gnr, box, y)
-          gnr += 1
-        end
-        (box.x_pos..box.x_pos + game_scale - 1).each do |x|
-          vertical_group(gnr, box, x)
-          gnr += 1
-        end
-      end
-      gnr
-    end
-
-    def holizontal_group(gnr, box, y_pos)
-      game.groups[gnr] = Number::Group.new(game, gnr, @count, :holizontal)
-      (box.x_pos..box.x_pos + game_scale - 1).each do |x|
-        cells[xmax * y_pos + x].group_ids << gnr
-      end
-    end
-
-    def vertical_group(gnr, box, x_pos)
-      game.groups[gnr] = Number::Group.new(game, gnr, @count, :vertical)
-      (box.y_pos..box.y_pos + game_scale - 1).each do |y|
-        cells[xmax * y + x_pos].group_ids << gnr
-      end
     end
   end
 end

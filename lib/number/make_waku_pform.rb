@@ -49,21 +49,17 @@ module Number
       @game_scale = @waku.game_scale
       @m = @waku.m
       @waku.cells_init
-
       @size = @waku.cells.reject(&:nil?).size
 
       # $grps を作る。 空サイズで作った後埋める
       @gsize = @waku.set_grp
       @gsize = optional_group(@gsize, @waku.boxes, @waku.xmax, @waku.cells)
-
-      # [xmax, ymax]
     end
 
     def ban_initialize(waku, _game_scale, xmax, ymax)
       waku.cells.each do |cell|
         next if cell.nil?
 
-        # @cells[cell.c] = Number::Cell.create(self, cell.c[0], cell[1], @count, option: option) # (cell_nr,group_ids)
         cell.group_ids.each { |grp_no| @groups[grp_no].addcell_ids cell.c }
       end
       @neigh = neighber(waku.cells, xmax, ymax)

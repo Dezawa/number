@@ -31,7 +31,7 @@ module Number
 
       def cell_c_is_on_block(gnr, cells, cell_id, block)
         cell_id += 1
-        cell_id += 1 if cells[cell_id].nil? ##
+        cell_id += 1 if cells[cell_id].nil?
         cells[cell_id].group_ids << block.to_i + gnr - 1
         cell_id
       end
