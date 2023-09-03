@@ -37,17 +37,17 @@ module Number
       mult_struct(mult)
     end
 
+    OFFSET = { '-' => 6, '+' => -6 }.freeze
     def create_boxes_for_all(bnr, mnr, mult, sign, dans)
       xmin = 0
-      box = Number::Box.new(game, game_scale, -6, -6)
+      # box = Number::Box.new(game, game_scale, -6, -6)
       boxes = Array.new(mnr)
-      wbox = Number::Box.new(game, game_scale)
-      offset = { '-' => 6, '+' => -6 }
+      wbox = Number::Box.new(game, game_scale, -6, -6)
       (0...dans).each do |dan|
-        wbox.p = box.p = box + [offset[sign[dan]], 6]
+        wbox.p = wbox + [OFFSET[sign[dan]], 6]
         create_boxes_for_dan(mult[dan], bnr, boxes, wbox)
       end
-      [boxes, xmin, box.y_pos]
+      [boxes, xmin, wbox.y_pos]
     end
 
     def create_boxes_for_dan(dan, bnr, boxes, wbox)
@@ -102,8 +102,8 @@ module Number
       null_cell = Number::NullCell.instance
       @cells =  Array.new(xmax * ymax, null_cell)
       @boxes.each do |box|
-        box.y_x_range do |y, x|
-          game.cells << (@cells[xmax * y + x] = Number::Cell.create(game, cell_no, [], game.count))
+        box.y_x_range do |y_x|
+          game.cells << (@cells[y_x] = Number::Cell.create(game, cell_no, [], game.count))
           cell_no += 1
         end
       end
