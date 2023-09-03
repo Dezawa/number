@@ -28,7 +28,8 @@ module Number
 
     def set_group(game_type, game_scale, gnr, group_width, group_hight)
       # pp [:xmax1, xmax]
-      gnr = vertical_holizontal_group(gnr, game_scale)
+      gnr = holizontal_group(gnr, game_scale)
+      gnr = vertical_group(gnr, game_scale)
       gnr = block_group(gnr, group_width, group_hight) unless game_type == 'KIKA'
       gnr
     end
@@ -42,40 +43,44 @@ module Number
     def block_group(gnr, group_width, group_hight)
       y_range.step(group_hight).each do |y|
         aliable_cells_of_block(group_width, y).each do |x|
-          new_group(gnr, x, y, group_hight, group_width)
+          game.groups[gnr] = Number::Group.new(game, gnr, @count, :block)
+          block_group_cell(gnr, x, y, group_hight, group_width)
           gnr += 1
         end
       end
       gnr
     end
 
-    def vertical_holizontal_group(gnr, game_scale)
+    def holizontal_group(gnr, game_scale)
       (y_position..y_position + game_scale - 1).each do |y|
-        holizontal_group(gnr, y)
-        gnr += 1
-      end
-      (x_position..x_position + game_scale - 1).each do |x|
-        vertical_group(gnr, x)
+        game.groups[gnr] = Number::Group.new(game, gnr, @count, :holizontal)
+        holizontal_group_cell(gnr, y)
         gnr += 1
       end
       gnr
     end
 
-    def holizontal_group(gnr, y_pos)
-      game.groups[gnr] = Number::Group.new(game, gnr, @count, :holizontal)
+    def vertical_group(gnr, game_scale)
+      (x_position..x_position + game_scale - 1).each do |x|
+        game.groups[gnr] = Number::Group.new(game, gnr, @count, :vertical)
+        vertical_group_cell(gnr, x)
+        gnr += 1
+      end
+      gnr
+    end
+
+    def holizontal_group_cell(gnr, y_pos)
       xstart = xmax_one * y_pos
       (xstart...xstart + game_scale).each { |x| cells[x].group_ids << gnr }
     end
 
-    def vertical_group(gnr, x_pos)
-      game.groups[gnr] = Number::Group.new(game, gnr, @count, :vertical)
-      (y_position...y_position + game_scale).each do |y|
+    def vertical_group_cell(gnr, x_pos)
+      y_range.each do |y|
         cells[xmax_one * y + x_pos].group_ids << gnr
       end
     end
 
-    def new_group(gnr, x_pos, y_pos, group_hight, group_width)
-      game.groups[gnr] = Number::Group.new(game, gnr, @count, :block)
+    def block_group_cell(gnr, x_pos, y_pos, group_hight, group_width)
       (y_pos...y_pos + group_hight).each do |yy|
         (x_pos...x_pos + group_width).each { |xx| game.cells[xmax_one * yy + xx].group_ids << gnr }
       end
