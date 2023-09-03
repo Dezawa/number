@@ -37,7 +37,7 @@ module Number
         # g_nums
         (2..@m).each do |g_nums|
           # combination
-          grps1.select { |grp| grp[0] <= g_nums }
+          grps1.select { |count, _grp, _cells, _co_groups| count <= g_nums }
                .combination(g_nums).each do |cmb_grp|
             # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
             # (5) このco_groupsから値vの可能性を削除する。except cells
@@ -56,7 +56,7 @@ module Number
 
     def select_cmb_grp_and_rm(cmb_grp, g_nums, rm_v)
       # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
-      rm_grps = cmb_grp.map { |grp| grp[3] }.flatten.uniq
+      rm_grps = cmb_grp.map { |_count, _grp, _cells, co_groups| co_groups }.flatten.uniq
       return unless rm_grps.size == g_nums
 
       # (5) このco_groupsから値vの可能性を削除する。except cells
