@@ -23,7 +23,7 @@ module Number
       end
 
       def xross_cells(cells, gnr, xmax)
-        (0..game_scale - 1).each do |i|
+        (0...game_scale).each do |i|
           cells[(xmax + 1) * i].group_ids << gnr
           cells[game_scale - 1 + (xmax - 1) * i].group_ids << gnr + 1
         end

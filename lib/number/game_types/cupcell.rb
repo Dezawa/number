@@ -91,30 +91,31 @@ module Number
 
         # pp [groups,abilitys]
         # evenについて調べる
-        even_reserve(abilitys)
+        even_reserve(abilitys, pair)
 
         # oddについて調べる
-        odd_reserve(abilitys)
+        odd_reserve(abilitys, pair)
       end
 
-      def even_reserve(abilitys)
+      def even_reserve(abilitys, pair)
         even = abilitys.map { |ab| ab.select { |i| i.positive? && i.even? } }
         # pp [even,(even[0] & even[1])]
         return unless even[0].size == 1 && even[1] == even[0]
 
         # このevenの値が予約される
-        v = even[0][0]
-        # pp "# このevenの値が予約される #{v}"
-        groups.each { |grp| @groups[grp].rm_ability(v, pair, "cupcell [#{pair.join(',')}]") }
+        reserve_valu(even[0][0], pair)
       end
 
-      def odd_reserve(abilitys)
+      def odd_reserve(abilitys, pair)
         odd = abilitys.map { |ab| ab.select(&:odd?) }
         return unless odd[0].size == 1 && odd[1] == odd[0]
 
         # このevenの値が予約される
-        v = (odd[0] & odd[1])[0]
-        groups.each { |grp| @groups[grp].rm_ability(v, pair, "cupcell [#{pair.join(',')}]") }
+        reserve_valu((odd[0] & odd[1])[0], pair)
+      end
+
+      def reserve_valu(value, pair)
+        groups.each { |grp| @groups[grp].rm_ability(value, pair, "cupcell [#{pair.join(',')}]") }
       end
     end
   end
