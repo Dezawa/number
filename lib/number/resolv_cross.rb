@@ -78,13 +78,23 @@ module Number
     end
 
     def groups_remain_2_or_m_cells_of_value_is(h_v, v_h, valu)
-      @groups.map do |grp|
-        count = grp.ability[valu].rest
-        next unless (grp.type == h_v) && # 　　 :holizontal なgroupについて、
-                    (count <= @m) && # 値valu　をとり得るcellの数が2,,@m である
-                    (count > 1) #      grp を集め
+      groups_remain = groups_remain_2_or_m_cells(h_v, valu)
+      # (2) そのcellを共有する:verticalなgroupを集める。[co_groups]
+      co_groups_of(groups_remain, v_h, valu)
+    end
 
-        # (2) そのcellを共有する:verticalなgroupを集める。[co_groups]
+    def groups_remain_2_or_m_cells(h_v, valu)
+      @groups.select do |grp|
+        count = grp.ability[valu].rest
+        (grp.type == h_v) && (2..@m).include?(count) # 　　 :holizontal なgroupについて、
+        #           (count <= @m) && # 値valu　をとり得るcellの数が2,,@m である
+        #           (count > 1) #      grp を集め
+      end
+    end
+
+    def co_groups_of(groups_remain, v_h, valu)
+      groups_remain.map do |grp|
+        count = grp.ability[valu].rest
         cells = grp.ability[valu].cell_ids
         co_groups = cells.map { |c| cogroup([c]).select { |g| @groups[g].type == v_h }.flatten }
         [count, grp, cells, co_groups]
