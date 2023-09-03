@@ -47,7 +47,7 @@ module Number
         wbox.p = wbox + [OFFSET[sign[dan]], 6]
         create_boxes_for_dan(mult[dan], bnr, boxes, wbox)
       end
-      [boxes, xmin, wbox.y_pos]
+      [boxes, xmin, wbox.y_position]
     end
 
     def create_boxes_for_dan(dan, bnr, boxes, wbox)
@@ -55,7 +55,7 @@ module Number
       (0...dan).each do |_b|
         bnr += 1
         boxes[bnr] = Number::Box.new(game, game_scale, wbox.p)
-        @xmax = wbox.x_pos + game_scale if @xmax < wbox.x_pos + game_scale
+        @xmax = wbox.x_position + game_scale if @xmax < wbox.x_position + game_scale
         wbox.p = wbox + [12, 0]
       end
     end
@@ -91,7 +91,7 @@ module Number
       return unless xmin != 0
 
       boxes.each do |b|
-        b.x_pos = (b.x_pos - xmin)
+        b.x_position = (b.x_pos - xmin)
       end
       @xmax -= xmin
     end
