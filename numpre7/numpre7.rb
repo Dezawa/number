@@ -25,10 +25,10 @@ class Numpre7
       game_number_file = File.open(game_number_level(lvl))
       (page - 1).times{ game_number_file.gets }
       while (line = game_number_file.gets)
-        puts "\n#{line}"
+        print "\n#{line}    "
         numbers = line.split
         page = numbers.shift
-        numbers.each{|number| output number; sleep 5 }
+        numbers.sort.each{|number| output number; sleep 5 }
       end
     end
   end
@@ -38,8 +38,8 @@ class Numpre7
     dir = "../sample/#{number[0,2]}"
     FileUtils.mkdir_p(dir)
     File.open("#{dir}/#{output_file(number)}",'w'){|f|
-      print "#{output_file(number)}, "
-      f.puts '## #{output_file(number)} ##\n9'
+      print "#{number} "
+      f.puts "## #{output_file(number)} ##\n9"
       f.puts game_data
     }
   end
