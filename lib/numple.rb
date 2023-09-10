@@ -79,14 +79,6 @@ require 'net/smtp'
 # $LOAD_PATH.unshift(File.join(File.dirname(File.expand_path(__FILE__)),"number"))
 # $LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)))
 require_relative 'number/game'
-require_relative 'number/cell'
-require_relative 'number/group'
-require_relative 'number/form'
-require_relative 'number/box'
-
-require_relative 'number/resolver'
-require_relative 'number/make_waku_pform'
-require_relative 'number/group_ability'
 
 # ナンプレのフロントエンド
 class Numple
