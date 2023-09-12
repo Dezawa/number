@@ -41,7 +41,7 @@ module Number
     def co_cell_ids(pair_grp)
       cell_ids & pair_grp.cell_ids
     end
-    
+
     # 数字残り可能性数 が v_num以下のcell
     def cell_ids_avility_le_than(v_num)
       cell_ids.select { |c_no| (1..v_num).include?(game.cells[c_no].valurest) }

@@ -12,9 +12,9 @@ require_relative 'lib/number/game'
 # -S      :: 解けたか否かに関わらず、使った技の統計を出す
 class NumpleAnalize
   attr_accessor :directories
-   
+
   def numples
-    @numples = [directories].flatten.map{|directory| Dir.glob("#{directory}/*")}.flatten
+    @numples = [directories].flatten.map { |directory| Dir.glob("#{directory}/*") }.flatten
   end
 
   def analyze

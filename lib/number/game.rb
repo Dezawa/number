@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 require_relative './game_initiate'
 require_relative './waku'
 require_relative './form'
@@ -98,11 +97,11 @@ module Number
         sw = nil
         RESOLVE_PATH.each do |method, arg|
           msg = arg ? send(method, arg) : send(method)
-          unless msg.to_s.empty?
-            print " #{method}(#{arg}):#{msg}\n" if option[:verb]
-            # アクションが有ったら、優しい解法に戻る
-            break
-          end
+          next if msg.to_s.empty?
+
+          print " #{method}(#{arg}):#{msg}\n" if option[:verb]
+          # アクションが有ったら、優しい解法に戻る
+          break
         end
 
         # puts count

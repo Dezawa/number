@@ -55,7 +55,7 @@ module Number
           end
           if vsw
             @count['X wing'] += 1
-            ret = "x-wing"
+            ret = 'x-wing'
           end
           # return true
         end
@@ -64,7 +64,6 @@ module Number
       #
       option[:cross] = nil
       ret # false
-
 
       # msg = ''
       # (1..game_scale).each do |v| # (1) 値v　をとり得る
