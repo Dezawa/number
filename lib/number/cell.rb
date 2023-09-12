@@ -20,10 +20,6 @@ module Number
     # group_ids には holizontal, vertical, block の順に入っている
     attr_accessor :game, :groups, :valu, :c, :ability, :group_ids, :option, :game_scale
 
-    def nil?
-      false
-    end
-
     def self.create(arg_game, cell_no, arg_group_ids, count, option: {})
       cell = new(arg_game, cell_no, arg_group_ids, count, option: option)
       cell.setup
