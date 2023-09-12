@@ -90,7 +90,7 @@ module Number
        [:curb]].freeze
 
     def resolve
-      @try_count = 900
+      @try_count = 400
       # self.rest_one
       sw = true
       while !fill? && (sw || @try_count.positive?)

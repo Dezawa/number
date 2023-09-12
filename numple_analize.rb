@@ -19,7 +19,7 @@ class NumpleAnalize
 
   def analyze
     numples.sort.map do |numple|
-      print  "#{numple} "
+      print  "#{numple} \r"
       game = Number::Game.create(File.open(numple))
       unless game.resolve
         puts "#{numple}:error"
