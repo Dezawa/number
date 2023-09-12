@@ -27,34 +27,70 @@ module Number
     #
     # X-wingと言われているらしい
     def cross_teiin
-      msg = ''
-      (1..game_scale).each do |v| # (1) 値v　をとり得る
-        vsw = false
-        grps1 = groups_remain_2_or_m_cells_of_value_is(:holizontal, :vertical, v)
-        #  [count , grp,  cells, co_groups]
+      ret = false
+      h_v_table = %i[holizontal vertical]
+      # h_v
+      h_v_table.each_with_index  do |h_v, idx|
+        v_h = h_v_table[1 - idx] # 　holizontal と :vertical について
+        # value
+        (1..game_scale).each do |v| # (1) 値v　をとり得る
+          vsw = false
+          grps1 = groups_remain_2_or_m_cells_of_value_is(h_v, v_h, v)
+          #  [count , grp,  cells, co_groups]
 
-        # (3) それぞれの cell grps1[2,g_nums]から g_numsつづつの組み合わせをつくり cmb_grp
-        # g_nums
-        (2..@m).each do |g_nums|
-          # combination
-          grps1.select { |count, _grp, _cells, _co_groups| count <= g_nums }
-               .combination(g_nums).each do |cmb_grp|
-            # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
-            # (5) このco_groupsから値vの可能性を削除する。except cells
-            vsw = select_cmb_grp_and_rm(cmb_grp, g_nums, v)
-        if vsw
-          @count['X wing'] += 1
-          msg = "grp #{g_nums}, val #{v}"
-        end
+          # (3) それぞれの cell grps1[2,g_nums]から g_numsつづつの組み合わせをつくり cmb_grp
+          # g_nums
+          (2..@m).each do |g_nums|
+            # combination
+            grps1.select { |grp| grp[0] <= g_nums }
+                 .combination(g_nums).each do |cmb_grp|
+              # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
+              rm_grps = cmb_grp.map { |grp| grp[3] }.flatten.uniq
+              next unless rm_grps.size == g_nums
+
+              # (5) このco_groupsから値vの可能性を削除する。except cells
+              # pp [v,cmb_grp[3]]
+              rm_v_from_co_groups(v, cmb_grp, rm_grps)
+            end
           end
+          @count['X wing'] += 1 if vsw
+          # return true
         end
-        # return true
       end
-      # end
       # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
       #
       option[:cross] = nil
-      msg # false
+      ret # false
+
+
+      # msg = ''
+      # (1..game_scale).each do |v| # (1) 値v　をとり得る
+      #   vsw = false
+      #   grps1 = groups_remain_2_or_m_cells_of_value_is(:holizontal, :vertical, v)
+      #   #  [count , grp,  cells, co_groups]
+
+      #   # (3) それぞれの cell grps1[2,g_nums]から g_numsつづつの組み合わせをつくり cmb_grp
+      #   # g_nums
+      #   (2..@m).each do |g_nums|
+      #     # combination
+      #     grps1.select { |count, _grp, _cells, _co_groups| count <= g_nums }
+      #          .combination(g_nums).each do |cmb_grp|
+      #       # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
+      #       # (5) このco_groupsから値vの可能性を削除する。except cells
+      #       vsw = select_cmb_grp_and_rm(cmb_grp, g_nums, v)
+      #   if vsw
+      #     @count['X wing'] += 1
+      #     msg = "grp #{g_nums}, val #{v}"
+      #   end
+      #     end
+      #   end
+      #   # return true
+      # end
+      # # end
+      # # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
+      # #
+      # option[:cross] = nil
+      # msg # false
     end
 
     def select_cmb_grp_and_rm(cmb_grp, g_nums, rm_v)
