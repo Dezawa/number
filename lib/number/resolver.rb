@@ -15,6 +15,42 @@ module Number
     include ResolvTrioOnCoGroup
     include ResolvCross
     include ResolvXyWing
+
+    RESOLVE_PATH =
+      [[:rest_one],
+       [:reserv, 2],
+       [:prison, 2],
+       [:optional_test],
+       [:reserv, 3],
+       [:prison, 3],
+       [:reserv, 4],
+       [:prison, 4],
+       [:trio_on_co_group],
+       [:cross_teiin],
+       [:xy_wing],
+       [:curb]].freeze
+
+    def resolve
+      @try_count = 400
+      # self.rest_one
+      sw = true
+      while !fill? && (sw || @try_count.positive?)
+        sw = nil
+        RESOLVE_PATH.each do |method, arg|
+          msg = arg ? send(method, arg) : send(method)
+          next if msg.to_s.empty?
+
+          print " #{method}(#{arg}):#{msg}\n" if option[:verb]
+          # アクションが有ったら、優しい解法に戻る
+          break
+        end
+
+        # puts count
+        @try_count -= 1
+      end
+      fill?
+    end
+
     # Cell達に共通なGroup
     # cell_ids :: Cell#c
     # 戻り値 :: [group_id, group_id, , ,] まあ有っても最大4つ。

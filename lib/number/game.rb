@@ -75,20 +75,6 @@ module Number
       [[:cross_teiin], [:curb]]
     end
 
-    RESOLVE_PATH =
-      [[:rest_one],
-       [:reserv, 2],
-       [:prison, 2],
-       [:optional_test],
-       [:reserv, 3],
-       [:prison, 3],
-       [:reserv, 4],
-       [:prison, 4],
-       [:trio_on_co_group],
-       [:cross_teiin],
-       [:xy_wing],
-       [:curb]].freeze
-
     def resolve
       @try_count = 400
       # self.rest_one
