@@ -31,6 +31,7 @@ module Number
       instance.structure
       instance.gout if option[:gout]
       instance.data_initialize
+      puts instance.cell_out if option[:cout]
       instance
     end
 
