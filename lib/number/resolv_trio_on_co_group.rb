@@ -2,8 +2,8 @@
 
 module Number
   # 解法
-  module ResolvPrison5
-    def prison5
+  module ResolvTrioOnCoGroup
+    def trio_on_co_group
       # return # prison(2,3)と等価?
       ret = ''
       @groups.each do |grp|
@@ -18,9 +18,9 @@ module Number
           cogroup(w).each do |g|
             grp0 = @groups[g]
             # group g0 の w 以外のcellから 値Vの可能性をなくす
-            if grp0.rm_ability(v, w, "## prison5:group #{grp.g} V=#{v} cells=#{w.join(',')}")
-              @count[:prison_5] += 1
-              return "## prison5:group #{grp.g} V=#{v} cells=#{w.join(',')}"
+            if grp0.rm_ability(v, w, "## trio_on_co_group:group #{grp.g} V=#{v} cells=#{w.join(',')}")
+              @count[:trio_on_co_group] += 1
+              return "## trio_on_co_group:group #{grp.g} V=#{v} cells=#{w.join(',')}"
             end
           end
         end

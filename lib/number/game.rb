@@ -84,7 +84,7 @@ module Number
        [:prison, 3],
        [:reserv, 4],
        [:prison, 4],
-       [:prison5],
+       [:trio_on_co_group],
        [:cross_teiin],
        [:xy_wing],
        [:curb]].freeze
