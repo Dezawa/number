@@ -85,6 +85,7 @@ module Number
        [:prison, 3],
        [:reserv, 4],
        [:prison, 4],
+       [:prison5],
        [:cross_teiin],
        [:xy_wing],
        [:curb]].freeze

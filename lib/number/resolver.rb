@@ -3,6 +3,7 @@
 require_relative './resolv_reserv'
 require_relative './resolv_curb'
 require_relative './resolv_prison'
+require_relative './resolv_prison5'
 require_relative './resolv_cross'
 require_relative './resolv_xy_wing'
 module Number
@@ -11,6 +12,7 @@ module Number
     include ResolvReserv
     include ResolvCurb
     include ResolvPrison
+    include ResolvPrison5
     include ResolvCross
     include ResolvXyWing
     # Cell達に共通なGroup
