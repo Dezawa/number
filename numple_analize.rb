@@ -18,10 +18,13 @@ class NumpleAnalize
   end
 
   def analyze
-    numples.map do |numple|
-      puts numple
+    numples.sort.map do |numple|
+      print  "#{numple} "
       game = Number::Game.create(File.open(numple))
-      numple unless game.resolve
+      unless game.resolve
+        puts "#{numple}:error"
+        numple
+      end
     end.compact
   end
 
