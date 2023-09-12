@@ -27,7 +27,7 @@ module Number
     #
     # X-wingと言われているらしい
     def cross_teiin
-      ret = false
+      ret = ''
       h_v_table = %i[holizontal vertical]
       # h_v
       h_v_table.each_with_index  do |h_v, idx|
@@ -53,7 +53,10 @@ module Number
               rm_v_from_co_groups(v, cmb_grp, rm_grps)
             end
           end
-          @count['X wing'] += 1 if vsw
+          if vsw
+            @count['X wing'] += 1
+            ret = "x-wing"
+          end
           # return true
         end
       end
