@@ -86,8 +86,8 @@ module Number
 
     # self と その対角のpair_cellが作る長方形の、残り2つの頂点のcell
     def diagonal_cell_ids(_pair_cell)
-      self_v, self_h, self_b, _dmy = group_ids
-      pair_v, pair_h, pair_b, _dmy = pair.group_ids
+      self_v, self_h, _self_b, _dmy = group_ids
+      pair_v, pair_h, _pair_b, _dmy = pair.group_ids
       [groups[self_v].co_cell(groups[pair_h]).first,
        groups[self_h].co_cell(groups[pair_v]).first]
     end

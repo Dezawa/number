@@ -13,7 +13,6 @@ module Number
 
           # 値vの可能性をもつcellを得る
           w = grp.ability[v].cell_ids
-          s = w.size # 2 or 3
           # これと同じcellを全て含むグループを探す
           cogroup(w).each do |g|
             grp0 = @groups[g]

@@ -10,7 +10,6 @@ require_relative '../number/resolv_cross'
 require_relative '../number/resolv_reserv'
 require_relative '../number/resolv_curb'
 require_relative '../number/resolv_prison'
-require_relative '../number/resolv_cross'
 require_relative '../number/resolv_xy_wing'
 
 # rubocop: disable Metrics/BlockLength
@@ -116,3 +115,4 @@ RSpec.describe Number::Game, type: :model do
     end
   end
 end
+# rubocop: enable Metrics/BlockLength
