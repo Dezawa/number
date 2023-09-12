@@ -20,7 +20,7 @@ class Numpre7
   end
   
   def get_games(level = 7, page = 1)
-    game_levels(level, page).each do |lvl, page|
+    game_levels(level, page)[0,1].each do |lvl, page|
       pp [lvl, page]
       game_number_file = File.open(game_number_level(lvl))
       (page - 1).times{ game_number_file.gets }
@@ -59,7 +59,8 @@ class Numpre7
   def game_data
     begin
       driver.get(game_url)
-    rescue
+    rescue => e
+      puts "ERROR #{e}"
       sleep 5
       retry
     end
