@@ -85,13 +85,14 @@ module Number
        [:reserv, 4],
        [:prison, 4],
        [:cross_teiin],
+       [:xy_wing],
        [:curb]].freeze
 
     def resolve
-      count = 400
+      @try_count = 900
       # self.rest_one
       sw = true
-      while !fill? && (sw || count.positive?)
+      while !fill? && (sw || @try_count.positive?)
         sw = nil
         RESOLVE_PATH.each do |method, arg|
           msg = arg ? send(method, arg) : send(method)
@@ -103,7 +104,7 @@ module Number
         end
 
         # puts count
-        count -= 1
+        @try_count -= 1
       end
       fill?
     end

@@ -27,7 +27,7 @@ module Number
     #
     # X-wingと言われているらしい
     def cross_teiin
-      ret = false
+      msg = ''
       (1..game_scale).each do |v| # (1) 値v　をとり得る
         vsw = false
         grps1 = groups_remain_2_or_m_cells_of_value_is(:holizontal, :vertical, v)
@@ -41,17 +41,20 @@ module Number
                .combination(g_nums).each do |cmb_grp|
             # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
             # (5) このco_groupsから値vの可能性を削除する。except cells
-            select_cmb_grp_and_rm(cmb_grp, g_nums, v)
+            vsw = select_cmb_grp_and_rm(cmb_grp, g_nums, v)
+        if vsw
+          @count['X wing'] += 1
+          msg = "grp #{g_nums}, val #{v}"
+        end
           end
         end
-        @count['X wing'] += 1 if vsw
         # return true
       end
       # end
       # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
       #
       option[:cross] = nil
-      ret # false
+      msg # false
     end
 
     def select_cmb_grp_and_rm(cmb_grp, g_nums, rm_v)
@@ -65,6 +68,7 @@ module Number
     end
 
     def rm_v_from_co_groups(value, cmb_grp, rm_grps)
+      ret = false
       except_cells = cmb_grp.map do |co_grp1|
         co_grp1[2]
       end.flatten.uniq
@@ -74,7 +78,9 @@ module Number
         next unless removed
 
         option[:gsw] = true
+        ret = true
       end
+      ret
     end
 
     def groups_remain_2_or_m_cells_of_value_is(h_v, v_h, valu)

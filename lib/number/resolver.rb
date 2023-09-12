@@ -4,6 +4,7 @@ require_relative './resolv_reserv'
 require_relative './resolv_curb'
 require_relative './resolv_prison'
 require_relative './resolv_cross'
+require_relative './resolv_xy_wing'
 module Number
   # 解法
   module Resolver
@@ -11,6 +12,7 @@ module Number
     include ResolvCurb
     include ResolvPrison
     include ResolvCross
+    include ResolvXyWing
     # Cell達に共通なGroup
     # cell_ids :: Cell#c
     # 戻り値 :: [group_id, group_id, , ,] まあ有っても最大4つ。

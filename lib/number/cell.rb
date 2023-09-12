@@ -17,6 +17,7 @@ module Number
 
   # 9x9の枠内の 枡
   class Cell
+    # group_ids には holizontal, vertical, block の順に入っている
     attr_accessor :game, :groups, :valu, :c, :ability, :group_ids, :option, :game_scale
 
     def nil?
@@ -81,6 +82,14 @@ module Number
 
     def odd?
       vlist.select(&:even?).empty?
+    end
+
+    # self と その対角のpair_cellが作る長方形の、残り2つの頂点のcell
+    def diagonal_cell_ids(pair_cell)
+      self_v, self_h, self_b, _dmy = group_ids
+      pair_v, pair_h, pair_b, _dmy = pair.group_ids
+      [groups[self_v].co_cell(groups[pair_h]).first,
+       groups[self_h].co_cell(groups[pair_v]).first]
     end
 
     def set_odd_even(val, msg = nil)
