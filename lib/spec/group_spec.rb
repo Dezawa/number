@@ -11,6 +11,34 @@ require_relative '../number/group_ability'
 RSpec.describe Number::Group, type: :model do
   let(:game) { Number::Game.new(nil, '9') }
   let(:group) { Number::Group.new(game, 9, []) }
+  let(:group0_cells) { [0..8].map { |c| Number::Cell.create(game, c, [0, 9 + c, 18 + c / 3], {}) } }
+  let(:other_cells) { [9..80].map{ |c| Number::Cell.create(game, c, [0, 9 + c, 18 + c / 3], {}) } }
+  # groupの値vの可能性が2〜3個ある場合のcell_ids
+  describe '#grp.cell_ids_rest_2_3_of_valu' do
+    let(:group0_ability) do
+      group0_ability = (1..9).map { |v| Number::GroupAbility.new(9, (0..8).to_a, v) }
+      group.ability.ability = [nil] + group0_ability
+      group0_ability
+    end
+
+    it 'cell 2,3,4 に数字1' do
+      group.ability.ability[1] = [2, 3, 4]
+      expect(group.cell_ids_rest_2_3_of_valu(1)).to eq [2, 3, 4]
+    end
+
+    it 'cell 2 に数字1' do
+      group.ability.ability[1] = [2]
+      expect(group.cell_ids_rest_2_3_of_valu(1)).to eq nil
+    end
+    it 'cell 2,3 に数字1' do
+      group.ability.ability[1] = [2, 3]
+      expect(group.cell_ids_rest_2_3_of_valu(1)).to eq [2, 3]
+    end
+    it 'cell 2,3,4,5 に数字1' do
+      group.ability.ability[1] = [2, 3, 4, 5]
+      expect(group.cell_ids_rest_2_3_of_valu(1)).to eq nil
+    end
+  end
 
   describe :group do
     let(:cell_abilities_for_prison) do
@@ -41,30 +69,30 @@ RSpec.describe Number::Group, type: :model do
       expect(group.cell_ids_avility_le_than(2)).to eq [11, 12, 13, 14]
     end
   end
-end
-__END__
+
   context :sum_of_cells_and_values do
     let(:abilities_for_reserv) do
-    # cell 10,11,12には1,2,3が有る。cell 13,14 には4,5が有る。
-    # これらの数字は他のcellにはない
-    # 他の数字はこれらのcellにもある
-    # 数字１のあるcell、数字2の、数字3の、
-    [[10, 11, 12], [11, 12], [10, 12]] +
-      [[13, 14],[13, 14]] + # 数字 4, 5のあるcell
-      [[10, 15, 16], [10, 15, 16],[13, 17], [10, 13, 18]] # 数字6, 7, 8, 9のあるcell
+      # cell 10,11,12には1,2,3が有る。cell 13,14 には4,5が有る。
+      # これらの数字は他のcellにはない
+      # 他の数字はこれらのcellにもある
+      # 数字１のあるcell、数字2の、数字3の、
+      [[10, 11, 12], [11, 12], [10, 12]] +
+        [[13, 14], [13, 14]] + # 数字 4, 5のあるcell
+        [[10, 15, 16], [10, 15, 16], [13, 17], [10, 13, 18]] # 数字6, 7, 8, 9のあるcell
     end
 
-  let(:combinations) do
+    let(:combinations) do
       combos = abilities_for_reserv.map.with_index(1) do |ability, value|
-        group_aiblilities.ability[value] =
+        # group_abilities.ability[value] =
+        group.ability.ability[value] =
           Number::GroupAbility.new(ability.size, ability, value)
       end
-  end
+    end
 
-  let(:combo3) { combinations[0, 3] }
-  let(:combo2) { combinations[3, 2] }
+    let(:combo3) { combinations[0, 3] }
+    let(:combo2) { combinations[3, 2] }
 
-  it 'combo2 の時' do
+    it 'combo2 の時' do
       ret = game.sum_of_cells_and_values(combo2)
       expect(ret).to eq [[4, 5], [13, 14]]
     end
@@ -74,11 +102,9 @@ __END__
     end
   end
 
+  # it '3個以下のcombintion。数字4,5がcell13,14にある' do
+  #   abilities = group.ability.combination_of_ability_of_rest_is_less_or_equal(3)
+  #   expect(abilities.map{|ab| ab.map{|ablty| [ablty.cell_ids,ablty.v]}}).to match_array [[[[10,11,12],1], [[11,12],2], [[10,12],3]]]
+  # end
 end
-__END__
-    it '3個以下のcombintion。数字4,5がcell13,14にある' do
-       abilities = group_aiblilities.combination_of_ability_of_rest_is_less_or_equal(3)
-       expect(abilities.map{|ab| ab.map{|ablty| [ablty.cell_ids,ablty.v]}}).to match_array [[[[10,11,12],1], [[11,12],2], [[10,12],3]]]
-    end
-  end
-end
+# end

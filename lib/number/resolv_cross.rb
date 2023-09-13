@@ -28,13 +28,9 @@ module Number
     # X-wingと言われているらしい
     def cross_teiin
       ret = ''
-      h_v_table = %i[holizontal vertical]
-      # h_v
-      h_v_table.each_with_index  do |h_v, idx|
-        v_h = h_v_table[1 - idx] # 　holizontal と :vertical について
+      [%i[holizontal vertical], %i[vertical holizontal]].each_with_index do |(h_v, v_h), _idx|
         # value
         (1..game_scale).each do |v| # (1) 値v　をとり得る
-          vsw = false
           grps1 = groups_remain_2_or_m_cells_of_value_is(h_v, v_h, v)
           #  [count , grp,  cells, co_groups]
 
@@ -45,24 +41,18 @@ module Number
             grps1.select { |grp| grp[0] <= g_nums }
                  .combination(g_nums).each do |cmb_grp|
               # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
-              rm_grps = cmb_grp.map { |grp| grp[3] }.flatten.uniq
-              next unless rm_grps.size == g_nums
-
               # (5) このco_groupsから値vの可能性を削除する。except cells
-              # pp [v,cmb_grp[3]]
-              rm_v_from_co_groups(v, cmb_grp, rm_grps)
+              if select_cmb_grp_and_rm(cmb_grp, g_nums, v) # rm_v_from_co_groups(v, cmb_grp, rm_grps)
+                @count['X wing'] += 1
+                ret = 'x-wing'
+              end
             end
           end
-          if vsw
-            @count['X wing'] += 1
-            ret = 'x-wing'
-          end
-          # return true
         end
       end
       # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
       #
-      option[:cross] = nil
+      # option[:cross] = nil
       ret # false
 
       # msg = ''
