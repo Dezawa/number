@@ -38,6 +38,11 @@ module Number
       cell_ids.map { |c_no| game.cells[c_no] }
     end
 
+    def cell_ids_rest_2_3_of_valu(val)
+      ids = ability[val].cell_ids
+      (2..game.m).include?(ids.size || 0) ? ids : nil
+    end
+
     def co_cell_ids(pair_grp)
       cell_ids & pair_grp.cell_ids
     end
@@ -72,7 +77,7 @@ module Number
       sw = nil
       cells = []
       ability.fixed_by_rest_one.each do |group_ability|
-        # next unless group_ability.cell_ids.first
+        next if group_ability.cell_ids.empty?
         next unless @game.cells[group_ability.cell_ids.first]
                          .set(group_ability.v,
                               "grp(#{g}).ability #{group_ability.cell_ids}")

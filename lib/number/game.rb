@@ -71,6 +71,10 @@ module Number
       'NOMAL'
     end
 
+    def m
+      @m = Math.sqrt(game_scale || 9).to_i
+    end
+
     def high_class
       [[:cross_teiin], [:curb]]
     end
