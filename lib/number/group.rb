@@ -38,8 +38,17 @@ module Number
       cell_ids.map { |c_no| game.cells[c_no] }
     end
 
-    def cell_ids_rest_2_3_of_valu(val)
-      ids = ability[val].cell_ids
+    def cell_ids_rest_2_3_of_valu
+      (1..game.game_scale).map do |val|
+        ids = _cell_ids_rest_2_3_of_valu(val)
+        ids ? [val, ids] : nil
+      end.compact
+    end
+
+    def _cell_ids_rest_2_3_of_valu(val)
+      ids = ability[val]&.cell_ids
+      return nil unless ids
+
       (2..game.m).include?(ids.size || 0) ? ids : nil
     end
 
