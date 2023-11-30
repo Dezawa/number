@@ -18,6 +18,7 @@ module Number
 
     RESOLVE_PATH =
       [[:rest_one],
+       [:ability_one],
        [:reserv, 2],
        [:prison, 2],
        [:optional_test],
@@ -90,9 +91,7 @@ module Number
 
     ##### 解への技 #########
     # (1) 可能な値が一つだけになった　cell　を確定する
-    #   ⇒ ここには 1しか入らない
-    # (2) ある値の可能性あるcellが一つになったら、そのcellを確定する
-    #   ⇒ 1 はここにしか入らない
+    #   ⇒ ここ「には」 1しか入らない
     def rest_one
       sw = true
       cells = []
@@ -102,15 +101,30 @@ module Number
         # (1) cell Ability
         @cells.each do |cell|
           result = cell.set_if_valurest_equal_one
-          cells << cell.c if result
-          sw |= result
+          if result
+            cells << cell.c 
+            sw |= result
+            count["rest_one"] += 1
+          end
         end
-        # (2) group ability [ 可能性cell数 , [cell_no,cell_no,, ], 値 ]
+      end
+    end
+    
+
+    # (2) ある値の可能性あるcellが一つになったら、そのcellを確定する
+    #   ⇒ 1 はここ「にしか」入らない
+    # (2) group ability [ 可能性cell数 , [cell_no,cell_no,, ], 値 ]
+    def ability_one
+      sw = true
+      cells = []
+      while sw
+        sw = false      
         @groups.each do |grp|
           fixed_cells = grp.set_cell_if_some_value_s_ability_is_rest_one
           unless fixed_cells.empty?
             sw |= true
             cells += fixed_cells
+            count["ability_one"] += 1
           end
         end
         ret |= sw

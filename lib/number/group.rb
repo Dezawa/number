@@ -87,15 +87,21 @@ module Number
       cells = []
       ability.fixed_by_rest_one.each do |group_ability|
         next if group_ability.cell_ids.empty?
-        next unless @game.cells[group_ability.cell_ids.first]
-                         .set(group_ability.v,
-                              "grp(#{g}).ability #{group_ability.cell_ids}")
 
-        game.count[:Group_ability_is_rest_one] += 1
-        cells += group_ability.cell_ids
-        sw = true
+        fixed_cell_ids = group_ability_by_rest_one(group_ability)
+        sw = true unless fixed_cell_ids.empty?
+        cells += fixed_cell_ids
       end
       cells
+    end
+
+    def group_ability_by_rest_one(group_ability)
+      return [] unless @game.cells[group_ability.cell_ids.first]
+                            .set(group_ability.v,
+                                 "grp(#{g}).ability #{group_ability.cell_ids}")
+
+      game.count[:Group_ability_is_rest_one] += 1
+      group_ability.cell_ids
     end
 
     # このgroupの値 v

@@ -21,7 +21,7 @@ module Number
             # group g0 の valu_v_cell_ids 以外のcellから 値Vの可能性をなくす
             msg =  "## trio_on_co_group:group #{grp.g} V=#{v} cells=#{valu_v_cell_ids.join(',')}"
             if grp0.rm_ability(v, cell_ids, msg)
-              @count[:trio_on_co_group] += 1
+              @count['trio_on_co_group'] += 1
               return msg
             end
           end

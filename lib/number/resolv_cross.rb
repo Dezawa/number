@@ -43,7 +43,7 @@ module Number
               # (4) co_groups のuniq がg_numsに等しい組み合わせを残す
               # (5) このco_groupsから値vの可能性を削除する。except cells
               if select_cmb_grp_and_rm(cmb_grp, g_nums, v) # rm_v_from_co_groups(v, cmb_grp, rm_grps)
-                @count['X wing'] += 1
+                @count['cross_teiin'] += 1
                 ret = 'x-wing'
               end
             end

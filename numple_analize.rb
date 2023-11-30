@@ -13,13 +13,31 @@ require_relative 'lib/number/game'
 class NumpleAnalize
   attr_accessor :directories
 
+  # dir :: 
+  def initialize(*dir)
+    @directories = dir
+  end
   def numples
     @numples = [directories].flatten.map { |directory| Dir.glob("#{directory}/*") }.flatten
   end
 
+  def stat
+    statistics = Hash.new{|h,k| h[k] = 0 }
+    numples.sort.map do |numple|
+      $stderr.print  "#{numple} \r"
+      game = Number::Game.create(File.open(numple))
+      game.resolve
+      game.count.each{|k,v| statistics[k] += v }
+    end
+    
+    puts Number::Game::RESOLVE_PATH.map{|sym, num|
+      format(" Stat: %<l>-10s %<v>3d\n",
+             l: "#{sym}#{num}", v: statistics["#{sym}#{num}"]) }.join
+  end
+  
   def analyze
     numples.sort.map do |numple|
-      print  "#{numple} \r"
+      $stderr.print  "#{numple} \r"
       game = Number::Game.create(File.open(numple))
       unless game.resolve
         puts "#{numple}:error"
@@ -31,4 +49,10 @@ class NumpleAnalize
   def output
     pp analyze
   end
+end
+
+# pp $ARGV
+if /numple_analize.rb$/ =~ $0
+  
+  NumpleAnalize.new(ARGV).stat
 end

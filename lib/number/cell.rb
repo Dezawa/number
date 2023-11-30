@@ -108,7 +108,7 @@ module Number
     end
 
     def set_cell(val, msg = 'rest one')
-      return nil if @valu || val && !@ability.include?(val)
+      return nil if fixed_or_value_is_not_included_ability
 
       # if v.nil? and @ability.size == 1 ; v= @ability[0] ; end
       printf "Set cell %2d = %2d. by #{msg} \n", @c, val if option[:verb]
@@ -126,6 +126,10 @@ module Number
       end
     end
 
+    def fixed_or_value_is_not_included_ability
+      @valu || val && !@ability.include?(val)
+    end
+    
     def rm_ability(rm_value, msg = '')
       ret = nil
       vv = [rm_value].flatten(1)
