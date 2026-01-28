@@ -1,0 +1,44 @@
+gemを作り、githubにのせ、rails の Gemfileに書いてbundle installして、エラーなく終わったのですが、認識できていません。なぜでしょう
+
+```
+# number.gemspec
+  spec.files         = Dir["lib/**/*", "sample/*"]
+  spec.require_paths = ['lib']
+
+# Gemfile
+  gem 'number', :git => 'git@github.com:Dezawa/number.git', :branch => "Gemming"
+
+# Gemfile.lock
+GIT
+  remote: git@github.com:Dezawa/number.git
+  revision: a36f86b6be7dd42f72635d302342e0b5710f0516
+  branch: Gemming
+  specs:
+    number (0.1.0)
+
+# lib/number.rb
+module Number
+end
+
+# lib/number/game.rb
+module Number
+  class Game
+  end
+end
+
+# rails c
+~/numple$ rails c
+Loading development environment (Rails 7.0.7)
+irb(main):001:0> Number
+=> Number
+irb(main):002:0> Number::Game
+(irb):2:in `<main>': uninitialized constant Number::Game (NameError)
+
+Number::Game
+      ^^^^^^
+```
+
+ruby 3.2.0
+rails 7.0.0
+
+
