@@ -1,0 +1,22 @@
+nampre7サイトのgameの取り扱いをするtool
+スクレイピング関係
+numpre7games.rb :: どのレベルにどういう名前のgameがあるか、を取得し
+                   ../game_number_level#{i} に一覧を書き出す。
+		   どう使うか忘れた
+numpre7.rb  :: サイトにアクセスし指定されたgameのhtml、もしくは boad情報を返す。
+               get_numpre7.rb、re_dl.rb にて使われる
+
+get_numpre7.rb :: game  "np#{level}{\d\d}{\ d\d\d\d}" のboad情報を取り込み
+                  ../game/np#{level}/np#{level}{\d\d}{\d\d\d\d} に書き出す
+                  終了判定に {\d\d}{\d\d\d\d}、 {\d\d}0001 が取れなかった
+		  を使っているため漏れがあった
+re_dl.rb       :: ../game_number_level#{i} の一覧をなめ
+                  get_numpre7.rb の取りこぼしを拾う。
+		  やり直すなら始めからこれだけでよい
+Game重複調査関係
+to_alph.rb     :: 数字を置き換えて別のgameの顔をさせてることはないか？
+                  を調べるための下準備。1~9を出た順に A〜Iに置き換えて
+		  game/alpa_game/np#{i} に置く
+duped_file_list   game/alpa_game/np#{i} をみて重複を拾い出す
+
+
