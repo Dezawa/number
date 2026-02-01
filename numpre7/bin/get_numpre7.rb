@@ -2,7 +2,7 @@
 # ナンプレ７のサイトに行き、DL した htmlから ゲームの盤情報をfileに書き出す
 #  L 1~7, NN 01~
 # 
-require "./numpre7"
+require_relative "./numpre7"
 
   def get_cells(game)
     puts game
@@ -15,19 +15,23 @@ require "./numpre7"
     cells.size < 9 ? false : cells
   end
   
-@numpre7 = Nampre7.new
+@numpre7 = Numpre7.new
+base_dir = File.expand_path('..', __dir__)
 ("1".."7").each{|lvl|
   ("01".."99").each{|no|
     game = "np#{lvl}#{no}001"
+    game_path = File.join(base_dir, 'game', "np#{lvl}",game)
+
     cells = get_cells(game)
     break unless cells
-    open(game,"w"){|f| f.puts cells}
-    
+    open(game_path,"w"){|f| f.puts cells}
+    #pp game_path
     while game.succ!
+      game_path = File.join(base_dir, 'game', "np#{lvl}", game)
       cells = get_cells(game)
       break unless cells
-      
-      open(game,"w"){|f| f.puts cells}
+      #pp game_path
+      open(game_path,"w"){|f| f.puts cells}
     end
   }
 }
