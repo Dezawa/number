@@ -22,7 +22,11 @@ module Number
     attr_reader :infile, :sep, :game_type, :count
 
     def self.create(infile, option: {})
-      form_type, game_type = form_and_game_type(infile)
+      form_type, game_type = if option[:nine]
+                               ['9', nil]
+                             else
+                               form_and_game_type(infile)
+                             end
       instance = new(infile, form_type, game_type: game_type, option: option)
       instance.set_game_type
       # @waku、formを作成。groupを作成し、optional_groupも作成

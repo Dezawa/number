@@ -116,7 +116,8 @@ OPTIONS = { '-S' => :stat, '-s' => :strct,
             '-v' => :verb, '-V' => :Verb,
             '-T' => :table, '-t' => :test,
             '-c' => :cout, '-g' => :gout,
-            '-d' => :dbg, '-m' => :mail }.freeze
+            '-d' => :dbg, '-m' => :mail,
+            '-9' => :nine }.freeze
 def options
   opt = OptionParser.new
   option = {}
