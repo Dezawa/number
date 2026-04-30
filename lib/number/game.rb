@@ -79,27 +79,6 @@ module Number
       [[:cross_teiin], [:curb]]
     end
 
-    def resolve
-      @try_count = 400
-      # self.rest_one
-      sw = true
-      while !fill? && (sw || @try_count.positive?)
-        sw = nil
-        RESOLVE_PATH.each do |method, arg|
-          msg = arg ? send(method, arg) : send(method)
-          next if msg.to_s.empty?
-
-          print " #{method}(#{arg}):#{msg}\n" if option[:verb]
-          # アクションが有ったら、優しい解法に戻る
-          break
-        end
-
-        # puts count
-        @try_count -= 1
-      end
-      fill?
-    end
-
     def optional_struct(sep, game_scale, infile); end
 
     def struct_reg
