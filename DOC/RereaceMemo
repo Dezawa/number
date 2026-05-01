@@ -1,0 +1,44 @@
+===========
+ResolvCross 46796b1
+  cross_teiin必要だった。countとる所にBUG user	1m2.402s
+  
+===========
+NumpleAnalizeを使い手法が利用される回数と全実行時間を測定。
+reserv4 prison4 trio_on だが以下の組み合わせで全gameが解ける
+  [reserv4 prison4 trio_on] 1m19.209s 1m18.765s
+  [reserv4 trio_on]         1m13.991s 1m13.880s
+  [prison4 trio_on]         1m18.416s 1m18.434s
+
+[reserv4 prison4][ trio_on]  だと解決できないgameがでてくる
+
+prison4 と 実行してるはずだが成果の出ていない手法を使わないようにする
+ついで
+実行回数の多い rest_on の高速化 を検討する
+
+dezawa@local:~/Homemade/number$ time ./numple_analize.rb ~/bin/number/numpre7/game/np7 2> /dev/null 
+    rest_on reserv2 prison2 optiona reserv3 prison3 reserv4 prison4 trio_on cross_t xy_wing curb   
+np7: 340504,   8005,  10620,      0,   1449,  11025,    350,  10366,   2856,      0,    414,      0,
+user	1m20.062s
+    rest_on reserv2 prison2 optiona reserv3 prison3 reserv4 trio_on cross_t xy_wing curb   
+np7: 340690,   8005,  10836,      0,   1449,  11025,    350,   2920,      0,    414,      0,
+user	1m13.991s
+    rest_on reserv2 prison2 optiona reserv3 prison3 prison4 trio_on cross_t xy_wing curb   
+np7: 340476,   8021,  10858,      0,   1449,  11089,  11313,   3334,      0,    414,      0,
+user	1m18.416s
+
+dezawa@local:~/Homemade/number$ time ./numple_analize.rb ~/bin/number/numpre7/game/np7 2> /dev/null 
+    rest_on reserv2 prison2 optiona reserv3 prison3 trio_on cross_t xy_wing curb    reserv4 prison4
+np7: 326598,   7878,  10143,      0,   1449,  10517,   3334,      0,    414,      0,
+user	3m42.731s  かつ解決できないものあり np701029:error
+
+dezawa@local:~/Homemade/number$ time ./numple_analize.rb ~/bin/number/numpre7/game/np7 2> /dev/null 
+    rest_on reserv2 prison2 optiona reserv3 prison3 reserv4 prison4 cross_t xy_wing curb   
+np7: 305342,   7649,  10434,      0,   1242,  10039,    207,   8921,      0,    414,      0,
+user	6m0.781s かつ解決できないものあり np702002:error
+
+===========
+NumpleAnalize  a60799e79
+  NumpleAnalize修正
+    NumpleAnalize.new にて解析するdirを復数渡す様にしていたが、dir毎に呼ぶことに変更
+    1問題毎に 手法 の利用回数を count に採って板がそれに加え dir全体の利用回数を gcountに採る様にした
+    比較が容易にできるようにするため、出力は 手法利用の有無に関わらず全手法成果あり回数を１行で出す
