@@ -28,7 +28,7 @@ module Number
     # [[[2,[28,29],7], [2,[28,29],9]]] <= cell 28,29 には数字7,9のみが入る
     #   [可能性残り数、[cell_id,,,], 値]
     def combination_of_ability_of_rest_is_less_or_equal(v_num)
-      @ability[1..].select { |abl| abl.rest > 1 and abl.rest <= v_num }
+      @ability[1..].select { |abl| abl.rest <= v_num and abl.rest > 1 }
                    .combination(v_num)
                    .select { |abl_cmb| abl_cmb.inject([]) { |cells, abl| cells | abl.cell_ids }.size == v_num }
     end

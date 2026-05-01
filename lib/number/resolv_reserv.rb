@@ -36,13 +36,17 @@ module Number
 
     # reserve の対象となる cell set の候補
     def candidate_reserved_set(v_num, group)
-      all_set = group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num).map do |abl_cmb|
+      # all_set = group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num).map do |abl_cmb|
+      #   values, reserved_cells = sum_of_cells_and_values(abl_cmb)
+      #   [values, reserved_cells, abl_cmb]
+      # end
+      # all_set.select do |values, reserved_cells, _abl_cmb|
+      #   !prison_done?(v_num, reserved_cells) && values_to_rm(reserved_cells, values).size.positive?
+      # end
+      group.ability.combination_of_ability_of_rest_is_less_or_equal(v_num).map do |abl_cmb|
         values, reserved_cells = sum_of_cells_and_values(abl_cmb)
-        [values, reserved_cells, abl_cmb]
-      end
-      all_set.select do |values, reserved_cells, _abl_cmb|
-        !prison_done?(v_num, reserved_cells) && values_to_rm(reserved_cells, values).size.positive?
-      end
+        !prison_done?(v_num, reserved_cells) && values_to_rm(reserved_cells, values).size.positive? ? [values, reserved_cells, abl_cmb] : nil
+      end.compact
     end
 
     # abilitys :: [ [grp_ability, grp_abirity], [], , ,]

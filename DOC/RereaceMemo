@@ -1,5 +1,5 @@
 ===========
-ResolvCross 46796b1
+ResolvCross b546480
   cross_teiin必要だった。countとる所にBUG user	1m2.402s
   NumpleAnalizeで利用回数に加え呼び出し回数もカウント
   利用回数の取得ややこしい所があり、呼び出し回数 < 利用回数 になってるのもある
