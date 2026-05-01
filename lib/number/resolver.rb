@@ -29,7 +29,8 @@ module Number
        [:cross_teiin],
        [:xy_wing],
        [:curb]].freeze
-
+    RESOLVE_KEY = RESOLVE_PATH.map{|k,v| "#{k}#{v}" }.to_a
+    
     def resolve
       @try_count = 400
       # self.rest_one

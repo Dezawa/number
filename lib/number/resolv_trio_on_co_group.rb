@@ -18,7 +18,7 @@ module Number
             grp0 = @groups[g]
             # group g0 の w 以外のcellから 値Vの可能性をなくす
             if grp0.rm_ability(v, w, "## trio_on_co_group:group #{grp.g} V=#{v} cells=#{w.join(',')}")
-              @count[:trio_on_co_group] += 1
+              @count["trio_on_co_group"] += 1
               return "## trio_on_co_group:group #{grp.g} V=#{v} cells=#{w.join(',')}"
             end
           end

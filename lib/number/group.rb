@@ -78,6 +78,7 @@ module Number
                               "grp(#{g}).ability #{group_ability.cell_ids}")
 
         game.count[:Group_ability_is_rest_one] += 1
+        game.count["rest_one"] += 1
         cells += group_ability.cell_ids
         sw = true
       end

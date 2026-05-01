@@ -6,29 +6,70 @@
 # frozen_string_literal: true
 
 require_relative 'lib/number/game'
+require_relative 'lib/numple'
 
 # == dir内のgameを全部解いて
 # default :: 解けなかった問題をlist up
 # -S      :: 解けたか否かに関わらず、使った技の統計を出す
 class NumpleAnalize
-  attr_accessor :directories
+  attr_accessor :directories, :gcount
 
-  def numples
-    @numples = [directories].flatten.map { |directory| Dir.glob("#{directory}/*") }.flatten
+  def initialize(dirs=["./"])
+    @directories = dirs
+  end
+  
+  def numples(dir)
+    @numples =Dir.glob("#{dir}/np*")[0,10]
   end
 
   def analyze
-    numples.sort.map do |numple|
-      print  "#{numple} \r"
-      game = Number::Game.create(File.open(numple))
-      unless game.resolve
-        puts "#{numple}:error"
-        numple
-      end
-    end.compact
+    #pp numples
+    @gcount = Hash.new(0)
+    directories.each do |dir|
+      pp dir
+      # pp numples(dir)
+      counts =
+        numples(dir).sort.map do |filename|
+          # puts File.basename(filename)
+          numple = Numple.new(filename, option: {nine: true})
+          unless numple.resolve
+            # game = Number::Game.create(File.open(numple), option: {nine: true})
+            # unless game.resolve
+            $stderr.puts "#{File.basename filename}:error"
+            $stderr.puts numple.output_form
+            nil
+          else
+            #puts numple.output_form
+            sum_count(numple.game.count)
+            #puts "#{File.basename filename}:\n#{numple.game.output_statistics}"
+          end
+      end.compact
+    end
   end
 
+  def sum_count(count)
+    count.each{|k,v| @gcount[k] += v}
+  end
+
+  def print_count(count)
+   ret =  Number::Resolver::RESOLVE_KEY.map do |key|
+     "%5d," % count[key].to_s
+     #key
+   end.to_a.join
+   puts ret
+  end
+  
   def output
     pp analyze
   end
+end
+
+if $0 ==  __FILE__
+  # pp ARGV
+  analize = NumpleAnalize.new ARGV
+  analize.analyze
+  #pp analize.gcount
+  puts Number::Resolver::RESOLVE_KEY.join(" ")
+  pp analize.gcount
+  analize.print_count(analize.gcount)
 end

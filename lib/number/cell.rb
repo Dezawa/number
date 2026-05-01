@@ -108,6 +108,7 @@ module Number
 
     def set(val, msg = 'rest_one')
       @count['Cell_ability is rest one'] += 1
+      @count['rest_one'] += 1
       set_cell(val, msg)
     end
 
