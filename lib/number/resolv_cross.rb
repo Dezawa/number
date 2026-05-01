@@ -50,12 +50,12 @@ module Number
 
               # (5) このco_groupsから値vの可能性を削除する。except cells
               # pp [v,cmb_grp[3]]
-              rm_v_from_co_groups(v, cmb_grp, rm_grps)
+              vsw ||= rm_v_from_co_groups(v, cmb_grp, rm_grps)
             end
           end
           if vsw
-            @count['X wing'] += 1
-            ret = 'x-wing'
+            @count['cross_teiin'] += 1
+            ret = 'cross_teiin'
           end
           # return true
         end

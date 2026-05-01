@@ -20,15 +20,16 @@ module Number
       [[:rest_one],
        [:reserv, 2],
        [:prison, 2],
-       [:optional_test],
+       # [:optional_test],
        [:reserv, 3],
        [:prison, 3],
        [:reserv, 4],
-       [:prison, 4],
+       # [:prison, 4],
        [:trio_on_co_group],
        [:cross_teiin],
        [:xy_wing],
-       [:curb]].freeze
+       # [:curb]
+      ].freeze
     RESOLVE_KEY = RESOLVE_PATH.map{|k,v| "#{k}#{v}" }.to_a
     
     def resolve
