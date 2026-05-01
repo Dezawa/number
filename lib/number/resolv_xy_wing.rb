@@ -4,12 +4,12 @@ module Number
   # 解法
   module ResolvXyWing
     def xy_wing
+      @call_count["xy_wing"] += 1
       candidate_cells_of_trio.each do |wing_cells|
+        @count['xy_wing'] += 1
         target_val = (wing_cells.first.ability & wing_cells.last.ability).first
         co_cells_of_pair_grp_of(wing_cells).each do |co_cells|
-          co_cells.each do |cell|
-            @count['xy_wing'] += 1 if cell.rm_ability(target_val)
-          end
+          co_cells.each{|cell| cell.rm_ability(target_val)}
         end
       end
     end

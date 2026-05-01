@@ -24,13 +24,12 @@ module Number
     # (5) このco_groupsから値vの可能性を削除する。except cells
     #
     # これを g_nums 2,,@m について繰り返し、:holizontal と :vertical を入れ替えて行う
-    #
-    # X-wingと言われているらしい
     def cross_teiin
       ret = ''
       h_v_table = %i[holizontal vertical]
       # h_v
       h_v_table.each_with_index  do |h_v, idx|
+        @call_count['cross_teiin'] += 1 # holizontal vertical 各々１回
         v_h = h_v_table[1 - idx] # 　holizontal と :vertical について
         # value
         (1..game_scale).each do |v| # (1) 値v　をとり得る

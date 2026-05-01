@@ -4,6 +4,7 @@ module Number
   # 解法
   module ResolvTrioOnCoGroup
     def trio_on_co_group
+      @call_count["trio_on_co_group"] += 1
       # return # prison(2,3)と等価?
       ret = ''
       @groups.each do |grp|

@@ -43,7 +43,7 @@ module Number
           next if msg.to_s.empty?
 
           print " #{method}(#{arg}):#{msg}\n" if option[:verb]
-          # アクションが有ったら、優しい解法に戻る
+          # アクションが有ったら、易しい解法に戻る
           break
         end
 
@@ -96,18 +96,20 @@ module Number
     # (2) ある値の可能性あるcellが一つになったら、そのcellを確定する
     #   ⇒ 1 はここにしか入らない
     def rest_one
+      @call_count["rest_one"] += 1
       sw = true
       cells = []
       while sw
         sw = false
 
-        # (1) cell Ability
+        # (1) cell Abilityが１になったcellをcellsに
         @cells.each do |cell|
           result = cell.set_if_valurest_equal_one
           cells << cell.c if result
           sw |= result
         end
         # (2) group ability [ 可能性cell数 , [cell_no,cell_no,, ], 値 ]
+        #    ある値の可能性あるcellが一つになったら、そのcellを確定する
         @groups.each do |grp|
           fixed_cells = grp.set_cell_if_some_value_s_ability_is_rest_one
           unless fixed_cells.empty?

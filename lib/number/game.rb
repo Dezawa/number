@@ -19,7 +19,7 @@ module Number
     include Number::Resolver
     include Number::GameInitiate
     attr_accessor :groups, :cells, :gsize, :size, :form_type, :form, :arrows, :n, :game_scale, :option, :waku
-    attr_reader :infile, :sep, :game_type, :count
+    attr_reader :infile, :sep, :game_type, :count, :call_count
 
     def self.create(infile, option: {})
       form_type, game_type = if option[:nine]
@@ -69,6 +69,7 @@ module Number
       @groups = []
       @cells = []
       @count = Hash.new(0)
+      @call_count = Hash.new(0)
     end
 
     def game

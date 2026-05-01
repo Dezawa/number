@@ -1,7 +1,18 @@
 ===========
 ResolvCross 46796b1
   cross_teiin必要だった。countとる所にBUG user	1m2.402s
+  NumpleAnalizeで利用回数に加え呼び出し回数もカウント
+  利用回数の取得ややこしい所があり、呼び出し回数 < 利用回数 になってるのもある
+  reserv? が 呼び出し回数 >>> 利用回数 なので枝刈りできないか要検討
   
+time ./numple_analize.rb ~/bin/number/numpre7/game/np7
+    rest_on reserv2 prison2 reserv3 prison3 reserv4 trio_on cross_t xy_wing
+np7: 340631,   8005,  10836,   1449,  11025,    350,   2920,   1592,    286,
+   :  28272,  20799,  12794,   9224,   7775,   4734,   4384,   2928,    143,
+
+real	1m6.372s
+user	1m2.738s
+
 ===========
 NumpleAnalizeを使い手法が利用される回数と全実行時間を測定。
 reserv4 prison4 trio_on だが以下の組み合わせで全gameが解ける

@@ -11,6 +11,7 @@ module Number
     # 似た概念 座敷牢 の方に違いを詳説
     # rubocop: disable Lint/UnreachableLoop
     def reserv(v_num)
+      @call_count["reserv#{v_num}"] += 1
       # group において、可能性ある cell が v_num個以下の数字を探す
       # それらのcellに他の数字の可能性が有ってもよい。
       # それらの v_num個のcombinationのうち、

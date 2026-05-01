@@ -12,19 +12,20 @@ require_relative 'lib/numple'
 # default :: 解けなかった問題をlist up
 # -S      :: 解けたか否かに関わらず、使った技の統計を出す
 class NumpleAnalize
-  attr_accessor :directory, :directories, :gcount
+  attr_accessor :directory, :directories, :gcount, :call_count
 
   def initialize(directory)
     @directory = directory
   end
   
   def numples(dir)
-    @numples =Dir.glob("#{dir}/np*") # [0,10]
+    @numples =Dir.glob("#{dir}/np*") #[0,100]
   end
 
   def analyze
     #pp numples
     @gcount = Hash.new(0)
+    @call_count = Hash.new(0)
     # directories.each do |dir|
     #  pp dir
       # pp numples(dir)
@@ -41,6 +42,7 @@ class NumpleAnalize
           else
             #puts numple.output_form
             sum_count(numple.game.count)
+            sum_call_count(numple.game.call_count)
             #puts "#{File.basename filename}:\n#{numple.game.output_statistics}"
           end
       end.compact
@@ -50,8 +52,18 @@ class NumpleAnalize
   def sum_count(count)
     count.each{|k,v| @gcount[k] += v}
   end
+  def sum_call_count(count)
+    count.each{|k,v| @call_count[k] += v}
+  end
 
   def print_count(count)
+   ret =  Number::Resolver::RESOLVE_KEY.map do |key|
+     "%7d," % count[key].to_s
+     #key
+   end.to_a.join
+   ret
+  end
+  def print_call_count(count)
    ret =  Number::Resolver::RESOLVE_KEY.map do |key|
      "%7d," % count[key].to_s
      #key
@@ -76,5 +88,7 @@ if $0 ==  __FILE__
     analize.analyze
     # pp analize.gcount
     puts "#{File.basename dir}:#{analize.print_count(analize.gcount)}"
+    puts "   :#{analize.print_call_count(analize.call_count)}"
+    #running_count(count)
   end
 end
