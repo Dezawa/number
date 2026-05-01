@@ -12,24 +12,24 @@ require_relative 'lib/numple'
 # default :: 解けなかった問題をlist up
 # -S      :: 解けたか否かに関わらず、使った技の統計を出す
 class NumpleAnalize
-  attr_accessor :directories, :gcount
+  attr_accessor :directory, :directories, :gcount
 
-  def initialize(dirs=["./"])
-    @directories = dirs
+  def initialize(directory)
+    @directory = directory
   end
   
   def numples(dir)
-    @numples =Dir.glob("#{dir}/np*")[0,10]
+    @numples =Dir.glob("#{dir}/np*") # [0,10]
   end
 
   def analyze
     #pp numples
     @gcount = Hash.new(0)
-    directories.each do |dir|
-      pp dir
+    # directories.each do |dir|
+    #  pp dir
       # pp numples(dir)
       counts =
-        numples(dir).sort.map do |filename|
+        numples(directory).sort.map do |filename|
           # puts File.basename(filename)
           numple = Numple.new(filename, option: {nine: true})
           unless numple.resolve
@@ -44,7 +44,7 @@ class NumpleAnalize
             #puts "#{File.basename filename}:\n#{numple.game.output_statistics}"
           end
       end.compact
-    end
+    # end
   end
 
   def sum_count(count)
@@ -53,10 +53,10 @@ class NumpleAnalize
 
   def print_count(count)
    ret =  Number::Resolver::RESOLVE_KEY.map do |key|
-     "%5d," % count[key].to_s
+     "%7d," % count[key].to_s
      #key
    end.to_a.join
-   puts ret
+   ret
   end
   
   def output
@@ -66,10 +66,15 @@ end
 
 if $0 ==  __FILE__
   # pp ARGV
-  analize = NumpleAnalize.new ARGV
-  analize.analyze
-  #pp analize.gcount
-  puts Number::Resolver::RESOLVE_KEY.join(" ")
-  pp analize.gcount
-  analize.print_count(analize.gcount)
+  #puts Number::Resolver::RESOLVE_KEY.join(" ")
+  keys = Number::Resolver::RESOLVE_KEY + ["reserv4", "prison4"]
+  #puts "    "+keys.map{|key| "#{key}    "[0,7]}.join(' ')
+  puts "    "+Number::Resolver::RESOLVE_KEY.map{|key| "#{key}    "[0,7]}.join(' ')
+ # exit
+  ARGV.each do |dir|
+    analize = NumpleAnalize.new dir
+    analize.analyze
+    # pp analize.gcount
+    puts "#{File.basename dir}:#{analize.print_count(analize.gcount)}"
+  end
 end
